@@ -254,43 +254,58 @@ def df_groupby(**kwargs):
 
 
 def _groupby(df, groupby, columns):
+    if isinstance(columns, dict):
+        df = df.rename(columns=columns)
+        columns = list(columns.values())
     if groupby is not None:
         if not isinstance(groupby, dict):
             groupby = dict(by=groupby)
         df = df.groupby(**groupby)
     if columns is not None:
-        df = df[columns]
+        if isinstance(columns, (list, str)):
+            df = df[columns]
+        else:
+            raise ValueError("'{}' must be dict, list, or str.".format(columns))
     return df
 
 
-def df_transform(groupby=None, columns=None, **kwargs):
+def _add_mutated(df, mutated_df, columns, keep_others):
+    if keep_others:
+        columns_list = list(columns.values()) if isinstance(columns, dict) else columns
+        df[columns_list] = mutated_df
+    else:
+        df = mutated_df
+    return df
+
+
+def df_transform(groupby=None, columns=None, keep_others=False, **kwargs):
     def _df_transform(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.transform(**kwargs)
+        mutated_df = _groupby(df, groupby, columns).transform(**kwargs)
+        return _add_mutated(df, mutated_df, columns, keep_others)
 
     return _df_transform
 
 
-def df_apply(groupby=None, columns=None, **kwargs):
+def df_apply(groupby=None, columns=None, keep_others=False, **kwargs):
     def _df_apply(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.apply(**kwargs)
+        mutated_df = _groupby(df, groupby, columns).apply(**kwargs)
+        return _add_mutated(df, mutated_df, columns, keep_others)
 
     return _df_apply
 
 
-def df_applymap(groupby=None, columns=None, **kwargs):
+def df_applymap(groupby=None, columns=None, keep_others=False, **kwargs):
     def _df_applymap(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.applymap(**kwargs)
+        mutated_df = _groupby(df, groupby, columns).applymap(**kwargs)
+        return _add_mutated(df, mutated_df, columns, keep_others)
 
     return _df_applymap
 
 
-def df_pipe(groupby=None, columns=None, **kwargs):
+def df_pipe(groupby=None, columns=None, keep_others=False, **kwargs):
     def _df_pipe(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.pipe(**kwargs)
+        mutated_df = _groupby(df, groupby, columns).pipe(**kwargs)
+        return _add_mutated(df, mutated_df, columns, keep_others)
 
     return _df_pipe
 
