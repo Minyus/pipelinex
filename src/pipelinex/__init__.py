@@ -50,4 +50,4 @@ if find_spec("sklearn"):
 if find_spec("allennlp"):
     from .ops.allennlp_ops import *  # NOQA
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
