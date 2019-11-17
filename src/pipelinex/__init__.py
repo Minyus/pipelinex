@@ -35,7 +35,7 @@ if find_spec("pandas"):
     from .ops.pandas_ops import *  # NOQA
     from .decorators.pandas_decorators import *  # NOQA
 
-if find_spec("torch"):
+if find_spec("torch") and find_spec("ignite"):
     from .ops.pytorch_ops import *  # NOQA
 
 if find_spec("shap"):
