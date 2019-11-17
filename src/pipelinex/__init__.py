@@ -15,12 +15,13 @@ if find_spec("kedro"):
         from .context.mlflow_context import *  # NOQA
 
 if find_spec("pandas"):
-    from .decorators import *  # NOQA
-    from .io.pandas.efficient_csv_local import *  # NOQA
-    from .io.pandas.pandas_cat_matrix import *  # NOQA
-    from .io.pandas.pandas_describe import *  # NOQA
     from .ops.pandas_ops import *  # NOQA
     from .decorators.pandas_decorators import *  # NOQA
+
+    if find_spec("kedro"):
+        from .io.pandas.efficient_csv_local import *  # NOQA
+        from .io.pandas.pandas_cat_matrix import *  # NOQA
+        from .io.pandas.pandas_describe import *  # NOQA
 
 if find_spec("pandas_profiling"):
     from .io.pandas_profiling.pandas_profiling import *  # NOQA
