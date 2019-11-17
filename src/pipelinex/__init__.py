@@ -14,26 +14,26 @@ if find_spec("kedro"):
     if find_spec("mlflow"):
         from .context.mlflow_context import *  # NOQA
 
-if find_spec("pandas"):
-    from .ops.pandas_ops import *  # NOQA
-    from .decorators.pandas_decorators import *  # NOQA
-
-    if find_spec("kedro"):
+    if find_spec("pandas"):
         from .io.pandas.efficient_csv_local import *  # NOQA
         from .io.pandas.pandas_cat_matrix import *  # NOQA
         from .io.pandas.pandas_describe import *  # NOQA
 
-if find_spec("pandas_profiling"):
-    from .io.pandas_profiling.pandas_profiling import *  # NOQA
+    if find_spec("pandas_profiling"):
+        from .io.pandas_profiling.pandas_profiling import *  # NOQA
 
-if find_spec("PIL"):
-    from .io.pillow.images import *  # NOQA
+    if find_spec("PIL"):
+        from .io.pillow.images import *  # NOQA
 
-if find_spec("seaborn"):
-    from .io.seaborn.seaborn_pairplot import *  # NOQA
+    if find_spec("seaborn"):
+        from .io.seaborn.seaborn_pairplot import *  # NOQA
 
-if find_spec("torchvision"):
-    from .io.torchvision.iterable_images import *  # NOQA
+    if find_spec("torchvision"):
+        from .io.torchvision.iterable_images import *  # NOQA
+
+if find_spec("pandas"):
+    from .ops.pandas_ops import *  # NOQA
+    from .decorators.pandas_decorators import *  # NOQA
 
 if find_spec("torch"):
     from .ops.pytorch_ops import *  # NOQA
