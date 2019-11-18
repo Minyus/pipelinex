@@ -188,11 +188,10 @@ print("model object: \n", model, "\n")
 > ) 
 ```
 
-To try a new neural network architecture including branching and merging as in ResNet and Inception,
-a class object with a method (`forward` for PyTorch, `call` for TensorFlow) needs to be developed.
-This experimentation process is not only time-consuming but also difficult to track.
+In addition to Sequential, TensorFLow/Keras provides modules to merge branches such as 
+`tf.keras.layers.Concatenate`, but PyTorch provides only functional interface such as `torch.cat`.
 
-PipelineX provides a quick API similar to Sequential that can be stored in a YAML or JSON config file optionally. 
+PipelineX provides modules to merge branches such as `ModuleConcat`, `ModuleSum`, and `ModuleAvg`.
 
 - Hardcoded:
 
