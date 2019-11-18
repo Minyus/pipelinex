@@ -16,35 +16,46 @@ def df_merge(**kwargs):
     return _df_merge
 
 
-def df_concat(**kwargs):
-    def _df_concat(df_0, df_1, *argsignore, **kwargsignore):
-        assert df_0 is not None and isinstance(df_0, pd.DataFrame)
-        assert df_1 is not None and isinstance(df_1, pd.DataFrame)
-        new_col_values = kwargs.get("new_col_values")  # type: List[str]
-        new_col_name = kwargs.get("new_col_name")  # type: str
-        col_id = kwargs.get("col_id")  # type: str
-        sort = kwargs.get("sort", False)  # type: bool
+def df_concat(new_col_name=None, new_col_values=None, col_id=None, sort=False):
+    assert isinstance(new_col_name, (str, type(None)))
+    assert isinstance(new_col_values, (list, type(None)))
+    assert isinstance(col_id, (str, type(None)))
+    kwargs = dict(
+        new_col_name=new_col_name,
+        new_col_values=new_col_values,
+        col_id=col_id,
+        sort=sort,
+    )
 
-        if col_id:
-            df_0.set_index(keys=col_id, inplace=True)
-            df_1.set_index(keys=col_id, inplace=True)
+    def _df_concat(*args):
+        df_list = [arg for arg in args if isinstance(arg, pd.DataFrame)]
+        assert len(df_list) >= 1, "No data frame was fed."
+
+        new_col_name = kwargs.get("new_col_name")
+        new_col_values = kwargs.get("new_col_values")
+        col_id = kwargs.get("col_id")
+        sort = kwargs.get("sort", False)
+
+        if col_id is not None:
+            for df in df_list:
+                df.set_index(keys=col_id, inplace=True)
         else:
-            col_id = df_0.index.name
+            col_id = df_list[0].index.name
 
-        assert (isinstance(new_col_values, list) and len(new_col_values) == 2) or (
-            new_col_values is None
-        )
+        if (new_col_name is not None) and (new_col_values is None):
+            new_col_values = list(range(len(df_list)))
+
         names = [new_col_name, col_id] if new_col_name else col_id
-        df_0 = pd.concat(
-            [df_0, df_1],
+        df = pd.concat(
+            df_list,
             sort=sort,
             verify_integrity=bool(col_id),
             keys=new_col_values,
             names=names,
         )
         if new_col_name:
-            df_0.reset_index(inplace=True, level=new_col_name)
-        return df_0
+            df.reset_index(inplace=True, level=new_col_name)
+        return df
 
     return _df_concat
 
@@ -423,9 +434,12 @@ def df_ngroup(groupby=None, columns=None, **kwargs):
     return _df_ngroup
 
 
-def df_cond_replace(cond, columns, value=np.nan, **kwargs):
+def df_cond_replace(flag, columns, value=np.nan, **kwargs):
+    if not isinstance(flag, dict):
+        flag = dict(expr=flag)
+
     def _df_cond_replace(df, *argsignore, **kwargsignore):
-        df.loc[df.eval(cond), columns] = value
+        df.loc[df.eval(**flag), columns] = value
         return df
 
     return _df_cond_replace
@@ -438,15 +452,14 @@ def df_rename(**kwargs):
     return _df_rename
 
 
-def df_duplicate(**kwargs):
-    columns = kwargs.get("columns")
-    assert columns and isinstance(columns, dict)
+def df_duplicate(columns):
+    assert isinstance(columns, dict)
     col_list = list(columns.keys())
 
     def _df_duplicate(df, *argsignore, **kwargsignore):
         for col in col_list:
             assert col in df.columns, "{} not in the data frame.".format(col)
-        new_df = df[col_list].rename(**kwargs)
+        new_df = df[col_list].rename(columns=columns)
         df = pd.concat([df, new_df], axis=1, sort=False)
         return df
 
@@ -587,20 +600,33 @@ def df_slice(**kwargs):
     return _df_slice
 
 
-def df_homogenize(**kwargs):
+def df_homogenize(flag, columns, groupby=None):
+    assert isinstance(flag, (dict, str))
+    assert isinstance(columns, (dict, list, str))
+
     def _df_homogenize(df):
-        groupby = kwargs.get("groupby")
-        columns = kwargs.get("columns")
-        cond = kwargs.get("cond")
         if isinstance(columns, dict):
             df = df_duplicate(columns=columns)(df)
             columns_list = list(columns.values())
         else:
             columns_list = columns
-        df = df_cond_replace(cond=cond, columns=columns_list, value=np.nan)(df)
+        df = df_cond_replace(flag=flag, columns=columns_list, value=np.nan)(df)
         df[columns_list] = df_transform(
             groupby=groupby, columns=columns_list, func="max"
         )(df)
         return df
 
     return _df_homogenize
+
+
+def df_relative(flag, columns, groupby=None):
+    assert isinstance(flag, (dict, str))
+    assert isinstance(columns, dict)
+
+    def _df_relative(df):
+        df = df_homogenize(flag=flag, columns=columns, groupby=groupby)(df)
+        for col, new_col in columns.items():
+            df[new_col] = df[col] - df[new_col]
+        return df
+
+    return _df_relative
