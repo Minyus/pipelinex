@@ -22,6 +22,13 @@ class ModuleConcat(ModuleListMerge):
         return torch.cat(tt_list, dim=1)
 
 
+def _check_size_match(self, tt_list):
+    assert len(set([tuple(list(tt.size())) for tt in tt_list])) == 1, (
+        "Sizes of tensors must match. "
+        "\n{}\n got tensor sizes: \n{}\n".format(self, [tt.size() for tt in tt_list])
+    )
+
+
 def element_wise_sum(tt_list):
     return torch.sum(torch.stack(tt_list), dim=0)
 
@@ -29,12 +36,7 @@ def element_wise_sum(tt_list):
 class ModuleSum(ModuleListMerge):
     def forward(self, input):
         tt_list = super().forward(input)
-        assert len(set([tuple(list(tt.size())) for tt in tt_list])) == 1, (
-            "Sizes of tensors must match. "
-            "\n{}\n got tensor sizes: \n{}\n".format(
-                self, [tt.size() for tt in tt_list]
-            )
-        )
+        _check_size_match(self, tt_list)
         return element_wise_sum(tt_list)
 
 
@@ -45,13 +47,19 @@ def element_wise_average(tt_list):
 class ModuleAvg(ModuleListMerge):
     def forward(self, input):
         tt_list = super().forward(input)
-        assert len(set([tuple(list(tt.size())) for tt in tt_list])) == 1, (
-            "Sizes of tensors must match. "
-            "\n{}\n got tensor sizes: \n{}\n".format(
-                self, [tt.size() for tt in tt_list]
-            )
-        )
+        _check_size_match(self, tt_list)
         return element_wise_average(tt_list)
+
+
+def element_wise_prod(tt_list):
+    return torch.prod(torch.stack(tt_list), dim=0)
+
+
+class ModuleProd(ModuleListMerge):
+    def forward(self, input):
+        tt_list = super().forward(input)
+        _check_size_match(self, tt_list)
+        return element_wise_prod(tt_list)
 
 
 class StatModule(torch.nn.Module):
@@ -389,6 +397,33 @@ class TensorSlice(torch.nn.Module):
 
     def forward(self, input):
         return input[:, self.start : (self.end or input.shape[1]) : self.step, ...]
+
+
+def step_binary(input, output_size, compare=torch.ge):
+    index_1dtt = input.type(dtype=torch.long)
+    h_1dtt = torch.arange(output_size)
+    h_2dtt = compare(h_1dtt.reshape(1, -1), index_1dtt.reshape(-1, 1))
+    return h_2dtt
+
+
+class StepBinary(torch.nn.Module):
+    def __init__(self, size, desc=False, compare=None, dtype=None):
+        super().__init__()
+        assert isinstance(size, int)
+        self.out_size = size
+        if compare is None:
+            assert isinstance(desc, bool)
+            desc_dict = {False: torch.ge, True: torch.le}
+            compare = desc_dict.get(desc)
+        else:
+            assert not desc, "'desc' and 'compare' cannot be specified together."
+        self.compare = compare
+        self.dtype = dtype
+
+    def forward(self, input):
+        output = step_binary(input, self.out_size, self.compare)
+        dtype = self.dtype or input.type()
+        return output.type(dtype=dtype)
 
 
 class TensorNearestPad(torch.nn.Module):
