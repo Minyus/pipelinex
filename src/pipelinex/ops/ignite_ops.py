@@ -26,7 +26,7 @@ class NetworkTrain:
         self.mlflow_logging = mlflow_logging
 
     def __call__(self, model, train_dataset, val_dataset=None, parameters=None):
-
+        assert train_dataset is not None
         train_params = self.train_params
         mlflow_logging = self.mlflow_logging
 
@@ -58,7 +58,7 @@ class NetworkTrain:
             train_dataset = PartialDataset(train_dataset, train_dataset_size_limit)
             log.info("train dataset size is set to {}".format(len(train_dataset)))
 
-        if val_dataset_size_limit:
+        if val_dataset_size_limit and (val_dataset is not None):
             val_dataset = PartialDataset(val_dataset, val_dataset_size_limit)
             log.info("val dataset size is set to {}".format(len(val_dataset)))
 
