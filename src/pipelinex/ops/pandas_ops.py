@@ -1,3 +1,4 @@
+import copy
 import pandas as pd
 import numpy as np
 import logging
@@ -289,8 +290,19 @@ def _add_mutated(df, mutated_df, columns, keep_others):
     return df
 
 
+def _preprocess_columns(columns):
+    columns_dict = None
+    if isinstance(columns, dict):
+        columns_dict = copy.deepcopy(columns)
+        columns = list(columns_dict.values())
+    return columns_dict, columns
+
+
 def df_transform(groupby=None, columns=None, keep_others=False, **kwargs):
+    columns_dict, columns = _preprocess_columns(columns)
+
     def _df_transform(df, *argsignore, **kwargsignore):
+        df = df_duplicate(columns=columns_dict)(df)
         mutated_df = _groupby(df, groupby, columns).transform(**kwargs)
         return _add_mutated(df, mutated_df, columns, keep_others)
 
@@ -298,7 +310,10 @@ def df_transform(groupby=None, columns=None, keep_others=False, **kwargs):
 
 
 def df_apply(groupby=None, columns=None, keep_others=False, **kwargs):
+    columns_dict, columns = _preprocess_columns(columns)
+
     def _df_apply(df, *argsignore, **kwargsignore):
+        df = df_duplicate(columns=columns_dict)(df)
         mutated_df = _groupby(df, groupby, columns).apply(**kwargs)
         return _add_mutated(df, mutated_df, columns, keep_others)
 
@@ -306,7 +321,10 @@ def df_apply(groupby=None, columns=None, keep_others=False, **kwargs):
 
 
 def df_applymap(groupby=None, columns=None, keep_others=False, **kwargs):
+    columns_dict, columns = _preprocess_columns(columns)
+
     def _df_applymap(df, *argsignore, **kwargsignore):
+        df = df_duplicate(columns=columns_dict)(df)
         mutated_df = _groupby(df, groupby, columns).applymap(**kwargs)
         return _add_mutated(df, mutated_df, columns, keep_others)
 
@@ -445,9 +463,11 @@ def df_cond_replace(flag, columns, value=np.nan, **kwargs):
     return _df_cond_replace
 
 
-def df_rename(**kwargs):
+def df_rename(index=None, columns=None, copy=True, level=None):
     def _df_rename(df, *argsignore, **kwargsignore):
-        return df.rename(**kwargs)
+        if not (index is None and columns is None and level is None):
+            df = df.rename(index=index, columns=columns, copy=copy, level=level)
+        return df
 
     return _df_rename
 
