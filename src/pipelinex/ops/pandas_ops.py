@@ -240,10 +240,9 @@ def df_query(**kwargs):
     return _df_query
 
 
-def df_eval(**kwargs):
+def df_eval(expr, parser="pandas", engine=None, truediv=True):
     def _df_eval(df, *argsignore, **kwargsignore):
-        kwargs.update(dict(inplace=True))
-        df.eval(**kwargs)
+        df = df.eval(expr=expr, parser=parser, engine=engine, truediv=truediv)
         return df
 
     return _df_eval
