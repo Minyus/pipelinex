@@ -291,6 +291,7 @@ def _add_mutated(df, mutated_df, columns, keep_others):
 
 
 def _preprocess_columns(columns):
+    assert isinstance(columns, (dict, list, str, type(None)))
     columns_dict = None
     if isinstance(columns, dict):
         columns_dict = copy.deepcopy(columns)
@@ -304,7 +305,8 @@ def df_transform(groupby=None, columns=None, keep_others=False, **kwargs):
     def _df_transform(df, *argsignore, **kwargsignore):
         df = df_duplicate(columns=columns_dict)(df)
         mutated_df = _groupby(df, groupby, columns).transform(**kwargs)
-        return _add_mutated(df, mutated_df, columns, keep_others)
+        df = _add_mutated(df, mutated_df, columns, keep_others)
+        return df
 
     return _df_transform
 
@@ -452,12 +454,17 @@ def df_ngroup(groupby=None, columns=None, **kwargs):
     return _df_ngroup
 
 
-def df_cond_replace(flag, columns, value=np.nan, **kwargs):
+def df_cond_replace(flag, columns, value=np.nan, replace_if_flag=True, **kwargs):
+    columns_dict, columns = _preprocess_columns(columns)
     if not isinstance(flag, dict):
         flag = dict(expr=flag)
 
     def _df_cond_replace(df, *argsignore, **kwargsignore):
-        df.loc[df.eval(**flag), columns] = value
+        df = df_duplicate(columns=columns_dict)(df)
+        cond = df.eval(**flag)
+        if not replace_if_flag:
+            cond = np.invert(cond)
+        df.loc[cond, columns] = value
         return df
 
     return _df_cond_replace
@@ -473,14 +480,13 @@ def df_rename(index=None, columns=None, copy=True, level=None):
 
 
 def df_duplicate(columns):
-    assert isinstance(columns, dict)
-    col_list = list(columns.keys())
+    assert isinstance(columns, (dict, type(None)))
+    columns_dict, columns = _preprocess_columns(columns)
 
     def _df_duplicate(df, *argsignore, **kwargsignore):
-        for col in col_list:
-            assert col in df.columns, "{} not in the data frame.".format(col)
-        new_df = df[col_list].rename(columns=columns)
-        df = pd.concat([df, new_df], axis=1, sort=False)
+        if isinstance(columns_dict, dict):
+            new_df = df_rename(columns=columns_dict)(df[columns_dict.keys()])
+            df = pd.concat([df, new_df], axis=1, sort=False)
         return df
 
     return _df_duplicate
@@ -620,23 +626,27 @@ def df_slice(**kwargs):
     return _df_slice
 
 
-def df_homogenize(flag, columns, groupby=None):
-    assert isinstance(flag, (dict, str))
+def df_focus_transform(
+    focus, columns, groupby=None, keep_others=False, func="max", **kwargs
+):
+    assert isinstance(focus, (dict, str))
     assert isinstance(columns, (dict, list, str))
+    columns_dict, columns = _preprocess_columns(columns)
 
-    def _df_homogenize(df):
-        if isinstance(columns, dict):
-            df = df_duplicate(columns=columns)(df)
-            columns_list = list(columns.values())
-        else:
-            columns_list = columns
-        df = df_cond_replace(flag=flag, columns=columns_list, value=np.nan)(df)
-        df[columns_list] = df_transform(
-            groupby=groupby, columns=columns_list, func="max"
+    def _df_focus_transform(df):
+        df = df_cond_replace(
+            replace_if_flag=False, flag=focus, columns=columns_dict, value=np.nan
+        )(df)
+        df = df_transform(
+            groupby=groupby,
+            columns=columns,
+            keep_others=keep_others,
+            func=func,
+            **kwargs
         )(df)
         return df
 
-    return _df_homogenize
+    return _df_focus_transform
 
 
 def df_relative(flag, columns, groupby=None):
