@@ -648,12 +648,12 @@ def df_focus_transform(
     return _df_focus_transform
 
 
-def df_relative(flag, columns, groupby=None):
-    assert isinstance(flag, (dict, str))
+def df_relative(focus, columns, groupby=None):
+    assert isinstance(focus, (dict, str))
     assert isinstance(columns, dict)
 
     def _df_relative(df):
-        df = df_homogenize(flag=flag, columns=columns, groupby=groupby)(df)
+        df = df_focus_transform(focus=focus, columns=columns, groupby=groupby)(df)
         for col, new_col in columns.items():
             df[new_col] = df[col] - df[new_col]
         return df
