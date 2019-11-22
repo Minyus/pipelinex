@@ -715,21 +715,30 @@ def laplacian_matrix(
     return laplacian_2darr
 
 
-def eig_sorted(a, return_vectors_only=True):
+def eigen(a, return_vectors_only=True, sort=False):
     w, v = np.linalg.eigh(a)
+
     if v.dtype == np.complex128:
         log.warning("Complex eigenvectors. The imaginary parts are discarded.")
         v = np.real(v)
-    idx = np.argsort(w)
-    v = v[:, idx]
+
+    if sort:
+        idx = np.argsort(w)
+        w = w[idx]
+        v = v[:, idx]
+
     if return_vectors_only:
         return v
-    w = w[idx]
     return w, v
 
 
-def laplacian_eigenvectors_sorted(
-    coo_2darr, ord=None, dist_scale=1.0, affinity_scale=1.0, min_affinity=1.0e-6
+def laplacian_eigenvectors(
+    coo_2darr,
+    ord=None,
+    dist_scale=1.0,
+    affinity_scale=1.0,
+    min_affinity=1.0e-6,
+    sort=False,
 ):
     a = laplacian_matrix(
         coo_2darr,
@@ -738,7 +747,7 @@ def laplacian_eigenvectors_sorted(
         affinity_scale=affinity_scale,
         min_affinity=min_affinity,
     )
-    ev = eig_sorted(a, return_vectors_only=True)
+    ev = eigen(a, return_vectors_only=True, sort=sort)
     return ev
 
 
@@ -751,6 +760,7 @@ def df_laplacian_eigvec(
     min_affinity=1.0e-6,
     col_name_fmt="eigvec_{:03d}",
     keep_others=False,
+    sort=False,
 ):
     kwargs = dict(
         coo_cols=coo_cols,
@@ -761,6 +771,7 @@ def df_laplacian_eigvec(
         min_affinity=min_affinity,
         col_name_fmt=col_name_fmt,
         keep_others=keep_others,
+        sort=sort,
     )
 
     def _df_laplacian_eigvec(df):
@@ -772,6 +783,7 @@ def df_laplacian_eigvec(
         min_affinity = kwargs.get("min_affinity")
         col_name_fmt = kwargs.get("col_name_fmt")
         keep_others = kwargs.get("keep_others")
+        sort = kwargs.get("sort")
 
         for coo_col in coo_cols:
             assert coo_col in df.columns
@@ -784,7 +796,7 @@ def df_laplacian_eigvec(
                 groupby = dict(by=groupby)
             ev_2darr_list = []
             for g_name, g_df in df.groupby(**groupby):
-                ev = laplacian_eigenvectors_sorted(
+                ev = laplacian_eigenvectors(
                     g_df[coo_cols].values,
                     ord=ord,
                     dist_scale=dist_scale,
@@ -792,11 +804,12 @@ def df_laplacian_eigvec(
                     if isinstance(affinity_scale, dict)
                     else affinity_scale,
                     min_affinity=min_affinity,
+                    sort=sort,
                 )
                 ev_2darr_list.append(ev)
         else:
             ev_2darr_list = [
-                laplacian_eigenvectors_sorted(
+                laplacian_eigenvectors(
                     df[coo_cols].values,
                     ord=ord,
                     dist_scale=dist_scale,
@@ -804,6 +817,7 @@ def df_laplacian_eigvec(
                     if isinstance(affinity_scale, dict)
                     else affinity_scale,
                     min_affinity=min_affinity,
+                    sort=sort,
                 )
             ]
 
