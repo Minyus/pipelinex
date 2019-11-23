@@ -715,25 +715,53 @@ def laplacian_matrix(
     return laplacian_2darr
 
 
-def eigen(a, return_vectors_only=True, sort=False):
-    w, v = np.linalg.eigh(a)
+def row_vector_to_square_matrix(a):
+    return np.tile(a, (a.shape[0], 1))
 
-    if v.dtype == np.complex128:
-        log.warning("Complex eigenvectors. The imaginary parts are discarded.")
-        v = np.real(v)
 
-    if sort:
-        idx = np.argsort(w)
-        w = w[idx]
-        v = v[:, idx]
+def eigen(
+    a,
+    return_values=True,
+    values_as_square_matrix=False,
+    return_vectors=False,
+    sort=False,
+):
+    if return_vectors:
+        w, v = np.linalg.eigh(a)
 
-    if return_vectors_only:
+        if v.dtype == np.complex128:
+            log.warning("Complex eigenvectors. The imaginary parts are discarded.")
+            v = np.real(v)
+
+        if sort:
+            idx = np.argsort(w)
+            v = v[:, idx]
+
+        if return_values:
+            w = w[idx]
+            if values_as_square_matrix:
+                w = row_vector_to_square_matrix(w)
+            return w, v
+
         return v
-    return w, v
+
+    else:
+        w = np.linalg.eigvalsh(a)
+
+        if sort:
+            idx = np.argsort(w)
+            w = w[idx]
+
+        if values_as_square_matrix:
+            w = row_vector_to_square_matrix(w)
+
+        return w
 
 
-def laplacian_eigenvectors(
+def laplacian_eigen(
     coo_2darr,
+    return_values=True,
+    return_vectors=False,
     ord=None,
     dist_scale=1.0,
     affinity_scale=1.0,
@@ -742,27 +770,38 @@ def laplacian_eigenvectors(
 ):
     a = laplacian_matrix(
         coo_2darr,
-        ord=None,
+        ord=ord,
         dist_scale=dist_scale,
         affinity_scale=affinity_scale,
         min_affinity=min_affinity,
     )
-    ev = eigen(a, return_vectors_only=True, sort=sort)
+    ev = eigen(
+        a,
+        return_values=return_values,
+        values_as_square_matrix=True,
+        return_vectors=return_vectors,
+        sort=sort,
+    )
     return ev
 
 
-def df_laplacian_eigvec(
+def df_laplacian_eig(
+    return_values=True,
+    return_vectors=False,
     coo_cols=["X", "Y"],
     groupby=None,
     ord=None,
     dist_scale=1.0,
     affinity_scale=1.0,
     min_affinity=1.0e-6,
-    col_name_fmt="eigvec_{:03d}",
+    col_name_fmt="eig_{:03d}",
     keep_others=False,
     sort=False,
 ):
+
     kwargs = dict(
+        return_values=return_values,
+        return_vectors=return_vectors,
         coo_cols=coo_cols,
         groupby=groupby,
         ord=ord,
@@ -774,7 +813,9 @@ def df_laplacian_eigvec(
         sort=sort,
     )
 
-    def _df_laplacian_eigvec(df):
+    def _df_laplacian_eig(df):
+        return_values = kwargs.get("return_values")
+        return_vectors = kwargs.get("return_vectors")
         coo_cols = kwargs.get("coo_cols")
         groupby = kwargs.get("groupby")
         ord = kwargs.get("ord")
@@ -796,21 +837,29 @@ def df_laplacian_eigvec(
                 groupby = dict(by=groupby)
             ev_2darr_list = []
             for g_name, g_df in df.groupby(**groupby):
-                ev = laplacian_eigenvectors(
+                if isinstance(affinity_scale, dict):
+                    affinity_scale_1darr = g_df.eval(**affinity_scale).values
+                    affinity_scale = np.expand_dims(
+                        affinity_scale_1darr, axis=0
+                    ) * np.expand_dims(affinity_scale_1darr, axis=1)
+
+                ev = laplacian_eigen(
                     g_df[coo_cols].values,
+                    return_values=return_values,
+                    return_vectors=return_vectors,
                     ord=ord,
                     dist_scale=dist_scale,
-                    affinity_scale=g_df.eval(**affinity_scale).values
-                    if isinstance(affinity_scale, dict)
-                    else affinity_scale,
+                    affinity_scale=affinity_scale,
                     min_affinity=min_affinity,
                     sort=sort,
                 )
                 ev_2darr_list.append(ev)
         else:
             ev_2darr_list = [
-                laplacian_eigenvectors(
+                laplacian_eigen(
                     df[coo_cols].values,
+                    return_values=return_values,
+                    return_vectors=return_vectors,
                     ord=ord,
                     dist_scale=dist_scale,
                     affinity_scale=df.eval(**affinity_scale).values
@@ -835,4 +884,4 @@ def df_laplacian_eigvec(
             else:
                 return out_df
 
-    return _df_laplacian_eigvec
+    return _df_laplacian_eig
