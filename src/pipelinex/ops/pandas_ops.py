@@ -668,9 +668,18 @@ def distance_matrix(coo_2darr, ord=None):
 
 
 def distance_to_affinity(
-    dist_2darr, dist_scale=1.0, affinity_scale=1.0, min_affinity=1.0e-6
+    dist_2darr,
+    unit_distance=1.0,
+    affinity_scale=1.0,
+    binary_affinity=False,
+    min_affinity=1.0e-6,
 ):
-    affinity_2darr = affinity_scale * np.exp(-0.5 * np.square(dist_2darr * dist_scale))
+    if binary_affinity:
+        affinity_2darr = dist_2darr <= unit_distance
+    else:
+        affinity_2darr = np.exp(-0.5 * np.square(dist_2darr / unit_distance))
+    if affinity_scale is not None:
+        affinity_2darr = affinity_2darr * affinity_scale
     if min_affinity is not None:
         affinity_2darr[affinity_2darr < min_affinity] = 0
     return affinity_2darr
@@ -679,20 +688,23 @@ def distance_to_affinity(
 def affinity_matrix(
     coo_2darr,
     ord=None,
-    dist_scale=1.0,
+    unit_distance=1.0,
     affinity_scale=1.0,
+    binary_affinity=False,
     min_affinity=1.0e-6,
     zero_diag=True,
 ):
     dist_2darr = distance_matrix(coo_2darr, ord=ord)
     affinity_2darr = distance_to_affinity(
         dist_2darr,
-        dist_scale=dist_scale,
+        unit_distance=unit_distance,
         affinity_scale=affinity_scale,
+        binary_affinity=binary_affinity,
         min_affinity=min_affinity,
     )
     if zero_diag:
-        affinity_2darr = affinity_2darr - np.eye(affinity_2darr.shape[0])
+        size = affinity_2darr.shape[1]
+        affinity_2darr = affinity_2darr * (np.ones((size, size)) - np.eye(size))
     return affinity_2darr
 
 
@@ -701,13 +713,19 @@ def degree_matrix(affinity_2darr):
 
 
 def laplacian_matrix(
-    coo_2darr, ord=None, dist_scale=1.0, affinity_scale=1.0, min_affinity=1.0e-6
+    coo_2darr,
+    ord=None,
+    unit_distance=1.0,
+    affinity_scale=1.0,
+    binary_affinity=False,
+    min_affinity=1.0e-6,
 ):
     affinity_2darr = affinity_matrix(
         coo_2darr=coo_2darr,
         ord=ord,
-        dist_scale=dist_scale,
+        unit_distance=unit_distance,
         affinity_scale=affinity_scale,
+        binary_affinity=binary_affinity,
         min_affinity=min_affinity,
         zero_diag=True,
     )
@@ -763,16 +781,18 @@ def laplacian_eigen(
     return_values=True,
     return_vectors=False,
     ord=None,
-    dist_scale=1.0,
+    unit_distance=1.0,
     affinity_scale=1.0,
+    binary_affinity=False,
     min_affinity=1.0e-6,
     sort=False,
 ):
     a = laplacian_matrix(
         coo_2darr,
         ord=ord,
-        dist_scale=dist_scale,
+        unit_distance=unit_distance,
         affinity_scale=affinity_scale,
+        binary_affinity=binary_affinity,
         min_affinity=min_affinity,
     )
     ev = eigen(
@@ -785,42 +805,51 @@ def laplacian_eigen(
     return ev
 
 
-def df_laplacian_eig(
-    return_values=True,
-    return_vectors=False,
+def df_spatial_features(
+    output="distance",
     coo_cols=["X", "Y"],
     groupby=None,
     ord=None,
-    dist_scale=1.0,
+    unit_distance=1.0,
     affinity_scale=1.0,
+    binary_affinity=False,
     min_affinity=1.0e-6,
-    col_name_fmt="eig_{:03d}",
-    keep_others=False,
-    sort=False,
+    col_name_fmt="feat_{:03d}",
+    keep_others=True,
+    sort=True,
 ):
+    """
+    Available values for output:
+     distance
+     affinity
+     laplacian
+     eigenvalues
+     eigenvectors
+     n_connected
+    """
 
     kwargs = dict(
-        return_values=return_values,
-        return_vectors=return_vectors,
+        output=output,
         coo_cols=coo_cols,
         groupby=groupby,
         ord=ord,
-        dist_scale=dist_scale,
+        unit_distance=unit_distance,
         affinity_scale=affinity_scale,
+        binary_affinity=binary_affinity,
         min_affinity=min_affinity,
         col_name_fmt=col_name_fmt,
         keep_others=keep_others,
         sort=sort,
     )
 
-    def _df_laplacian_eig(df):
-        return_values = kwargs.get("return_values")
-        return_vectors = kwargs.get("return_vectors")
+    def _df_spatial_features(df):
+        output = kwargs.get("output")
         coo_cols = kwargs.get("coo_cols")
         groupby = kwargs.get("groupby")
         ord = kwargs.get("ord")
-        dist_scale = kwargs.get("dist_scale")
+        unit_distance = kwargs.get("unit_distance")
         affinity_scale = kwargs.get("affinity_scale")
+        binary_affinity = kwargs.get("binary_affinity")
         min_affinity = kwargs.get("min_affinity")
         col_name_fmt = kwargs.get("col_name_fmt")
         keep_others = kwargs.get("keep_others")
@@ -835,42 +864,68 @@ def df_laplacian_eig(
         if groupby is not None:
             if not isinstance(groupby, dict):
                 groupby = dict(by=groupby)
-            ev_2darr_list = []
-            for g_name, g_df in df.groupby(**groupby):
-                if isinstance(affinity_scale, dict):
-                    affinity_scale_1darr = g_df.eval(**affinity_scale).values
-                    affinity_scale = np.expand_dims(
-                        affinity_scale_1darr, axis=0
-                    ) * np.expand_dims(affinity_scale_1darr, axis=1)
-
-                ev = laplacian_eigen(
-                    g_df[coo_cols].values,
-                    return_values=return_values,
-                    return_vectors=return_vectors,
-                    ord=ord,
-                    dist_scale=dist_scale,
-                    affinity_scale=affinity_scale,
-                    min_affinity=min_affinity,
-                    sort=sort,
-                )
-                ev_2darr_list.append(ev)
+            g_df_iter = df.groupby(**groupby)
         else:
-            ev_2darr_list = [
-                laplacian_eigen(
-                    df[coo_cols].values,
+            g_df_iter = [("", df)]
+
+        output_2darr_list = []
+        for g_name, g_df in g_df_iter:
+            if isinstance(affinity_scale, dict):
+                affinity_scale_1darr = g_df.eval(**affinity_scale).values
+                affinity_scale = np.expand_dims(
+                    affinity_scale_1darr, axis=0
+                ) * np.expand_dims(affinity_scale_1darr, axis=1)
+
+            coo_2darr = g_df[coo_cols].values
+            if output in ["distance"]:
+                output_2darr = distance_matrix(coo_2darr, ord=ord)
+            elif output in ["affinity"]:
+                output_2darr = affinity_matrix(
+                    coo_2darr=coo_2darr,
+                    ord=ord,
+                    unit_distance=unit_distance,
+                    affinity_scale=affinity_scale,
+                    binary_affinity=binary_affinity,
+                    min_affinity=min_affinity,
+                    zero_diag=True,
+                )
+            elif output in ["laplacian"]:
+                output_2darr = laplacian_matrix(
+                    coo_2darr,
+                    ord=ord,
+                    unit_distance=unit_distance,
+                    affinity_scale=affinity_scale,
+                    binary_affinity=binary_affinity,
+                    min_affinity=min_affinity,
+                )
+            elif output in ["eigenvalues", "eigenvectors", "n_connected"]:
+                if output in ["eigenvectors"]:
+                    return_values = False
+                    return_vectors = True
+                else:
+                    return_values = True
+                    return_vectors = False
+
+                output_2darr = laplacian_eigen(
+                    coo_2darr,
                     return_values=return_values,
                     return_vectors=return_vectors,
                     ord=ord,
-                    dist_scale=dist_scale,
-                    affinity_scale=df.eval(**affinity_scale).values
-                    if isinstance(affinity_scale, dict)
-                    else affinity_scale,
+                    unit_distance=unit_distance,
+                    affinity_scale=affinity_scale,
+                    binary_affinity=binary_affinity,
                     min_affinity=min_affinity,
                     sort=sort,
                 )
-            ]
+                if output in ["n_connected"]:
+                    output_2darr = np.sum(
+                        (output_2darr < 1.0e-8).astype(np.uint64), axis=1, keepdims=True
+                    )
+            else:
+                raise NotImplementedError(output)
+            output_2darr_list.append(output_2darr)
 
-        ev_2darr = np.concatenate(ev_2darr_list, axis=0)
+        ev_2darr = np.concatenate(output_2darr_list, axis=0)
 
         if col_name_fmt is None:
             return ev_2darr
@@ -884,4 +939,4 @@ def df_laplacian_eig(
             else:
                 return out_df
 
-    return _df_laplacian_eig
+    return _df_spatial_features
