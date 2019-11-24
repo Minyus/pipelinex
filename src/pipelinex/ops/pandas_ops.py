@@ -805,6 +805,21 @@ def laplacian_eigen(
     return ev
 
 
+def df_assign_columns(names=None, name_fmt="{:03d}"):
+    if names is None:
+        assert isinstance(name_fmt, str)
+    _names = names
+    _name_fmt = name_fmt
+
+    def _df_assign_columns(df, values):
+        names = _names or [_name_fmt.format(i) for i in range(values.shape[1])]
+        values_df = pd.DataFrame(values, columns=names)
+        out_df = pd.concat([df.reset_index(drop=True), values_df], axis=1, sort=False)
+        return out_df.set_index(df.index)
+
+    return _df_assign_columns
+
+
 def df_spatial_features(
     output="distance",
     coo_cols=["X", "Y"],
@@ -925,18 +940,21 @@ def df_spatial_features(
                 raise NotImplementedError(output)
             output_2darr_list.append(output_2darr)
 
-        ev_2darr = np.concatenate(output_2darr_list, axis=0)
+        output_2darr = np.concatenate(output_2darr_list, axis=0)
 
         if col_name_fmt is None:
-            return ev_2darr
+            return output_2darr
 
         else:
             assert isinstance(col_name_fmt, str)
-            ev_col_names = [col_name_fmt.format(i) for i in range(ev_2darr.shape[1])]
-            out_df = pd.DataFrame(ev_2darr, columns=ev_col_names)
             if keep_others:
-                return pd.concat([df, out_df], axis=1, sort=False)
+                return df_assign_columns(name_fmt=col_name_fmt)(df, output_2darr)
             else:
-                return out_df
+                output_col_names = [
+                    col_name_fmt.format(i) for i in range(output_2darr.shape[1])
+                ]
+                return pd.DataFrame(
+                    output_2darr, columns=output_col_names, index=df.index
+                )
 
     return _df_spatial_features
