@@ -50,6 +50,17 @@ class DfBaseTransformer(ZeroToZeroTransformer):
         self.cols = cols
         self.target_col = target_col
 
+    def _assign_to_df(self, df, cols, out_arr):
+        if isinstance(df, pd.DataFrame):
+            if getattr(self, "copy", True):
+                out_df = df.copy()
+            else:
+                out_df = df
+            out_df.loc[:, cols] = out_arr
+            return out_df
+        else:
+            return out_arr
+
     def fit(self, df):
         d, cols = extract_from_df(df, self.cols, self.target_col)
         return super().fit(**d)
@@ -57,20 +68,12 @@ class DfBaseTransformer(ZeroToZeroTransformer):
     def transform(self, df):
         d, cols = extract_from_df(df, self.cols, self.target_col)
         out_arr = super().transform(**d)
-        if isinstance(df, pd.DataFrame):
-            df.loc[:, cols] = out_arr
-            return df
-        else:
-            return out_arr
+        return self._assign_to_df(df, cols, out_arr)
 
     def fit_transform(self, df):
         d, cols = extract_from_df(df, self.cols, self.target_col)
         out_arr = super().fit_transform(**d)
-        if isinstance(df, pd.DataFrame):
-            df.loc[:, cols] = out_arr
-            return df
-        else:
-            return out_arr
+        return self._assign_to_df(df, cols, out_arr)
 
     def __call__(self, df):
         return self.fit_transform(df), self
