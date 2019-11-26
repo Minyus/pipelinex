@@ -1,6 +1,6 @@
 import sklearn
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import QuantileTransformer
+from sklearn.preprocessing import QuantileTransformer, StandardScaler, MinMaxScaler
 import pandas as pd
 import numpy as np
 
@@ -20,7 +20,31 @@ def extract_from_df(df, cols, target_col):
         return dict(X=X), cols
 
 
-class DfBaseTransformer(BaseEstimator, TransformerMixin):
+class ZeroToZeroTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self, zero_to_zero=False, **kwargs):
+        self.zero_to_zero = zero_to_zero
+        super().__init__(**kwargs)
+
+    def _keep_zero(self, X):
+        zeros_arr = np.zeros((1, X.shape[1]))
+        offset_arr = super().transform(zeros_arr)
+        X = X - offset_arr
+        return X
+
+    def transform(self, X):
+        out_X = super().transform(X)
+        if self.zero_to_zero:
+            out_X = self._keep_zero(out_X)
+        return out_X
+
+    def fit_transform(self, X):
+        out_X = super().fit_transform(X)
+        if self.zero_to_zero:
+            out_X = self._keep_zero(out_X)
+        return out_X
+
+
+class DfBaseTransformer(ZeroToZeroTransformer):
     def __init__(self, cols=None, target_col=None, **kwargs):
         super().__init__(**kwargs)
         self.cols = cols
@@ -52,31 +76,15 @@ class DfBaseTransformer(BaseEstimator, TransformerMixin):
         return self.fit_transform(df), self
 
 
-class FlexibleQuantileTransformer(QuantileTransformer):
-    def __init__(self, zero_to_zero=False, **kwargs):
-        self.zero_to_zero = zero_to_zero
-        super().__init__(**kwargs)
-
-    def _keep_zero(self, X):
-        zeros_arr = np.zeros((1, X.shape[1]))
-        offset_arr = super().transform(zeros_arr)
-        X = X - offset_arr
-        return X
-
-    def transform(self, X):
-        out_X = super().transform(X)
-        if self.zero_to_zero:
-            out_X = self._keep_zero(out_X)
-        return out_X
-
-    def fit_transform(self, X):
-        out_X = super().fit_transform(X)
-        if self.zero_to_zero:
-            out_X = self._keep_zero(out_X)
-        return out_X
+class DfQuantileTransformer(DfBaseTransformer, QuantileTransformer):
+    pass
 
 
-class DfQuantileTransformer(DfBaseTransformer, FlexibleQuantileTransformer):
+class DfStandardScaler(DfBaseTransformer, StandardScaler):
+    pass
+
+
+class DfMinMaxScaler(DfBaseTransformer, MinMaxScaler):
     pass
 
 
