@@ -355,6 +355,16 @@ class TensorForward(torch.nn.Module):
         return self._func(input)
 
 
+class TensorConstantLinear(torch.nn.Module):
+    def __init__(self, weight=1, bias=0):
+        self.weight = weight
+        self.bias = bias
+        super().__init__()
+
+    def forward(self, input):
+        return self.weight * input + self.bias
+
+
 class TensorExp(torch.nn.Module):
     def forward(self, input):
         return torch.exp(input)
