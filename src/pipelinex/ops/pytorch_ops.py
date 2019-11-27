@@ -492,6 +492,16 @@ class TensorClampMin(torch.nn.Module):
         return torch.clamp_min(input, min=self.min)
 
 
+class TensorProba(torch.nn.Module):
+    def __init__(self, dim=1):
+        self.dim = dim
+        super().__init__()
+
+    def forward(self, input):
+        total = torch.sum(input, dim=self.dim, keepdim=True)
+        return input / total
+
+
 def nl_loss(input, *args, **kwargs):
     return torch.nn.functional.nll_loss(input.log(), *args, **kwargs)
 
