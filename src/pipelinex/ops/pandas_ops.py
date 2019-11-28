@@ -9,26 +9,31 @@ FLOAT_TYPES = ["float16", "float32", "float64"]
 INT_TYPES = ["int8", "int16", "int32", "int64"]
 
 
-def df_merge(**kwargs):
-    def _df_merge(left_df, right_df, *argsignore, **kwargsignore):
+class DfMerge:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, left_df, right_df):
+        kwargs = self.kwargs
         kwargs.setdefault("suffixes", (False, False))
         return pd.merge(left_df, right_df, **kwargs)
 
-    return _df_merge
 
+class DfConcat:
+    def __init__(self, new_col_name=None, new_col_values=None, col_id=None, sort=False):
+        assert isinstance(new_col_name, (str, type(None)))
+        assert isinstance(new_col_values, (list, type(None)))
+        assert isinstance(col_id, (str, type(None)))
+        kwargs = dict(
+            new_col_name=new_col_name,
+            new_col_values=new_col_values,
+            col_id=col_id,
+            sort=sort,
+        )
+        self.kwargs = kwargs
 
-def df_concat(new_col_name=None, new_col_values=None, col_id=None, sort=False):
-    assert isinstance(new_col_name, (str, type(None)))
-    assert isinstance(new_col_values, (list, type(None)))
-    assert isinstance(col_id, (str, type(None)))
-    kwargs = dict(
-        new_col_name=new_col_name,
-        new_col_values=new_col_values,
-        col_id=col_id,
-        sort=sort,
-    )
-
-    def _df_concat(*args):
+    def __call__(self, *args):
+        kwargs = self.kwargs
         df_list = [arg for arg in args if isinstance(arg, pd.DataFrame)]
         assert len(df_list) >= 1, "No data frame was fed."
 
@@ -58,21 +63,22 @@ def df_concat(new_col_name=None, new_col_values=None, col_id=None, sort=False):
             df.reset_index(inplace=True, level=new_col_name)
         return df
 
-    return _df_concat
+
+class DfSortValues:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        kwargs = self.kwargs
+        return df.sort_values(**kwargs)
 
 
-def df_sort_values(**kwargs):
-    def _df_sort_values(df, *argsignore, **kwargsignore):
-        """ https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.sort_values.html """
-        kwargs.update(dict(inplace=True))
-        df.sort_values(**kwargs)
-        return df
+class DfSample:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
-    return _df_sort_values
-
-
-def df_sample(**kwargs):
-    def _df_sample(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        kwargs = self.kwargs
         frac = kwargs.get("frac", 1.0)
         random_state = kwargs.get("random_state")
         col_sample = kwargs.get("col_sample")
@@ -100,34 +106,36 @@ def df_sample(**kwargs):
         log.info("DF shape after random sampling: {}".format(df.shape))
         return df
 
-    return _df_sample
 
-
-def df_get_cols(**kwargs):
-    def _df_get_cols(df, *argsignore, **kwargsignore):
+class DfGetCols:
+    def __call__(self, df):
         return df.columns.to_list()
 
-    return _df_get_cols
 
+class DfSelectDtypes:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
-def df_select_dtypes(**kwargs):
-    def _df_select_dtypes(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        kwargs = self.kwargs
         return df.select_dtypes(**kwargs)
 
-    return _df_select_dtypes
+
+class DfSelectDtypesCols:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        kwargs = self.kwargs
+        return df.select_dtypes(**kwargs).columns.to_list()
 
 
-def df_select_dtypes_cols(**kwargs):
-    def _df_select_dtypes_cols(df, *argsignore, **kwargsignore):
-        return df_select_dtypes(**kwargs)(
-            df, *argsignore, **kwargsignore
-        ).columns.to_list()
+class DfGetColIndexes:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
-    return _df_select_dtypes_cols
-
-
-def df_get_col_indexes(**kwargs):
-    def _df_get_col_indexes(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        kwargs = self.kwargs
         cols = kwargs.get("cols")
         assert cols
         for col in cols:
@@ -137,31 +145,32 @@ def df_get_col_indexes(**kwargs):
         indices = [df.columns.to_list().index(col) for col in cols]
         return indices
 
-    return _df_get_col_indexes
+
+class DfDrop:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        kwargs = self.kwargs
+        return df.drop(**kwargs)
 
 
-def df_drop(**kwargs):
-    def _df_drop(df, *argsignore, **kwargsignore):
-        kwargs.update(dict(inplace=True))
-        df.drop(**kwargs)
-        return df
+class DfDropFilter:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
-    return _df_drop
-
-
-def df_drop_filter(**kwargs):
-    def _df_drop_filter(df, *argsignore, **kwargsignore):
-        cols_drop = df_filter(**kwargs)(
-            df, *argsignore, **kwargsignore
-        ).columns.to_list()
-        df.drop(columns=cols_drop, inplace=True)
-        return df
-
-    return _df_drop_filter
+    def __call__(self, df):
+        kwargs = self.kwargs
+        cols_drop = DfFilter(**kwargs)(df).columns.to_list()
+        return df.drop(columns=cols_drop)
 
 
-def df_add_row_stat(**kwargs):
-    def _df_add_row_stat(df, *argsignore, **kwargsignore):
+class DfAddRowStat:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        kwargs = self.kwargs
         regex = kwargs.get("regex", r".*")
         prefix = kwargs.get("prefix", "stat_all")
 
@@ -228,40 +237,42 @@ def df_add_row_stat(**kwargs):
 
         return df
 
-    return _df_add_row_stat
+
+class DfQuery:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        kwargs = self.kwargs
+        return df.query(**kwargs)
 
 
-def df_query(**kwargs):
-    def _df_query(df, *argsignore, **kwargsignore):
-        kwargs.update(dict(inplace=True))
-        df.query(**kwargs)
-        return df
+class DfEval:
+    def __init__(self, expr, parser="pandas", engine=None, truediv=True):
+        kwargs = dict(expr=expr, parser=parser, engine=engine, truediv=truediv)
+        self.kwargs = kwargs
 
-    return _df_query
-
-
-def df_eval(expr, parser="pandas", engine=None, truediv=True):
-    def _df_eval(df, *argsignore, **kwargsignore):
-        df = df.eval(expr=expr, parser=parser, engine=engine, truediv=truediv)
-        return df
-
-    return _df_eval
+    def __call__(self, df):
+        kwargs = self.kwargs
+        return df.eval(**kwargs)
 
 
-def df_drop_duplicates(**kwargs):
-    def _df_drop_duplicates(df, *argsignore, **kwargsignore):
-        kwargs.update(dict(inplace=True))
-        df.drop_duplicates(**kwargs)
-        return df
+class DfDropDuplicates:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
-    return _df_drop_duplicates
+    def __call__(self, df):
+        kwargs = self.kwargs
+        return df.drop_duplicates(**kwargs)
 
 
-def df_groupby(**kwargs):
-    def _df_groupby(df, *argsignore, **kwargsignore):
+class DfGroupby:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        kwargs = self.kwargs
         return df.groupby(**kwargs)
-
-    return _df_groupby
 
 
 def _groupby(df, groupby, columns):
@@ -298,91 +309,76 @@ def _preprocess_columns(columns):
     return columns_dict, columns
 
 
-def df_transform(groupby=None, columns=None, keep_others=False, **kwargs):
-    columns_dict, columns = _preprocess_columns(columns)
+class DfMethodGroupby:
+    method = None
 
-    def _df_transform(df, *argsignore, **kwargsignore):
-        df = df_duplicate(columns=columns_dict)(df)
-        mutated_df = _groupby(df, groupby, columns).transform(**kwargs)
-        df = _add_mutated(df, mutated_df, columns, keep_others)
-        return df
+    def __init__(
+        self, groupby=None, columns=None, keep_others=False, method=None, **kwargs
+    ):
+        if self.method is None:
+            self.method = method
+        columns_dict, columns = _preprocess_columns(columns)
+        self.groupby = groupby
+        self.columns_dict = columns_dict
+        self.columns = columns
+        self.keep_others = keep_others
+        self.kwargs = kwargs
 
-    return _df_transform
-
-
-def df_apply(groupby=None, columns=None, keep_others=False, **kwargs):
-    columns_dict, columns = _preprocess_columns(columns)
-
-    def _df_apply(df, *argsignore, **kwargsignore):
-        df = df_duplicate(columns=columns_dict)(df)
-        mutated_df = _groupby(df, groupby, columns).apply(**kwargs)
+    def __call__(self, df):
+        groupby = self.groupby
+        columns_dict = self.columns_dict
+        columns = self.columns
+        keep_others = self.keep_others
+        kwargs = self.kwargs
+        df = DfDuplicate(columns=columns_dict)(df)
+        g_df = _groupby(df, groupby, columns)
+        if self.method is None:
+            mutated_df = g_df
+        else:
+            mutated_df = getattr(g_df, self.method)(**kwargs)
         return _add_mutated(df, mutated_df, columns, keep_others)
 
-    return _df_apply
+
+class DfTransform(DfMethodGroupby):
+    method = "transform"
 
 
-def df_applymap(groupby=None, columns=None, keep_others=False, **kwargs):
-    columns_dict, columns = _preprocess_columns(columns)
-
-    def _df_applymap(df, *argsignore, **kwargsignore):
-        df = df_duplicate(columns=columns_dict)(df)
-        mutated_df = _groupby(df, groupby, columns).applymap(**kwargs)
-        return _add_mutated(df, mutated_df, columns, keep_others)
-
-    return _df_applymap
+class DfApply(DfMethodGroupby):
+    method = "apply"
 
 
-def df_pipe(groupby=None, columns=None, keep_others=False, **kwargs):
-    def _df_pipe(df, *argsignore, **kwargsignore):
-        mutated_df = _groupby(df, groupby, columns).pipe(**kwargs)
-        return _add_mutated(df, mutated_df, columns, keep_others)
-
-    return _df_pipe
+class DfApplymap(DfMethodGroupby):
+    method = "applymap"
 
 
-def df_agg(groupby=None, columns=None, **kwargs):
-    def _df_agg(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.agg(**kwargs)
-
-    return _df_agg
+class DfPipe(DfMethodGroupby):
+    method = "pipe"
 
 
-def df_aggregate(groupby=None, columns=None, **kwargs):
-    def _df_aggregate(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.aggregate(**kwargs)
-
-    return _df_aggregate
+class DfAgg(DfMethodGroupby):
+    method = "agg"
 
 
-def df_rolling(groupby=None, columns=None, **kwargs):
-    def _df_rolling(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.rolling(**kwargs)
-
-    return _df_rolling
+class DfAggregate(DfMethodGroupby):
+    method = "aggregate"
 
 
-def df_expanding(groupby=None, columns=None, **kwargs):
-    def _df_expanding(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.expanding(**kwargs)
-
-    return _df_expanding
+class DfRolling(DfMethodGroupby):
+    method = "rolling"
 
 
-def df_ewm(groupby=None, columns=None, **kwargs):
-    def _df_ewm(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.ewm(**kwargs)
-
-    return _df_ewm
+class DfExpanding(DfMethodGroupby):
+    method = "expanding"
 
 
-def df_filter(groupby=None, columns=None, **kwargs):
-    def _df_filter(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
+class DfEwm(DfMethodGroupby):
+    method = "ewm"
+
+
+class DfFilter(DfMethodGroupby):
+    def __call__(self, df):
+        df = super().__call__(df)
+        kwargs = self.kwargs
         items = kwargs.get("items")
         if items:
             if isinstance(items, str):
@@ -395,106 +391,108 @@ def df_filter(groupby=None, columns=None, **kwargs):
             kwargs.update(dict(items=items))
         return df.filter(**kwargs)
 
-    return _df_filter
+
+class DfFilterCols(DfFilter):
+    def __call__(self, df):
+        return super().__call__(df).columns.to_list()
 
 
-def df_filter_cols(**kwargs):
-    def _df_filter_cols(df, *argsignore, **kwargsignore):
-        return df_filter(**kwargs)(df, *argsignore, **kwargsignore).columns.to_list()
-
-    return _df_filter_cols
+class DfFillna(DfMethodGroupby):
+    method = "fillna"
 
 
-def df_fillna(groupby=None, columns=None, **kwargs):
-    def _df_fillna(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.fillna(**kwargs)
-
-    return _df_fillna
+class DfHead(DfMethodGroupby):
+    method = "head"
 
 
-def df_head(groupby=None, columns=None, **kwargs):
-    def _df_head(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.head(**kwargs)
-
-    return _df_head
+class DfTail(DfMethodGroupby):
+    method = "tail"
 
 
-def df_tail(groupby=None, columns=None, **kwargs):
-    def _df_tail(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.tail(**kwargs)
-
-    return _df_tail
+class DfShift(DfMethodGroupby):
+    method = "shift"
 
 
-def df_shift(groupby=None, columns=None, **kwargs):
-    def _df_shift(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.shift(**kwargs)
-
-    return _df_shift
+class DfResample(DfMethodGroupby):
+    method = "resample"
 
 
-def df_resample(groupby=None, columns=None, **kwargs):
-    def _df_resample(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.resample(**kwargs)
-
-    return _df_resample
+class DfNgroup(DfMethodGroupby):
+    method = "ngroup"
 
 
-def df_ngroup(groupby=None, columns=None, **kwargs):
-    def _df_ngroup(df, *argsignore, **kwargsignore):
-        df = _groupby(df, groupby, columns)
-        return df.ngroup(**kwargs)
+class DfCondReplace:
+    def __init__(self, flag, columns, value=np.nan, replace_if_flag=True, **kwargs):
 
-    return _df_ngroup
+        if not isinstance(flag, dict):
+            flag = dict(expr=flag)
+        columns_dict, columns = _preprocess_columns(columns)
+        self.flag = flag
+        self.columns_dict = columns_dict
+        self.columns = columns
+        self.value = value
+        self.replace_if_flag = replace_if_flag
+        self.kwargs = kwargs
 
+    def __call__(self, df):
+        flag = self.flag
+        columns_dict = self.columns_dict
+        columns = self.columns
+        value = self.value
+        replace_if_flag = self.replace_if_flag
+        kwargs = self.kwargs
 
-def df_cond_replace(flag, columns, value=np.nan, replace_if_flag=True, **kwargs):
-    columns_dict, columns = _preprocess_columns(columns)
-    if not isinstance(flag, dict):
-        flag = dict(expr=flag)
-
-    def _df_cond_replace(df, *argsignore, **kwargsignore):
-        df = df_duplicate(columns=columns_dict)(df)
+        df = DfDuplicate(columns=columns_dict)(df)
         cond = df.eval(**flag)
         if not replace_if_flag:
             cond = np.invert(cond)
         df.loc[cond, columns] = value
         return df
 
-    return _df_cond_replace
 
+class DfRename:
+    def __init__(self, index=None, columns=None, copy=True, level=None):
+        kwargs = dict(index=index, columns=columns, copy=copy, level=level)
+        self.kwargs = kwargs
 
-def df_rename(index=None, columns=None, copy=True, level=None):
-    def _df_rename(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        kwargs = self.kwargs
+        index = kwargs.get("index")
+        columns = kwargs.get("columns")
+        level = kwargs.get("level")
         if not (index is None and columns is None and level is None):
-            df = df.rename(index=index, columns=columns, copy=copy, level=level)
+            df = df.rename(**kwargs)
         return df
 
-    return _df_rename
 
+class DfDuplicate:
+    def __init__(self, columns):
+        assert isinstance(columns, (dict, type(None)))
+        columns_dict, columns = _preprocess_columns(columns)
+        self.columns_dict = columns_dict
 
-def df_duplicate(columns):
-    assert isinstance(columns, (dict, type(None)))
-    columns_dict, columns = _preprocess_columns(columns)
+    def __call__(self, df):
+        columns_dict = self.columns_dict
 
-    def _df_duplicate(df, *argsignore, **kwargsignore):
         if isinstance(columns_dict, dict):
-            new_df = df_rename(columns=columns_dict)(df[columns_dict.keys()])
+            new_df = DfRename(columns=columns_dict)(df[columns_dict.keys()])
             df = pd.concat([df, new_df], axis=1, sort=False)
         return df
 
-    return _df_duplicate
 
+class DfMap:
+    def __init__(self, arg, prefix="", suffix="", **kwargs):
+        assert isinstance(arg, dict)
+        self.arg = arg
+        self.prefix = prefix
+        self.suffix = suffix
+        self.kwargs = kwargs
 
-def df_map(arg, prefix="", suffix="", **kwargs):
-    assert isinstance(arg, dict)
-
-    def _df_map(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        arg = self.arg
+        prefix = self.prefix
+        suffix = self.suffix
+        kwargs = self.kwargs
         for col, m in arg.items():
             if col in df.columns:
                 new_col = prefix + col + suffix
@@ -510,53 +508,67 @@ def df_map(arg, prefix="", suffix="", **kwargs):
                 log.warning("'{}' not in the DataFrame".format(col))
         return df
 
-    return _df_map
+
+class SrMap:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, sr):
+        kwargs = self.kwargs
+        return sr.map(**kwargs)
 
 
-def sr_map(**kwargs):
-    def _sr_map(sr, *argsignore, **kwargsignore):
-        sr.map(**kwargs)
+class DfGetDummies:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
-    return _sr_map
-
-
-def df_get_dummies(**kwargs):
-    def _df_get_dummies(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        kwargs = self.kwargs
         return pd.get_dummies(df, **kwargs)
 
-    return _df_get_dummies
 
+class DfColApply:
+    def __init__(self, func, **kwargs):
+        self.func = func
+        self.kwargs = kwargs
 
-def df_col_apply(func, **kwargs):
-    def _df_col_apply(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        func = self.func
+        kwargs = self.kwargs
         func_params = kwargs.pop("func_params", dict())
         cols = kwargs.pop("cols", None)
         cols = cols or df.columns
         df.loc[:, cols] = func(df.loc[:, cols], **func_params)
         return df
 
-    return _df_col_apply
 
+class DfDtypesApply:
+    def __init__(self, func, **kwargs):
+        self.func = func
+        self.kwargs = kwargs
 
-def df_dtypes_apply(func, **kwargs):
-    def _df_dtypes_apply(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        func = self.func
+        kwargs = self.kwargs
         func_params = kwargs.pop("func_params", dict())
         cols = df.select_dtypes(**kwargs).columns.to_list()
         df.loc[:, cols] = func(df.loc[:, cols], **func_params)
         return df
 
-    return _df_dtypes_apply
 
+class DfRowApply:
+    def __init__(self, func, **kwargs):
+        self.func = func
+        self.kwargs = kwargs
 
-def df_row_apply(func, **kwargs):
-    def _df_row_apply(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        func = self.func
+        kwargs = self.kwargs
         func_params = kwargs.pop("func_params", dict())
         rows = kwargs.pop("rows", None)
         rows = rows or df.index
         df.loc[rows, :] = func(df.loc[rows, :], **func_params)
         return df
-
-    return _df_row_apply
 
 
 def _cols_apply(df, func, cols, kwargs):
@@ -575,68 +587,97 @@ def _cols_apply(df, func, cols, kwargs):
     return df
 
 
-def df_to_datetime(cols=None, **kwargs):
-    def _df_to_datetime(df, *argsignore, **kwargsignore):
+class DfToDatetime:
+    def __init__(self, cols=None, **kwargs):
+        self.cols = cols
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        cols = self.cols
+        kwargs = self.kwargs
         if cols:
             df = _cols_apply(df, func=pd.to_datetime, cols=cols, kwargs=kwargs)
         else:
             df = pd.to_datetime(df, **kwargs)
         return df
 
-    return _df_to_datetime
 
+class DfTotalSeconds:
+    def __init__(self, cols, **kwargs):
+        self.cols = cols
+        self.kwargs = kwargs
 
-def df_total_seconds(cols=None, **kwargs):
-    def _df_total_seconds(df, *argsignore, **kwargsignore):
-        assert cols
+    def __call__(self, df):
+        cols = self.cols
+        kwargs = self.kwargs
         df = _cols_apply(df, func=pd.Series.dt.total_seconds, cols=cols, kwargs=kwargs)
         return df
 
-    return _df_total_seconds
 
+class DfToTimedelta:
+    def __init__(self, cols, **kwargs):
+        self.cols = cols
+        self.kwargs = kwargs
 
-def df_to_timedelta(cols=None, **kwargs):
-    def _df_to_timedelta(df, *argsignore, **kwargsignore):
-        assert cols
+    def __call__(self, df):
+        cols = self.cols
+        kwargs = self.kwargs
         df = _cols_apply(df, func=pd.to_timedelta, cols=cols, kwargs=kwargs)
         return df
 
-    return _df_to_timedelta
 
+class DfStrftime:
+    def __init__(self, cols, **kwargs):
+        kwargs.setdefault("date_format", "%Y-%m-%dT%H:%M:%S")
+        self.cols = cols
+        self.kwargs = kwargs
 
-def df_strftime(cols=None, **kwargs):
-    kwargs.setdefault("date_format", "%Y-%m-%dT%H:%M:%S")
-
-    def _df_strftime(df, *argsignore, **kwargsignore):
-        assert cols
+    def __call__(self, df):
+        cols = self.cols
+        kwargs = self.kwargs
         df = _cols_apply(df, func=pd.Series.dt.strftime, cols=cols, kwargs=kwargs)
         return df
 
-    return _df_strftime
 
+class DfSlice:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
-def df_slice(**kwargs):
-    def _df_slice(df, *argsignore, **kwargsignore):
+    def __call__(self, df):
+        kwargs = self.kwargs
         start = kwargs.get("start", 0)
         end = kwargs.get("end", df.shape[0])
         step = kwargs.get("step", 1)
         return df.loc[start:end:step, :]
 
-    return _df_slice
 
+class DfFocusTransform:
+    def __init__(
+        self, focus, columns, groupby=None, keep_others=False, func="max", **kwargs
+    ):
+        assert isinstance(focus, (dict, str))
+        assert isinstance(columns, (dict, list, str))
+        columns_dict, columns = _preprocess_columns(columns)
+        self.focus = focus
+        self.columns_dict = columns_dict
+        self.columns = columns
+        self.groupby = groupby
+        self.keep_others = keep_others
+        self.func = func
+        self.kwargs = kwargs
 
-def df_focus_transform(
-    focus, columns, groupby=None, keep_others=False, func="max", **kwargs
-):
-    assert isinstance(focus, (dict, str))
-    assert isinstance(columns, (dict, list, str))
-    columns_dict, columns = _preprocess_columns(columns)
-
-    def _df_focus_transform(df):
-        df = df_cond_replace(
+    def __call__(self, df):
+        focus = self.focus
+        columns_dict = self.columns_dict
+        columns = self.columns
+        groupby = self.groupby
+        keep_others = self.keep_others
+        func = self.func
+        kwargs = self.kwargs
+        df = DfCondReplace(
             replace_if_flag=False, flag=focus, columns=columns_dict, value=np.nan
         )(df)
-        df = df_transform(
+        df = DfTransform(
             groupby=groupby,
             columns=columns,
             keep_others=keep_others,
@@ -645,20 +686,23 @@ def df_focus_transform(
         )(df)
         return df
 
-    return _df_focus_transform
 
+class DfRelative:
+    def __init__(self, focus, columns, groupby=None):
+        assert isinstance(focus, (dict, str))
+        assert isinstance(columns, dict)
+        self.focus = focus
+        self.columns = columns
+        self.groupby = groupby
 
-def df_relative(focus, columns, groupby=None):
-    assert isinstance(focus, (dict, str))
-    assert isinstance(columns, dict)
-
-    def _df_relative(df):
-        df = df_focus_transform(focus=focus, columns=columns, groupby=groupby)(df)
+    def __call__(self, df):
+        focus = self.focus
+        columns = self.columns
+        groupby = self.groupby
+        df = DfFocusTransform(focus=focus, columns=columns, groupby=groupby)(df)
         for col, new_col in columns.items():
             df[new_col] = df[col] - df[new_col]
         return df
-
-    return _df_relative
 
 
 def distance_matrix(coo_2darr, ord=None):
@@ -805,59 +849,64 @@ def laplacian_eigen(
     return ev
 
 
-def df_assign_columns(names=None, name_fmt="{:03d}"):
-    if names is None:
-        assert isinstance(name_fmt, str)
-    _names = names
-    _name_fmt = name_fmt
+class DfAssignColumns:
+    def __init__(self, names=None, name_fmt="{:03d}"):
+        if names is None:
+            assert isinstance(name_fmt, str)
+        self.names = names
+        self.name_fmt = name_fmt
 
-    def _df_assign_columns(df, values):
-        names = _names or [_name_fmt.format(i) for i in range(values.shape[1])]
+    def __call__(self, df, values):
+        names = self.names
+        name_fmt = self.name_fmt
+        names = names or [name_fmt.format(i) for i in range(values.shape[1])]
         values_df = pd.DataFrame(values, columns=names)
         out_df = pd.concat([df.reset_index(drop=True), values_df], axis=1, sort=False)
         return out_df.set_index(df.index)
 
-    return _df_assign_columns
 
+class DfSpatialFeatures:
+    def __init__(
+        self,
+        output="distance",
+        coo_cols=["X", "Y"],
+        groupby=None,
+        ord=None,
+        unit_distance=1.0,
+        affinity_scale=1.0,
+        binary_affinity=False,
+        min_affinity=1.0e-6,
+        col_name_fmt="feat_{:03d}",
+        keep_others=True,
+        sort=True,
+    ):
+        """
+        Available values for output:
+         distance
+         affinity
+         laplacian
+         eigenvalues
+         eigenvectors
+         n_connected
+        """
 
-def df_spatial_features(
-    output="distance",
-    coo_cols=["X", "Y"],
-    groupby=None,
-    ord=None,
-    unit_distance=1.0,
-    affinity_scale=1.0,
-    binary_affinity=False,
-    min_affinity=1.0e-6,
-    col_name_fmt="feat_{:03d}",
-    keep_others=True,
-    sort=True,
-):
-    """
-    Available values for output:
-     distance
-     affinity
-     laplacian
-     eigenvalues
-     eigenvectors
-     n_connected
-    """
+        kwargs = dict(
+            output=output,
+            coo_cols=coo_cols,
+            groupby=groupby,
+            ord=ord,
+            unit_distance=unit_distance,
+            affinity_scale=affinity_scale,
+            binary_affinity=binary_affinity,
+            min_affinity=min_affinity,
+            col_name_fmt=col_name_fmt,
+            keep_others=keep_others,
+            sort=sort,
+        )
+        self.kwargs = kwargs
 
-    kwargs = dict(
-        output=output,
-        coo_cols=coo_cols,
-        groupby=groupby,
-        ord=ord,
-        unit_distance=unit_distance,
-        affinity_scale=affinity_scale,
-        binary_affinity=binary_affinity,
-        min_affinity=min_affinity,
-        col_name_fmt=col_name_fmt,
-        keep_others=keep_others,
-        sort=sort,
-    )
-
-    def _df_spatial_features(df):
+    def __call__(self, df):
+        kwargs = self.kwargs
         output = kwargs.get("output")
         coo_cols = kwargs.get("coo_cols")
         groupby = kwargs.get("groupby")
@@ -948,7 +997,7 @@ def df_spatial_features(
         else:
             assert isinstance(col_name_fmt, str)
             if keep_others:
-                return df_assign_columns(name_fmt=col_name_fmt)(df, output_2darr)
+                return DfAssignColumns(name_fmt=col_name_fmt)(df, output_2darr)
             else:
                 output_col_names = [
                     col_name_fmt.format(i) for i in range(output_2darr.shape[1])
@@ -956,5 +1005,3 @@ def df_spatial_features(
                 return pd.DataFrame(
                     output_2darr, columns=output_col_names, index=df.index
                 )
-
-    return _df_spatial_features
