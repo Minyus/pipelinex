@@ -283,7 +283,7 @@ print("model object: \n", model, "\n")
   - Loss: Cross-entropy
 
 - [Complex example](https://github.com/Minyus/kaggle_nfl)
-  - Packages: PyTorch, Ignite, pandas, numpy, Kedro, MLFlow
+  - Packages: PyTorch, Ignite, pandas, numpy, Kedro, MLflow
   - Application: Kaggle competition to predict the results of American Football plays
   - Model: Combination of CNN and MLP
   - Data: Sparse heatmap-like field images and tabular data
