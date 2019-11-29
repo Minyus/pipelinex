@@ -9,6 +9,178 @@ FLOAT_TYPES = ["float16", "float32", "float64"]
 INT_TYPES = ["int8", "int16", "int32", "int64"]
 
 
+class DfBaseMethod:
+    method = None
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        kwargs = self.kwargs
+
+        if self.method is None:
+            mutated_df = df
+        else:
+            mutated_df = getattr(df, self.method)(**kwargs)
+        return mutated_df
+
+
+def _groupby(df, groupby, columns):
+    if isinstance(columns, dict):
+        df = df.rename(columns=columns)
+        columns = list(columns.values())
+    if groupby is not None:
+        if not isinstance(groupby, dict):
+            groupby = dict(by=groupby)
+        df = df.groupby(**groupby)
+    if columns is not None:
+        if isinstance(columns, (list, str)):
+            df = df[columns]
+        else:
+            raise ValueError("'{}' must be dict, list, or str.".format(columns))
+    return df
+
+
+def _add_mutated(df, mutated_df, columns, keep_others):
+    if keep_others:
+        columns_list = list(columns.values()) if isinstance(columns, dict) else columns
+        df[columns_list] = mutated_df
+    else:
+        df = mutated_df
+    return df
+
+
+def _preprocess_columns(columns):
+    assert isinstance(columns, (dict, list, str, type(None)))
+    columns_dict = None
+    if isinstance(columns, dict):
+        columns_dict = copy.deepcopy(columns)
+        columns = list(columns_dict.values())
+    return columns_dict, columns
+
+
+class DfBaseTask:
+    method = None
+
+    def __init__(
+        self, groupby=None, columns=None, keep_others=False, method=None, **kwargs
+    ):
+        if self.method is None:
+            self.method = method
+        columns_dict, columns = _preprocess_columns(columns)
+        self.groupby = groupby
+        self.columns_dict = columns_dict
+        self.columns = columns
+        self.keep_others = keep_others
+        self.kwargs = kwargs
+
+    def __call__(self, df):
+        groupby = self.groupby
+        columns_dict = self.columns_dict
+        columns = self.columns
+        keep_others = self.keep_others
+        kwargs = self.kwargs
+        df = DfDuplicate(columns=columns_dict)(df)
+        g_df = _groupby(df, groupby, columns)
+        if self.method is None:
+            mutated_df = g_df
+        else:
+            mutated_df = getattr(g_df, self.method)(**kwargs)
+        return _add_mutated(df, mutated_df, columns, keep_others)
+
+
+class DfResetIndex(DfBaseMethod):
+    method = "reset_index"
+
+
+class DfSetIndex(DfBaseMethod):
+    method = "set_index"
+
+
+class DfSortValues(DfBaseMethod):
+    method = "sort_values"
+
+
+class DfDrop(DfBaseMethod):
+    method = "drop"
+
+
+class DfQuery(DfBaseMethod):
+    method = "query"
+
+
+class DfDropDuplicates(DfBaseMethod):
+    method = "drop_duplicates"
+
+
+class DfGroupby(DfBaseMethod):
+    method = "groupby"
+
+
+class DfSelectDtypes(DfBaseMethod):
+    method = "select_dtypes"
+
+
+class DfTransform(DfBaseTask):
+    method = "transform"
+
+
+class DfApply(DfBaseTask):
+    method = "apply"
+
+
+class DfApplymap(DfBaseTask):
+    method = "applymap"
+
+
+class DfPipe(DfBaseTask):
+    method = "pipe"
+
+
+class DfAgg(DfBaseTask):
+    method = "agg"
+
+
+class DfAggregate(DfBaseTask):
+    method = "aggregate"
+
+
+class DfRolling(DfBaseTask):
+    method = "rolling"
+
+
+class DfExpanding(DfBaseTask):
+    method = "expanding"
+
+
+class DfEwm(DfBaseTask):
+    method = "ewm"
+
+
+class DfFillna(DfBaseTask):
+    method = "fillna"
+
+
+class DfHead(DfBaseTask):
+    method = "head"
+
+
+class DfTail(DfBaseTask):
+    method = "tail"
+
+
+class DfShift(DfBaseTask):
+    method = "shift"
+
+
+class DfResample(DfBaseTask):
+    method = "resample"
+
+
+class DfNgroup(DfBaseTask):
+    method = "ngroup"
+
+
 class DfMerge:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
@@ -64,15 +236,6 @@ class DfConcat:
         return df
 
 
-class DfSortValues:
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-
-    def __call__(self, df):
-        kwargs = self.kwargs
-        return df.sort_values(**kwargs)
-
-
 class DfSample:
     def __init__(self, **kwargs):
         self.kwargs = kwargs
@@ -112,22 +275,9 @@ class DfGetCols:
         return df.columns.to_list()
 
 
-class DfSelectDtypes:
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-
+class DfSelectDtypesCols(DfSelectDtypes):
     def __call__(self, df):
-        kwargs = self.kwargs
-        return df.select_dtypes(**kwargs)
-
-
-class DfSelectDtypesCols:
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-
-    def __call__(self, df):
-        kwargs = self.kwargs
-        return df.select_dtypes(**kwargs).columns.to_list()
+        return super().__call__(df).columns.to_list()
 
 
 class DfGetColIndexes:
@@ -144,15 +294,6 @@ class DfGetColIndexes:
         cols = [col for col in cols if col in df.columns.to_list()]
         indices = [df.columns.to_list().index(col) for col in cols]
         return indices
-
-
-class DfDrop:
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-
-    def __call__(self, df):
-        kwargs = self.kwargs
-        return df.drop(**kwargs)
 
 
 class DfDropFilter:
@@ -238,15 +379,6 @@ class DfAddRowStat:
         return df
 
 
-class DfQuery:
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-
-    def __call__(self, df):
-        kwargs = self.kwargs
-        return df.query(**kwargs)
-
-
 class DfEval:
     def __init__(self, expr, parser="pandas", engine=None, truediv=True):
         kwargs = dict(expr=expr, parser=parser, engine=engine, truediv=truediv)
@@ -257,125 +389,7 @@ class DfEval:
         return df.eval(**kwargs)
 
 
-class DfDropDuplicates:
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-
-    def __call__(self, df):
-        kwargs = self.kwargs
-        return df.drop_duplicates(**kwargs)
-
-
-class DfGroupby:
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-
-    def __call__(self, df):
-        kwargs = self.kwargs
-        return df.groupby(**kwargs)
-
-
-def _groupby(df, groupby, columns):
-    if isinstance(columns, dict):
-        df = df.rename(columns=columns)
-        columns = list(columns.values())
-    if groupby is not None:
-        if not isinstance(groupby, dict):
-            groupby = dict(by=groupby)
-        df = df.groupby(**groupby)
-    if columns is not None:
-        if isinstance(columns, (list, str)):
-            df = df[columns]
-        else:
-            raise ValueError("'{}' must be dict, list, or str.".format(columns))
-    return df
-
-
-def _add_mutated(df, mutated_df, columns, keep_others):
-    if keep_others:
-        columns_list = list(columns.values()) if isinstance(columns, dict) else columns
-        df[columns_list] = mutated_df
-    else:
-        df = mutated_df
-    return df
-
-
-def _preprocess_columns(columns):
-    assert isinstance(columns, (dict, list, str, type(None)))
-    columns_dict = None
-    if isinstance(columns, dict):
-        columns_dict = copy.deepcopy(columns)
-        columns = list(columns_dict.values())
-    return columns_dict, columns
-
-
-class DfMethodGroupby:
-    method = None
-
-    def __init__(
-        self, groupby=None, columns=None, keep_others=False, method=None, **kwargs
-    ):
-        if self.method is None:
-            self.method = method
-        columns_dict, columns = _preprocess_columns(columns)
-        self.groupby = groupby
-        self.columns_dict = columns_dict
-        self.columns = columns
-        self.keep_others = keep_others
-        self.kwargs = kwargs
-
-    def __call__(self, df):
-        groupby = self.groupby
-        columns_dict = self.columns_dict
-        columns = self.columns
-        keep_others = self.keep_others
-        kwargs = self.kwargs
-        df = DfDuplicate(columns=columns_dict)(df)
-        g_df = _groupby(df, groupby, columns)
-        if self.method is None:
-            mutated_df = g_df
-        else:
-            mutated_df = getattr(g_df, self.method)(**kwargs)
-        return _add_mutated(df, mutated_df, columns, keep_others)
-
-
-class DfTransform(DfMethodGroupby):
-    method = "transform"
-
-
-class DfApply(DfMethodGroupby):
-    method = "apply"
-
-
-class DfApplymap(DfMethodGroupby):
-    method = "applymap"
-
-
-class DfPipe(DfMethodGroupby):
-    method = "pipe"
-
-
-class DfAgg(DfMethodGroupby):
-    method = "agg"
-
-
-class DfAggregate(DfMethodGroupby):
-    method = "aggregate"
-
-
-class DfRolling(DfMethodGroupby):
-    method = "rolling"
-
-
-class DfExpanding(DfMethodGroupby):
-    method = "expanding"
-
-
-class DfEwm(DfMethodGroupby):
-    method = "ewm"
-
-
-class DfFilter(DfMethodGroupby):
+class DfFilter(DfBaseTask):
     def __call__(self, df):
         df = super().__call__(df)
         kwargs = self.kwargs
@@ -395,30 +409,6 @@ class DfFilter(DfMethodGroupby):
 class DfFilterCols(DfFilter):
     def __call__(self, df):
         return super().__call__(df).columns.to_list()
-
-
-class DfFillna(DfMethodGroupby):
-    method = "fillna"
-
-
-class DfHead(DfMethodGroupby):
-    method = "head"
-
-
-class DfTail(DfMethodGroupby):
-    method = "tail"
-
-
-class DfShift(DfMethodGroupby):
-    method = "shift"
-
-
-class DfResample(DfMethodGroupby):
-    method = "resample"
-
-
-class DfNgroup(DfMethodGroupby):
-    method = "ngroup"
 
 
 class DfCondReplace:
