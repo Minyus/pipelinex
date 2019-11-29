@@ -276,7 +276,7 @@ print("model object: \n", model, "\n")
 ## Examples
 
 - [Basic example](https://github.com/Minyus/pipelinex_pytorch)
-  - Packages: PyTorch, Ignite, Shap
+  - Packages: PyTorch, Ignite, Shap, Kedro, MLflow
   - Application: Image classification
   - Model: CNN (Convolutional Neural Network)
   - Data: MNIST images
