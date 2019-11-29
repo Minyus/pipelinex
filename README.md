@@ -273,8 +273,22 @@ print("model object: \n", model, "\n")
 > ) 
 ```
 
-Image classification demo project using PyTorch, Ignite, and Shap is available at:
-https://github.com/Minyus/pipelinex_pytorch
+## Examples
+
+- [Basic example](https://github.com/Minyus/pipelinex_pytorch)
+  - Packages: PyTorch, Ignite, Shap
+  - Application: Image classification
+  - Model: CNN (Convolutional Neural Network)
+  - Data: MNIST images
+  - Loss: Cross-entropy
+
+- [Complex example](https://github.com/Minyus/kaggle_nfl)
+  - Packages: PyTorch, Ignite, pandas, numpy, Kedro, MLFlow
+  - Application: Kaggle competition to predict the results of American Football plays
+  - Model: Combination of CNN and MLP
+  - Data: Sparse heatmap-like field images and tabular data
+  - Loss: Continuous Rank Probability Score (CRPS)
+
 
 ## Use with Ignite
 
