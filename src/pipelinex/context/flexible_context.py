@@ -10,5 +10,5 @@ class FlexibleContext(
     CatalogSyntacticSugarContext,
     OnlyMissingStringRunnerDefaultOptionContext,
 ):
-    project_name = "FlexibleKedroProject"
-    project_version = "0.15.2"
+    project_name = "KedroProject"
+    project_version = "0.15.4"
