@@ -1,5 +1,10 @@
-def allennlp_reader_to_dict(**kwargs):
-    def _reader_to_dict(*argsignore, **kwargsignore):
+class AllennlpReaderToDict:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, *args_ignore, **kwargs_ignore):
+        kwargs = self.kwargs
+
         reader = kwargs.get("reader")
         file_path = kwargs.get("file_path")
         n_samples = kwargs.get("n_samples")
@@ -13,5 +18,3 @@ def allennlp_reader_to_dict(**kwargs):
             d[i] = instance.fields
             i += 1
         return d
-
-    return _reader_to_dict
