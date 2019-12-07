@@ -4,8 +4,12 @@ from torch.utils.data import DataLoader
 from .pytorch_ops import to_channel_last_arr
 
 
-def explain_model(**kwargs):
-    def _explain_model(model, train_dataset, val_dataset, *argsignore, **kwargsignore):
+class ExplainModel:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, model, train_dataset, val_dataset):
+        kwargs = self.kwargs
 
         train_size = kwargs.get("train_size")
         val_size = kwargs.get("val_size")
@@ -32,8 +36,6 @@ def explain_model(**kwargs):
         images = _explain_pytorch_model(model, train_batch, val_batch)
 
         return images
-
-    return _explain_model
 
 
 def _explain_pytorch_model(
@@ -79,8 +81,8 @@ def _explain_pytorch_model(
         for samp_i in range(len(val_images_tt))
     ]
 
-    shap_nhwc_arr = scale(lower=0, upper=255)(shap_nhwc_arr)
-    val_images_nhwc_arr = scale(lower=0, upper=255)(val_images_nhwc_arr)
+    shap_nhwc_arr = Scale(lower=0, upper=255)(shap_nhwc_arr)
+    val_images_nhwc_arr = Scale(lower=0, upper=255)(val_images_nhwc_arr)
 
     all_images_nhwc_arr = np.concatenate([shap_nhwc_arr, val_images_nhwc_arr], axis=0)
     all_names = shap_image_names + val_image_names
@@ -91,8 +93,13 @@ def _explain_pytorch_model(
     return images_dict
 
 
-def scale(**kwargs):
-    def _scale(a):
+class Scale:
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+
+    def __call__(self, a):
+        kwargs = self.kwargs
+
         lower = kwargs.get("lower")
         upper = kwargs.get("upper")
         if (lower is not None) or (upper is not None):
@@ -104,5 +111,3 @@ def scale(**kwargs):
                 ((a - min_val) / (max_val - min_val)) * (upper - lower) + lower
             ).astype(np.uint8)
         return a
-
-    return _scale
