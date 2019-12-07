@@ -232,11 +232,37 @@ def pass_through(*args, **kwargs):
     return args[0] if args else list(kwargs.values())[0] if kwargs else None
 
 
-def pass_func(arg):
-    def _pass_func(*argsignore, **kwargsignore):
-        return arg
+class ToPipeline:
+    def __init__(self, *args):
+        if len(args) == 1:
+            args = args[0]
+        self.args = args
 
-    return _pass_func
+    def __call__(self):
+        return self.args
+
+
+class Method:
+    method = None
+
+    def __init__(self, *args, **kwargs):
+        if self.method is None:
+            self.method = kwargs.pop("method")
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self, d):
+        if isinstance(d, dict):
+            d = HatchDict(d)
+        attr = getattr(d, self.method, None)
+        if callable(attr):
+            return attr(*self.args, **self.kwargs)
+        else:
+            return d
+
+
+class Get(Method):
+    method = "get"
 
 
 def feed(func, args):
@@ -258,7 +284,13 @@ def feed(func, args):
 
 
 def _builtin_funcs():
-    return dict(pass_=pass_, pass_through=pass_through, pass_func=pass_func)
+    return dict(
+        pass_=pass_,
+        pass_through=pass_through,
+        ToPipeline=ToPipeline,
+        Method=Method,
+        Get=Get,
+    )
 
 
 """ 
