@@ -1,3 +1,4 @@
+import copy
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -541,3 +542,27 @@ class PartialDataset:
 
     def __getitem__(self, item):
         return self.dataset[item]
+
+
+class CopiedPartialDataset:
+    def __init__(self, dataset, size):
+        size = int(size)
+        assert hasattr(dataset, "__getitem__")
+        assert hasattr(dataset, "__len__")
+        assert dataset.__len__() >= size
+        self.dataset = [copy.deepcopy(dataset[i]) for i in range(size)]
+        self.size = size
+
+    def __len__(self):
+        return self.size
+
+    def __getitem__(self, item):
+        return self.dataset[item]
+
+
+class GetPartialDataset:
+    def __init__(self, size):
+        self.size = size
+
+    def __call__(self, dataset):
+        return CopiedPartialDataset(dataset, self.size)
