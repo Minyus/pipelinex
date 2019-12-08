@@ -187,7 +187,7 @@ def _hatch(
 ):
     d.pop(obj_key)
     if d:
-        assert callable(a)
+        assert callable(a), "{} is not callable.".format(a)
 
         pos_args = d.pop(pos_arg_key, None)
         if pos_args is None:
