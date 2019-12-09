@@ -518,6 +518,20 @@ class NLLoss(torch.nn.NLLLoss):
         return super().forward(input.log(), target)
 
 
+class CrossEntropyLoss2d(torch.nn.CrossEntropyLoss):
+    def forward(self, input, target):
+        input_hw = list(input.shape)[-2:]
+        target_hw = list(target.shape)[-2:]
+        if input_hw != target_hw:
+            input = torch.nn.functional.interpolate(
+                input, size=target_hw, mode="bilinear", align_corners=True
+            )
+        input_4dtt = to_channel_last_tensor(input)
+        input_2dtt = input_4dtt.reshape(-1, input_4dtt.shape[-1])
+        target_1dtt = target.reshape(-1)
+        return super().forward(input_2dtt, target_1dtt)
+
+
 class TransformCompose:
     def __init__(self, transforms):
         self.transforms = transforms
@@ -538,11 +552,25 @@ def to_channel_last_arr(a):
         return a
 
 
+def to_channel_last_tensor(a):
+    if a.ndim in {3, 4}:
+        return a.permute(*_to_channel_last_dict.get(a.ndim))
+    else:
+        return a
+
+
 _to_channel_first_dict = {3: (-1, -3, -2), 4: (0, -1, -3, -2)}
 
 
 def to_channel_first_arr(a):
     if a.ndim in {3, 4}:
         return np.transpose(a, axes=_to_channel_first_dict.get(a.ndim))
+    else:
+        return a
+
+
+def to_channel_first_tensor(a):
+    if a.ndim in {3, 4}:
+        return a.permute(*_to_channel_first_dict.get(a.ndim))
     else:
         return a
