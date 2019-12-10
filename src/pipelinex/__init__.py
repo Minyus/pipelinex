@@ -31,6 +31,9 @@ if find_spec("kedro"):
     if find_spec("torchvision"):
         from .io.torchvision.iterable_images import *  # NOQA
 
+    if find_spec("cv2"):
+        from .io.opencv.images import *  # NOQA
+
 if find_spec("pandas"):
     from .ops.pandas_ops import *  # NOQA
     from .decorators.pandas_decorators import *  # NOQA
