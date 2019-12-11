@@ -18,6 +18,7 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
         load_args: Dict[str, Any] = None,
         save_args: Dict[str, Any] = None,
         channel_first=False,
+        reverse_color=False,
         version: Version = None,
     ) -> None:
 
@@ -27,7 +28,8 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
             save_args=save_args,
             version=version,
         )
-        self.channel_first = channel_first
+        self._channel_first = channel_first
+        self._reverse_color = reverse_color
 
     def _load(self) -> Any:
 
@@ -36,55 +38,43 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
         load_args = copy.deepcopy(self._load_args)
         load_args = load_args or dict()
 
-        as_numpy = load_args.pop("as_numpy", None)
-        upper = load_args.pop("upper", None)
-        lower = load_args.pop("lower", None)
-        to_scale = upper or lower
+        dict_structure = load_args.pop("dict_structure", True)
+        as_numpy = load_args.pop("as_numpy", True)
+
+        channel_first = self._channel_first
+        reverse_color = self._reverse_color
 
         if load_path.is_dir():
             images_dict = {}
             for p in load_path.glob("*"):
-                with p.open("r") as local_file:
-                    img = Image.open(local_file, **load_args)
-                    images_dict[p.stem] = img
-            if as_numpy or to_scale:
-                images = list(images_dict.values())
-                names = list(images_dict.keys())
+                img = load_image(
+                    p,
+                    load_args,
+                    as_numpy=as_numpy,
+                    channel_first=channel_first,
+                    reverse_color=reverse_color,
+                )
+                images_dict[p.stem] = img
 
-                images = [np.asarray(img) for img in images]
-                images = np.stack(images, axis=0)
-
-                images = scale(lower=lower, upper=upper)(images)
-
-                if as_numpy:
-                    if self.channel_first:
-                        images = to_channel_first_arr(images)
-
-                    images_dict = dict(images=images, names=names)
-
-                if not as_numpy:
-                    for i in range(images.shape[0]):
-                        img = Image.fromarray(images[i, :, :, :])
-                        images_dict[names[i]] = img
+            if dict_structure is None:
+                return list(images_dict.values())
+            if dict_structure == "sep_names":
+                return dict(
+                    images=list(images_dict.values()), names=list(images_dict.keys())
+                )
 
             return images_dict
 
         else:
-            with load_path.open("r") as local_file:
-                img = Image.open(local_file, **load_args)
-                if as_numpy or to_scale:
-                    img = np.asarray(img)
-                    img = scale(lower=lower, upper=upper)(img)
+            return load_image(
+                load_path,
+                load_args,
+                as_numpy=self.as_numpy,
+                channel_first=channel_first,
+                reverse_color=reverse_color,
+            )
 
-                    if not as_numpy:
-                        img = Image.fromarray(img)
-
-                if self.channel_first:
-                    img = to_channel_first_arr(img)
-
-                return img
-
-    def _save(self, data: Union[np.ndarray, dict, type(Image.Image)]) -> None:
+    def _save(self, data: Union[dict, list, np.ndarray, type(Image.Image)]) -> None:
         save_path = Path(self._get_save_path())
         save_path.parent.mkdir(parents=True, exist_ok=True)
         p = save_path
@@ -97,8 +87,12 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
         to_scale = (upper is not None) or (lower is not None)
 
         if isinstance(data, dict):
-            images = data.get("images")
-            names = data.get("names")
+            images = list(data.values())
+            names = list(data.keys())
+            if "names" in names and "images" in names:
+                images = data.get("images")
+                names = data.get("names")
+
         else:
             images = data
 
@@ -111,8 +105,10 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
                 images = np.asarray(images)
 
         if isinstance(images, np.ndarray):
-            if self.channel_first:
+            if self._channel_first:
                 images = to_channel_last_arr(images)
+            if self._reverse_color:
+                images = ReverseChannel(channel_first=self._channel_first)(images)
             if images.ndim in {2, 3}:
                 img = images
                 img = scale(lower=lower, upper=upper)(img)
@@ -132,10 +128,17 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
                 p.mkdir(parents=True, exist_ok=True)
                 for i, img in enumerate(images):
                     if isinstance(img, np.ndarray):
+                        if self._channel_first:
+                            img = to_channel_last_arr(img)
+                        if self._reverse_color:
+                            img = ReverseChannel(channel_first=self._channel_first)(img)
                         img = np.squeeze(img)
                         img = Image.fromarray(img)
-                    assert isinstance(img, type(Image))
-                    s = p / "{}_{:05d}{}".format(p.stem, i, p.suffix)
+                    if names:
+                        name = names[i] if names else "{:05d}".format(i)
+                        s = p / "{}{}".format(name, p.suffix)
+                    else:
+                        s = p / "{:05d}{}".format(i, p.suffix)
                     img.save(s, **save_args)
                 return None
             else:
@@ -150,10 +153,14 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
             img = dataset[i]
             if isinstance(img, (tuple, list)):
                 img = img[0]
+            if self._channel_first:
+                img = to_channel_last_arr(img)
+            if self._reverse_color:
+                img = ReverseChannel(channel_first=self._channel_first)(img)
             img = np.squeeze(img)
             img = Image.fromarray(img, mode=mode)
             name = names[i] if names else "{:05d}".format(i)
-            s = p / "{}_{}{}".format(p.stem, name, p.suffix)
+            s = p / "{}{}".format(name, p.suffix)
             img.save(s, **save_args)
         return None
 
@@ -162,6 +169,8 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
             filepath=self._filepath,
             load_args=self._save_args,
             save_args=self._save_args,
+            channel_first=self._channel_first,
+            reverse_color=self._reverse_color,
             version=self._version,
         )
 
@@ -171,6 +180,20 @@ class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
         except DataSetError:
             return False
         return Path(path).exists()
+
+
+def load_image(
+    load_path, load_args, as_numpy=False, channel_first=False, reverse_color=False
+):
+    with load_path.open("rb") as local_file:
+        img = Image.open(local_file, **load_args)
+        if as_numpy:
+            img = np.asarray(img)
+            if channel_first:
+                img = to_channel_first_arr(img)
+            if reverse_color:
+                img = ReverseChannel(channel_first=channel_first)(img)
+        return img
 
 
 def scale(**kwargs):
@@ -216,3 +239,24 @@ class Np3DArrDatasetFromList:
 
     def __len__(self):
         return len(self.a)
+
+
+def reverse_channel(a, channel_first=False):
+    if a.ndim == 3:
+        if channel_first:
+            return a[::-1, :, :]
+        else:
+            return a[:, :, ::-1]
+    if a.ndim == 4:
+        if channel_first:
+            return a[:, ::-1, :, :]
+        else:
+            return a[:, :, :, ::-1]
+
+
+class ReverseChannel:
+    def __init__(self, channel_first=False):
+        self.channel_first = channel_first
+
+    def __call__(self, a):
+        return reverse_channel(a, channel_first=self.channel_first)
