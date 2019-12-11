@@ -15,11 +15,18 @@ class CvBaseMethod:
         if self.method is None:
             img = img
         else:
-            img = getattr(cv2, self.method)(img, *args, **kwargs)
-        return img
+            if isinstance(img, list):
+                return [getattr(cv2, self.method)(e, *args, **kwargs) for e in img]
+            if isinstance(img, dict):
+                return {
+                    k: getattr(cv2, self.method)(e, *args, **kwargs)
+                    for k, e in img.items()
+                }
+            else:
+                return getattr(cv2, self.method)(img, *args, **kwargs)
 
 
-class CvResize(CvBaseMethod):
+class CvScale(CvBaseMethod):
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -32,6 +39,10 @@ class CvResize(CvBaseMethod):
         if isinstance(height, float):
             height = int(img.shape[0] * height)
         return cv2.resize(img, (width, height))
+
+
+class CvResize(CvBaseMethod):
+    method = "resize"
 
 
 class CvCvtColor(CvBaseMethod):
@@ -54,6 +65,10 @@ class CvLine(CvBaseMethod):
     method = "line"
 
 
-class CvBGR2Gray:
-    def __call__(self, img):
-        return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+class CvBGR2Gray(CvBaseMethod):
+    method = "cvtColor"
+
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        kwargs["code"] = cv2.COLOR_BGR2GRAY
+        self.kwargs = kwargs
