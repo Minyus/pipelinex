@@ -65,6 +65,10 @@ class CvLine(CvBaseMethod):
     method = "line"
 
 
+class CvEqualizeHist(CvBaseMethod):
+    method = "equalizeHist"
+
+
 class CvBGR2Gray(CvBaseMethod):
     method = "cvtColor"
 
