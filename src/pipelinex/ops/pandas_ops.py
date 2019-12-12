@@ -995,3 +995,24 @@ class DfSpatialFeatures:
                 return pd.DataFrame(
                     output_2darr, columns=output_col_names, index=df.index
                 )
+
+
+def nested_dict_to_df(d, row_oriented=True, index_name="index", reset_index=True):
+    df = pd.DataFrame(d)
+    if row_oriented:
+        df = df.transpose()
+    if index_name is not None:
+        df.index.name = index_name
+    if reset_index:
+        df.reset_index(inplace=True)
+    return df
+
+
+class NestedDictToDf:
+    def __init__(self, row_oriented=True, index_name="index", reset_index=True):
+        self.kwargs = dict(
+            row_oriented=row_oriented, index_name=index_name, reset_index=reset_index
+        )
+
+    def __call__(self, d):
+        return nested_dict_to_df(d, **self.kwargs)
