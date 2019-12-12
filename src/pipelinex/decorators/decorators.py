@@ -4,6 +4,8 @@ import time
 from functools import wraps
 from typing import Callable
 
+log = logging.getLogger(__name__)
+
 
 def _func_full_name(func: Callable):
     return getattr(func, "__qualname__", repr(func))
@@ -96,3 +98,30 @@ if find_spec("memory_profiler"):
             return result
 
         return with_memory
+
+
+def dict_of_list_to_list_of_dict(dict_of_list):
+    return [
+        dict(zip(dict_of_list.keys(), vals)) for vals in zip(*dict_of_list.values())
+    ]
+
+
+def dict_io(func: Callable) -> Callable:
+    @wraps(func)
+    def _dict_io(*args):
+        keys = args[0].keys()
+
+        out_dict = {}
+        for key in keys:
+            a = [e.get(key) for e in args]
+            out = func(*a)
+            out_dict[key] = out
+            log.info("{}: {}".format(key, out))
+
+        if isinstance(out_dict[key], tuple):
+            return tuple(dict_of_list_to_list_of_dict(out_dict))
+
+        else:
+            return out_dict
+
+    return _dict_io
