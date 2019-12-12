@@ -72,3 +72,12 @@ class CvBGR2Gray(CvBaseMethod):
         self.args = args
         kwargs["code"] = cv2.COLOR_BGR2GRAY
         self.kwargs = kwargs
+
+
+class CvBGR2HSV(CvBaseMethod):
+    method = "cvtColor"
+
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        kwargs["code"] = cv2.COLOR_BGR2HSV
+        self.kwargs = kwargs
