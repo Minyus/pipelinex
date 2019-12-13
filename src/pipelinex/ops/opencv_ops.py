@@ -1,32 +1,131 @@
 import cv2
+import numpy as np
+from ..utils import list_of_dict_to_dict_of_list
 
 
-class CvBaseMethod:
-    method = None
+class BaseMethod:
+    module = None
+    fn = None
 
-    def __init__(self, *args, **kwargs):
-        self.args = args
+    def __init__(self, **kwargs):
         self.kwargs = kwargs
+        assert isinstance(self.fn, str)
 
-    def __call__(self, img):
-        args = self.args
+    def __call__(self, d):
         kwargs = self.kwargs
-
-        if self.method is None:
-            img = img
+        if self.module is None:
+            fn = eval(self.fn)
         else:
-            if isinstance(img, list):
-                return [getattr(cv2, self.method)(e, *args, **kwargs) for e in img]
-            if isinstance(img, dict):
-                return {
-                    k: getattr(cv2, self.method)(e, *args, **kwargs)
-                    for k, e in img.items()
-                }
-            else:
-                return getattr(cv2, self.method)(img, *args, **kwargs)
+            fn = getattr(self.module, self.fn)
+        assert callable(fn)
+        assert isinstance(d, dict)
+        out = {k: fn(e, **kwargs) for k, e in d.items()}
+        return out
 
 
-class CvScale(CvBaseMethod):
+class NpBaseMethod(BaseMethod):
+    module = np
+
+
+class CvBaseMethod(BaseMethod):
+    module = cv2
+
+
+class NpConcat(NpBaseMethod):
+    fn = "concatenate"
+
+
+class NpStack(NpBaseMethod):
+    fn = "stack"
+
+
+class NpSum(NpBaseMethod):
+    fn = "sum"
+
+
+class NpMean(NpBaseMethod):
+    fn = "mean"
+
+
+class NpSquare(NpBaseMethod):
+    fn = "square"
+
+
+class NpSqrt(NpBaseMethod):
+    fn = "sqrt"
+
+
+class NpAbs(NpBaseMethod):
+    fn = "abs"
+
+
+def fit_to_uint8(a):
+    min = a.min()
+    max = a.max()
+    return (255 * (a - min) / (max - min)).astype(np.uint8)
+
+
+class CvFitToUint8(BaseMethod):
+    fn = "fit_to_uint8"
+
+
+class CvModuleListMerge:
+    def __init__(self, *modules):
+        for m in modules:
+            assert callable(m)
+        self.modules = modules
+
+    def __call__(self, d):
+        assert isinstance(d, dict)
+        list_d = [m(d) for m in self.modules]
+        d_list = list_of_dict_to_dict_of_list(list_d)
+        return d_list
+
+
+class CvModuleConcat(CvModuleListMerge):
+    def __call__(self, d):
+        d_list = super().__call__(d)
+        d_out = NpConcat(axis=0)(d_list)
+        return d_out
+
+
+class CvModuleStack(CvModuleListMerge):
+    def __call__(self, d):
+        d_list = super().__call__(d)
+        np_stack = NpStack(axis=0)
+        d_stacked = np_stack(d_list)
+        return d_stacked
+
+
+class CvModuleSum(CvModuleStack):
+    def __call__(self, d):
+        d_stacked = super().__call__(d)
+        d_out = NpSum(axis=0)(d_stacked)
+        return d_out
+
+
+class CvModuleMean(CvModuleStack):
+    def __call__(self, d):
+        d_stacked = super().__call__(d)
+        d_out = NpMean(axis=0)(d_stacked)
+        return d_out
+
+
+class CvModuleL1(CvModuleStack):
+    def __call__(self, d):
+        d_stacked = super().__call__(d)
+        d_out = NpSum(axis=0)(NpAbs()(d_stacked))
+        return d_out
+
+
+class CvModuleL2(CvModuleStack):
+    def __call__(self, d):
+        d_stacked = super().__call__(d)
+        d_out = NpSqrt()(NpSum(axis=0)(NpSquare()(d_stacked)))
+        return d_out
+
+
+class CvScale:
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -42,78 +141,86 @@ class CvScale(CvBaseMethod):
 
 
 class CvResize(CvBaseMethod):
-    method = "resize"
+    fn = "resize"
 
 
 class CvCvtColor(CvBaseMethod):
-    method = "cvtColor"
+    fn = "cvtColor"
 
 
 class CvDilate(CvBaseMethod):
-    method = "dilate"
+    fn = "dilate"
 
 
 class CvErode(CvBaseMethod):
-    method = "erode"
+    fn = "erode"
 
 
 class CvFilter2d(CvBaseMethod):
-    method = "filter2D"
+    fn = "filter2D"
 
 
 class CvBlur(CvBaseMethod):
-    method = "blur"
+    fn = "blur"
 
 
 class CvBoxFilter(CvBaseMethod):
-    method = "boxFilter"
+    fn = "boxFilter"
 
 
 class CvGaussianBlur(CvBaseMethod):
-    method = "GaussianBlur"
+    fn = "GaussianBlur"
 
 
 class CvMedianBlur(CvBaseMethod):
-    method = "medianBlur"
+    fn = "medianBlur"
 
 
 class CvBilateralFilter(CvBaseMethod):
-    method = "bilateralFilter"
-
-
-class CvAdaptiveBilateralFilter(CvBaseMethod):
-    method = "adaptiveBilateralFilter"
+    fn = "bilateralFilter"
 
 
 class CvCanny(CvBaseMethod):
-    method = "Canny"
+    fn = "Canny"
 
 
 class CvHoughLinesP(CvBaseMethod):
-    method = "HoughLinesP"
+    fn = "HoughLinesP"
 
 
 class CvLine(CvBaseMethod):
-    method = "line"
+    fn = "line"
 
 
 class CvEqualizeHist(CvBaseMethod):
-    method = "equalizeHist"
+    fn = "equalizeHist"
 
 
 class CvBGR2Gray(CvBaseMethod):
-    method = "cvtColor"
+    fn = "cvtColor"
 
     def __init__(self, *args, **kwargs):
-        self.args = args
         kwargs["code"] = cv2.COLOR_BGR2GRAY
-        self.kwargs = kwargs
+        super().__init__(*args, **kwargs)
 
 
 class CvBGR2HSV(CvBaseMethod):
-    method = "cvtColor"
+    fn = "cvtColor"
 
     def __init__(self, *args, **kwargs):
-        self.args = args
         kwargs["code"] = cv2.COLOR_BGR2HSV
-        self.kwargs = kwargs
+        super().__init__(*args, **kwargs)
+
+
+diagonal_edge_kernel_list = [
+    np.array([[2, 1, 0], [1, 0, -1], [0, -1, -2]]),
+    np.array([[0, 1, 2], [-1, 0, 1], [-2, -1, 0]]),
+]
+
+
+class CvDiagonalEdgeFilter2d(CvModuleL2):
+    def __init__(self, **kwargs):
+        kwargs.setdefault("ddepth", -1)
+        self.modules = [
+            CvFilter2d(kernel=k, **kwargs) for k in diagonal_edge_kernel_list
+        ]
