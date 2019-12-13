@@ -212,15 +212,22 @@ class CvBGR2HSV(CvBaseMethod):
         super().__init__(*args, **kwargs)
 
 
-diagonal_edge_kernel_list = [
-    np.array([[2, 1, 0], [1, 0, -1], [0, -1, -2]]),
-    np.array([[0, 1, 2], [-1, 0, 1], [-2, -1, 0]]),
-]
+diagonal_edge_kernel_dict = {
+    1: [
+        np.array([[1, 0, 0], [0, 0, 0], [0, 0, -1]]),
+        np.array([[0, 0, 1], [0, 0, 0], [-1, 0, 0]]),
+    ],
+    2: [
+        np.array([[2, 1, 0], [1, 0, -1], [0, -1, -2]]),
+        np.array([[0, 1, 2], [-1, 0, 1], [-2, -1, 0]]),
+    ],
+}
 
 
 class CvDiagonalEdgeFilter2d(CvModuleL2):
-    def __init__(self, **kwargs):
+    def __init__(self, kernel_type=2, **kwargs):
         kwargs.setdefault("ddepth", -1)
         self.modules = [
-            CvFilter2d(kernel=k, **kwargs) for k in diagonal_edge_kernel_list
+            CvFilter2d(kernel=k, **kwargs)
+            for k in diagonal_edge_kernel_dict[kernel_type]
         ]
