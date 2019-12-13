@@ -3,6 +3,7 @@ import logging
 import time
 from functools import wraps
 from typing import Callable
+from ..utils import dict_of_list_to_list_of_dict
 
 log = logging.getLogger(__name__)
 
@@ -98,12 +99,6 @@ if find_spec("memory_profiler"):
             return result
 
         return with_memory
-
-
-def dict_of_list_to_list_of_dict(dict_of_list):
-    return [
-        dict(zip(dict_of_list.keys(), vals)) for vals in zip(*dict_of_list.values())
-    ]
 
 
 def dict_io(func: Callable) -> Callable:
