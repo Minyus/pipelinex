@@ -49,8 +49,40 @@ class CvCvtColor(CvBaseMethod):
     method = "cvtColor"
 
 
+class CvDilate(CvBaseMethod):
+    method = "dilate"
+
+
+class CvErode(CvBaseMethod):
+    method = "erode"
+
+
+class CvFilter2d(CvBaseMethod):
+    method = "filter2D"
+
+
+class CvBlur(CvBaseMethod):
+    method = "blur"
+
+
+class CvBoxFilter(CvBaseMethod):
+    method = "boxFilter"
+
+
 class CvGaussianBlur(CvBaseMethod):
     method = "GaussianBlur"
+
+
+class CvMedianBlur(CvBaseMethod):
+    method = "medianBlur"
+
+
+class CvBilateralFilter(CvBaseMethod):
+    method = "bilateralFilter"
+
+
+class CvAdaptiveBilateralFilter(CvBaseMethod):
+    method = "adaptiveBilateralFilter"
 
 
 class CvCanny(CvBaseMethod):
