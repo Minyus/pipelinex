@@ -1,26 +1,6 @@
 import cv2
 import numpy as np
-from ..utils import list_of_dict_to_dict_of_list
-
-
-class DictToDict:
-    module = None
-    fn = None
-
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
-        assert isinstance(self.fn, str)
-
-    def __call__(self, d):
-        kwargs = self.kwargs
-        if self.module is None:
-            fn = eval(self.fn)
-        else:
-            fn = getattr(self.module, self.fn)
-        assert callable(fn)
-        assert isinstance(d, dict)
-        out = {k: fn(e, **kwargs) for k, e in d.items()}
-        return out
+from ..utils import DictToDict, list_of_dict_to_dict_of_list
 
 
 class NpDictToDict(DictToDict):
