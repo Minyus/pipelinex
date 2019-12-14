@@ -56,4 +56,7 @@ if find_spec("allennlp"):
 if find_spec("cv2"):
     from .ops.opencv_ops import *  # NOQA
 
+if find_spec("skimage"):
+    from .ops.skimage_ops import *  # NOQA
+
 __version__ = "0.1.5"
