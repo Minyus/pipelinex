@@ -18,10 +18,13 @@ class DictToDict:
 
     def __call__(self, d):
         kwargs = self.kwargs
-        if self.module is None:
+        module = self.module
+        if module is None:
             fn = eval(self.fn)
         else:
-            fn = getattr(self.module, self.fn)
+            if isinstance(module, str):
+                module = eval(module)
+            fn = getattr(module, self.fn)
         assert callable(fn)
         assert isinstance(d, dict)
         out = {k: fn(e, **kwargs) for k, e in d.items()}
