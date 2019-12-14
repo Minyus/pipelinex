@@ -1,6 +1,7 @@
+from ..utils import DictToDict, list_of_dict_to_dict_of_list
+from ..decorators.decorators import dict_io
 import cv2
 import numpy as np
-from ..utils import DictToDict, list_of_dict_to_dict_of_list
 
 
 class NpDictToDict(DictToDict):
@@ -39,14 +40,11 @@ class NpAbs(NpDictToDict):
     fn = "abs"
 
 
+@dict_io
 def fit_to_uint8(a):
     min = a.min()
     max = a.max()
     return (255 * (a - min) / (max - min)).astype(np.uint8)
-
-
-class CvFitToUint8(DictToDict):
-    fn = "fit_to_uint8"
 
 
 class CvModuleListMerge:
