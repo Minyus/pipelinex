@@ -3,7 +3,7 @@ import numpy as np
 from ..utils import list_of_dict_to_dict_of_list
 
 
-class BaseMethod:
+class DictToDict:
     module = None
     fn = None
 
@@ -23,39 +23,39 @@ class BaseMethod:
         return out
 
 
-class NpBaseMethod(BaseMethod):
+class NpDictToDict(DictToDict):
     module = np
 
 
-class CvBaseMethod(BaseMethod):
+class CvDictToDict(DictToDict):
     module = cv2
 
 
-class NpConcat(NpBaseMethod):
+class NpConcat(NpDictToDict):
     fn = "concatenate"
 
 
-class NpStack(NpBaseMethod):
+class NpStack(NpDictToDict):
     fn = "stack"
 
 
-class NpSum(NpBaseMethod):
+class NpSum(NpDictToDict):
     fn = "sum"
 
 
-class NpMean(NpBaseMethod):
+class NpMean(NpDictToDict):
     fn = "mean"
 
 
-class NpSquare(NpBaseMethod):
+class NpSquare(NpDictToDict):
     fn = "square"
 
 
-class NpSqrt(NpBaseMethod):
+class NpSqrt(NpDictToDict):
     fn = "sqrt"
 
 
-class NpAbs(NpBaseMethod):
+class NpAbs(NpDictToDict):
     fn = "abs"
 
 
@@ -65,7 +65,7 @@ def fit_to_uint8(a):
     return (255 * (a - min) / (max - min)).astype(np.uint8)
 
 
-class CvFitToUint8(BaseMethod):
+class CvFitToUint8(DictToDict):
     fn = "fit_to_uint8"
 
 
@@ -140,63 +140,63 @@ class CvScale:
         return cv2.resize(img, (width, height))
 
 
-class CvResize(CvBaseMethod):
+class CvResize(CvDictToDict):
     fn = "resize"
 
 
-class CvCvtColor(CvBaseMethod):
+class CvCvtColor(CvDictToDict):
     fn = "cvtColor"
 
 
-class CvDilate(CvBaseMethod):
+class CvDilate(CvDictToDict):
     fn = "dilate"
 
 
-class CvErode(CvBaseMethod):
+class CvErode(CvDictToDict):
     fn = "erode"
 
 
-class CvFilter2d(CvBaseMethod):
+class CvFilter2d(CvDictToDict):
     fn = "filter2D"
 
 
-class CvBlur(CvBaseMethod):
+class CvBlur(CvDictToDict):
     fn = "blur"
 
 
-class CvBoxFilter(CvBaseMethod):
+class CvBoxFilter(CvDictToDict):
     fn = "boxFilter"
 
 
-class CvGaussianBlur(CvBaseMethod):
+class CvGaussianBlur(CvDictToDict):
     fn = "GaussianBlur"
 
 
-class CvMedianBlur(CvBaseMethod):
+class CvMedianBlur(CvDictToDict):
     fn = "medianBlur"
 
 
-class CvBilateralFilter(CvBaseMethod):
+class CvBilateralFilter(CvDictToDict):
     fn = "bilateralFilter"
 
 
-class CvCanny(CvBaseMethod):
+class CvCanny(CvDictToDict):
     fn = "Canny"
 
 
-class CvHoughLinesP(CvBaseMethod):
+class CvHoughLinesP(CvDictToDict):
     fn = "HoughLinesP"
 
 
-class CvLine(CvBaseMethod):
+class CvLine(CvDictToDict):
     fn = "line"
 
 
-class CvEqualizeHist(CvBaseMethod):
+class CvEqualizeHist(CvDictToDict):
     fn = "equalizeHist"
 
 
-class CvBGR2Gray(CvBaseMethod):
+class CvBGR2Gray(CvDictToDict):
     fn = "cvtColor"
 
     def __init__(self, *args, **kwargs):
@@ -204,7 +204,7 @@ class CvBGR2Gray(CvBaseMethod):
         super().__init__(*args, **kwargs)
 
 
-class CvBGR2HSV(CvBaseMethod):
+class CvBGR2HSV(CvDictToDict):
     fn = "cvtColor"
 
     def __init__(self, *args, **kwargs):
