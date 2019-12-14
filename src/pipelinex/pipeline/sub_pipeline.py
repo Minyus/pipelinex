@@ -28,7 +28,11 @@ class SubPipeline(Pipeline):
         nodes = []
         for i, f in enumerate(funcs):
             output = (
-                "{}__{:03d}".format(main_input, i + 1)
+                "{}__{}__{:03d}".format(
+                    main_input,
+                    outputs[0] if isinstance(outputs, list) else outputs,
+                    i + 1,
+                )
                 if (i + 1 < len(funcs))
                 else outputs
             )
