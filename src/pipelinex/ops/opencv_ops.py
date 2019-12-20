@@ -138,6 +138,17 @@ class CvFilter2d(CvDictToDict):
     fn = "filter2D"
 
 
+class CvSobel(CvDictToDict):
+    fn = "Sobel"
+
+    def __init__(self, ddepth="CV_64F", **kwargs):
+        if isinstance(ddepth, str):
+            kwargs["ddepth"] = getattr(cv2, ddepth)
+        else:
+            kwargs["ddepth"] = ddepth
+        super().__init__(**kwargs)
+
+
 class CvBlur(CvDictToDict):
     fn = "blur"
 
@@ -172,6 +183,21 @@ class CvLine(CvDictToDict):
 
 class CvEqualizeHist(CvDictToDict):
     fn = "equalizeHist"
+
+
+class CvThreshold(CvDictToDict):
+    fn = "threshold"
+
+    def __init__(self, type="THRESH_BINARY", **kwargs):
+        if isinstance(type, str):
+            kwargs["type"] = getattr(cv2, type)
+        else:
+            kwargs["type"] = type
+        super().__init__(**kwargs)
+
+    def __call__(self, *args, **kwargs):
+        out = super().__call__(*args, **kwargs)
+        return out
 
 
 class CvBGR2Gray(CvDictToDict):
