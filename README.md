@@ -56,7 +56,29 @@ downloaded repository, and run:
 $ python setup.py install
 ```
 
-## Basic usage
+## Example Projects
+
+- [Basic example](https://github.com/Minyus/pipelinex_pytorch)
+  - Packages: PyTorch, Ignite, Shap, Kedro, MLflow
+  - Application: Image classification
+  - Model: CNN (Convolutional Neural Network)
+  - Data: MNIST images
+  - Loss: Cross-entropy
+
+- [Complex example](https://github.com/Minyus/kaggle_nfl)
+  - Packages: PyTorch, Ignite, pandas, numpy, Kedro, MLflow
+  - Application: Kaggle competition to predict the results of American Football plays
+  - Model: Combination of CNN and MLP
+  - Data: Sparse heatmap-like field images and tabular data
+  - Loss: Continuous Rank Probability Score (CRPS)
+
+## Template
+
+General PipelineX project template is available at:
+https://github.com/Minyus/pipelinex_template
+
+
+## Basic usage with *any* Python packages
 
 To manage experiments, it is a common practice to store parameters in YAML or JSON config files.
 Parameters for Machine Learning are, however not limited to (list of) numbers or string.
@@ -126,10 +148,74 @@ print("model object: \n", model, "\n")
 ```
 
 
+## Use with Kedro
+
+Kedro enables you to separate 2 functions of pipelines:
+- File IO (Extract and Load of ETL) as "DataSet"
+- Processing (Transform of ETL) as "Node"
+
+Regarding Kedro, please see the [Kedro's document](https://kedro.readthedocs.io/en/latest/).
+
+PipelineX enables you to use Kedro in more convenient ways:
+
+- Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
+  - Optionally run only missing nodes (skip tasks which have already been run)
+  - Optionally run nodes in parallel
+- Define Kedro pipeline in `parameters.yml` using `PIPELINES` key
+  - Optionally specify the default module 
+  - Optionally specify the function decorator to apply to each node
+  - Specify `inputs`, `func`, and `outputs` for each node
+    - Optionally list nodes in the similar way to Sequential API (e.g. `torch.nn.Sequential`, `tf.keras.Sequential`)
+- Integration with MLflow
+  - Specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
+  - Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
+- Syntactic sugar for `catalog.yml`
+  - Optionally specify the `filepath` as the catalog entry name 
+
+
+```yaml
+# parameters.yml
+
+RUN_CONFIG:
+  pipeline_name: __default__
+  only_missing: False  # Set True to run only missing nodes
+  runner: SequentialRunner  # Set to "ParallelRunner" to run in parallel
+
+PIPELINES:
+  __default__:
+    =: pipelinex.FlexiblePipeline
+    module:  # Optionally specify the default module 
+    decorator:  # Optionally specify the function decorator to apply to each node
+    nodes:
+
+      - inputs: input_data_1
+        func: processing_task_1
+        outputs: [intermididate_data_1, intermididate_data_2]
+
+      - inputs: intermididate_data_1
+        func: 
+          - processing_task_2
+          - processing_task_3
+        outputs: output_data
+
+MLFLOW_LOGGING_CONFIG:
+  offset_hours: 0  # Specify the offset hour (local time zone) to show in MLflow tracking
+  logging_artifacts:  # Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
+
+```
+
+```yaml
+#  catalog.yml
+
+data/input/input_data_1.csv:
+  type: CSVLocalDataSet
+
+```
+
 ## Use with PyTorch
 
 To develop a simple neural network, it is convenient to use Sequential API 
-(`torch.nn.Sequential for PyTorch`, `tf.keras.Sequential` for Keras).
+(e.g. `torch.nn.Sequential`, `tf.keras.Sequential`).
 
 - Hardcoded:
 
@@ -191,7 +277,7 @@ print("model object: \n", model, "\n")
 > ) 
 ```
 
-In addition to Sequential, TensorFLow/Keras provides modules to merge branches such as 
+In addition to `Sequential`, TensorFLow/Keras provides modules to merge branches such as 
 `tf.keras.layers.Concatenate`, but PyTorch provides only functional interface such as `torch.cat`.
 
 PipelineX provides modules to merge branches such as `ModuleConcat`, `ModuleSum`, and `ModuleAvg`.
@@ -276,22 +362,6 @@ print("model object: \n", model, "\n")
 > ) 
 ```
 
-## Examples
-
-- [Basic example](https://github.com/Minyus/pipelinex_pytorch)
-  - Packages: PyTorch, Ignite, Shap, Kedro, MLflow
-  - Application: Image classification
-  - Model: CNN (Convolutional Neural Network)
-  - Data: MNIST images
-  - Loss: Cross-entropy
-
-- [Complex example](https://github.com/Minyus/kaggle_nfl)
-  - Packages: PyTorch, Ignite, pandas, numpy, Kedro, MLflow
-  - Application: Kaggle competition to predict the results of American Football plays
-  - Model: Combination of CNN and MLP
-  - Data: Sparse heatmap-like field images and tabular data
-  - Loss: Continuous Rank Probability Score (CRPS)
-
 
 ## Use with Ignite
 
@@ -301,20 +371,6 @@ Wrappers of Ignite provides features including:
 - Flexible model checkpoint using timestamp in the model file name
 - Time limit for training
 
-## Use with Kedro
-
-Wrappers of Kedro provides features including:
-- Integration with MLflow
-- Run only missing nodes (skip tasks which have already been run)
-- Define kedro pipeline in parameters.yml instead of Python code
-- List nodes (tasks) in similar way with Sequential API 
-(`torch.nn.Sequential` for PyTorch, `tf.keras.Sequential` for Keras)
-- Syntactic sugar for catalog.yml
-
-## Template
-
-General project template is available at:
-https://github.com/Minyus/pipelinex_template
 
 ## Author
 Yusuke Minami
