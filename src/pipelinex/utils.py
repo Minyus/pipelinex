@@ -1,3 +1,6 @@
+import operator
+
+
 def dict_of_list_to_list_of_dict(dict_of_list):
     return [
         dict(zip(dict_of_list.keys(), vals)) for vals in zip(*dict_of_list.values())
@@ -6,6 +9,13 @@ def dict_of_list_to_list_of_dict(dict_of_list):
 
 def list_of_dict_to_dict_of_list(list_of_dict):
     return {k: [d[k] for d in list_of_dict] for k in list_of_dict[0]}
+
+
+def apply_func_to_dict(d, fn, kwargs={}):
+    assert callable(fn)
+    assert isinstance(d, dict)
+    out = {k: fn(e, **kwargs) for k, e in d.items()}
+    return out
 
 
 class DictToDict:
@@ -25,7 +35,15 @@ class DictToDict:
             if isinstance(module, str):
                 module = eval(module)
             fn = getattr(module, self.fn)
-        assert callable(fn)
-        assert isinstance(d, dict)
-        out = {k: fn(e, **kwargs) for k, e in d.items()}
+        out = apply_func_to_dict(d, fn, kwargs)
+        return out
+
+
+class ItemGetterInDict:
+    def __init__(self, item):
+        self.item = item
+
+    def __call__(self, d):
+        fn = operator.itemgetter(self.item)
+        out = apply_func_to_dict(d, fn)
         return out
