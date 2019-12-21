@@ -40,11 +40,71 @@ class NpAbs(NpDictToDict):
     fn = "abs"
 
 
-@dict_io
-def fit_to_uint8(a):
+def _fit_to_1(a):
+    assert isinstance(a, np.ndarray)
     min = a.min()
     max = a.max()
-    return (255 * (a - min) / (max - min)).astype(np.uint8)
+    return (a - min) / (max - min)
+
+
+@dict_io
+def fit_to_1(a):
+    return _fit_to_1(a)
+
+
+def _fit_to_uint8(a):
+    return (_fit_to_1(a) * 255).astype(np.uint8)
+
+
+@dict_io
+def fit_to_uint8(a):
+    return _fit_to_uint8(a)
+
+
+def _expand_repeat(a, repeats=1, axis=None):
+    return np.repeat(np.expand_dims(a, axis=axis), repeats=repeats, axis=axis)
+
+
+@dict_io
+def expand_repeat(a, repeats=1, axis=None):
+    return _expand_repeat(a, repeats=repeats, axis=axis)
+
+
+def _sum_up(*imgs):
+    imgs = [
+        (_expand_repeat(img, repeats=3, axis=2) if img.ndim == 2 else img)
+        for img in imgs
+    ]
+    imgs = [_fit_to_1(img) for img in imgs]
+    out_img = np.sum(np.stack(imgs), axis=0)
+    if out_img.shape[2] == 1:
+        out_img = np.squeeze(out_img, axis=2)
+    return out_img
+
+
+@dict_io
+def sum_up(*imgs):
+    return _sum_up(*imgs)
+
+
+def _mix_up(*imgs):
+    mean_img = _sum_up(*imgs) / len(imgs)
+    return (mean_img * 255).astype(np.uint8)
+
+
+@dict_io
+def mix_up(*imgs):
+    return _mix_up(*imgs)
+
+
+def _overlay(*imgs):
+    clipped_img = np.clip(_sum_up(*imgs), 0, 1)
+    return (clipped_img * 255).astype(np.uint8)
+
+
+@dict_io
+def overlay(*imgs):
+    return _overlay(*imgs)
 
 
 class CvModuleListMerge:
