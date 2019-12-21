@@ -1,4 +1,4 @@
-from ..utils import DictToDict, list_of_dict_to_dict_of_list
+from ..utils import DictToDict
 from skimage import segmentation
 
 
@@ -8,3 +8,7 @@ class SkimageSegmentationDictToDict(DictToDict):
 
 class SkimageSegmentationSlic(SkimageSegmentationDictToDict):
     fn = "slic"
+
+
+class SkimageMarkBoundaries(SkimageSegmentationDictToDict):
+    fn = "mark_boundaries"
