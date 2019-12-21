@@ -3,7 +3,7 @@ import logging
 import time
 from functools import wraps
 from typing import Callable
-from ..utils import dict_of_list_to_list_of_dict
+from ..utils import dict_io  # NOQA
 
 log = logging.getLogger(__name__)
 
@@ -99,24 +99,3 @@ if find_spec("memory_profiler"):
             return result
 
         return with_memory
-
-
-def dict_io(func: Callable) -> Callable:
-    @wraps(func)
-    def _dict_io(*args):
-        keys = args[0].keys()
-
-        out_dict = {}
-        for key in keys:
-            a = [e.get(key) for e in args]
-            out = func(*a)
-            out_dict[key] = out
-            log.info("{}: {}".format(key, out))
-
-        if isinstance(out_dict[key], tuple):
-            return tuple(dict_of_list_to_list_of_dict(out_dict))
-
-        else:
-            return out_dict
-
-    return _dict_io
