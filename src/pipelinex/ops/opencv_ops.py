@@ -1,5 +1,4 @@
-from ..utils import DictToDict, list_of_dict_to_dict_of_list
-from ..decorators.decorators import dict_io
+from ..utils import DictToDict, dict_io, list_of_dict_to_dict_of_list
 import cv2
 import numpy as np
 
