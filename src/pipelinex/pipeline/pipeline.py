@@ -9,7 +9,6 @@ class FlexiblePipeline(kedro.pipeline.Pipeline):
         nodes,  # type: Iterable[Union[SubPipeline, kedro.pipeline.Pipeline, kedro.pipeline.node.Node]]
         *,
         parameters_in_inputs=False,  # type: bool
-        main_input_index=0,  # type: int
         module="",  # type: str
         decorator=[],  # type: Union[Callable, List[Callable]]
         name=None  # type: str
@@ -32,7 +31,6 @@ class FlexiblePipeline(kedro.pipeline.Pipeline):
                     if not ("parameters" in inputs):
                         node["inputs"] = inputs + ["parameters"]
 
-                node.setdefault("main_input_index", main_input_index)
                 node.setdefault("module", module)
                 node.setdefault("decorator", decorator)
                 nodes[i] = SubPipeline(**node)
