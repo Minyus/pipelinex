@@ -11,6 +11,18 @@ class CvDictToDict(DictToDict):
     module = cv2
 
 
+class NpZerosLike(NpDictToDict):
+    fn = "zeros_like"
+
+
+class NpOnesLike(NpDictToDict):
+    fn = "ones_like"
+
+
+class NpFullLike(NpDictToDict):
+    fn = "full_like"
+
+
 class NpConcat(NpDictToDict):
     fn = "concatenate"
 
