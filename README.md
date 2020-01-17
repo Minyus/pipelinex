@@ -190,9 +190,9 @@ PIPELINES:
 
       - inputs: input_data_1
         func: processing_task_1
-        outputs: [intermididate_data_1, intermididate_data_2]
+        outputs: [intermediate_data_1, intermediate_data_2]
 
-      - inputs: intermididate_data_1
+      - inputs: intermediate_data_1
         func: 
           - processing_task_2
           - processing_task_3
