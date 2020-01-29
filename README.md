@@ -8,11 +8,11 @@ Pipeline for eXperimentation
 
 ## Overview
 
-PipelineX is a Python package to develop pipelines for rapid Machine Learning experimentation.
+PipelineX is a Python package to develop pipelines for rapid Machine/Deep Learning experimentation.
 
-PipelineX includes thin wrappers of:
+PipelineX includes integration with:
 - [Kedro](https://github.com/quantumblacklabs/kedro) (A Python library for building robust production-ready data and analytics pipelines.)
-  - Integration with [MLflow](https://github.com/mlflow/mlflow) (Open source platform for the machine learning lifecycle)
+  - Optional integration with [MLflow](https://github.com/mlflow/mlflow) (Open source platform for the machine learning lifecycle)
 - [PyTorch](https://github.com/pytorch/pytorch)
 - [Ignite](https://github.com/pytorch/ignite) (High-level library to help with training neural networks in PyTorch)
 - [pandas](https://github.com/pandas-dev/pandas)
@@ -56,7 +56,15 @@ downloaded repository, and run:
 $ python setup.py install
 ```
 
-## Example Projects
+## Why and how PipelineX was born
+ 
+When I was working on a Deep Learning project, I suffered from developing the pipeline for experimentation.
+Especially, it took time to develop pipeline so it can resume using the intermediate data files instead of running the whole pipeline.
+Since I wanted to concentrate on the project-specific processing in future projects, I decided to implement the pipeline resuming option as a wrapper of Kedro, a Python package for pipeline development.
+Using this prototype, I worked on more projects including a Kaggle competition, and I added integration with PyTorch, Ignite, pandas, MLflow, OpenCV, etc.
+
+
+## Example/Demo Projects
 
 - [Basic example](https://github.com/Minyus/pipelinex_pytorch)
   - Packages: PyTorch, Ignite, Shap, Kedro, MLflow
