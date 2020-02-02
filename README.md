@@ -10,6 +10,10 @@ Pipeline for eXperimentation
 
 PipelineX is a Python package to develop pipelines for rapid Machine/Deep Learning experimentation.
 
+Comparision with other pipeline/workflow packages, Airflow, Luigi, Gokart, and Kedro, is available [here](
+https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow
+).
+
 PipelineX includes integration with:
 - [Kedro](https://github.com/quantumblacklabs/kedro) (A Python library for building robust production-ready data and analytics pipelines.)
   - Optional integration with [MLflow](https://github.com/mlflow/mlflow) (Open source platform for the machine learning lifecycle)
@@ -30,10 +34,6 @@ PipelineX shares similar philosophy, concepts, or API styles with:
 - [Ludwig](https://uber.github.io/ludwig/)
 - [Jsonnet](https://github.com/google/jsonnet)
 
-If efficient experimentation is not important, other pipeline packages might be more suitable:
-- [Luigi](https://github.com/spotify/luigi)
-- [Oozie](https://github.com/apache/oozie)
-- [Azkaban](https://github.com/azkaban/azkaban)
 
 ## Installation
 
