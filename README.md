@@ -10,7 +10,7 @@ Pipeline for eXperimentation
 
 PipelineX is a Python package to develop pipelines for rapid Machine/Deep Learning experimentation.
 
-Comparision with other pipeline/workflow packages, Airflow, Luigi, Gokart, and Kedro, is available [here](
+Comparision with other pipeline/workflow packages, Airflow, Luigi, Gokart, Metaflow, and Kedro, is available [here](
 https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow
 ).
 
