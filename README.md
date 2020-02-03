@@ -158,22 +158,23 @@ print("model object: \n", model, "\n")
 
 ## Use with Kedro
 
-Kedro enables you to separate 2 functions of pipelines:
-- File IO (Extract and Load of ETL) as "DataSet"
-- Processing (Transform of ETL) as "Node"
+Kedro is a Python package to develop pipelines consisting of tasks (called `node`).
 
-Regarding Kedro, please see the [Kedro's document](https://kedro.readthedocs.io/en/latest/).
+Regarding Kedro, please see the [Kedro's document](https://kedro.readthedocs.io/en/latest/) 
+and comparison with other pipeline/workflow packages [here](
+https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow
+).
 
 PipelineX enables you to use Kedro in more convenient ways:
 
 - Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
-  - Optionally run only missing nodes (skip tasks which have already been run)
+  - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
   - Optionally run nodes in parallel
 - Define Kedro pipeline in `parameters.yml` using `PIPELINES` key
-  - Optionally specify the default module 
-  - Optionally specify the function decorator to apply to each node
+  - Optionally specify the default Python module (path of .py file) if you want to omit the module name
+  - Optionally specify the Python function decorator to apply to each node
   - Specify `inputs`, `func`, and `outputs` for each node
-    - Optionally list nodes in the similar way to Sequential API (e.g. `torch.nn.Sequential`, `tf.keras.Sequential`)
+    - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
 - Integration with MLflow
   - Specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
   - Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
