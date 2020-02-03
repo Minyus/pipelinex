@@ -176,10 +176,13 @@ PipelineX enables you to use Kedro in more convenient ways:
   - Specify `inputs`, `func`, and `outputs` for each node
     - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
 - Integration with MLflow
-  - Specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
+  - Optionally specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
   - Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
 - Syntactic sugar for `catalog.yml`
-  - Optionally specify the `filepath` as the catalog entry name 
+  - Optionally specify the `filepath` as the catalog entry name so the file name without extension is used as the DataSet instance name
+  - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
+  - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. (`kedro.contrib.io.cached.CachedDataSet` is used under the hood.) 
+  - Optionally specify the default `DataSet` and its parameters using `/` key so you can reduce copying. 
 
 
 ```yaml
