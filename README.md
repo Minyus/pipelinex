@@ -219,8 +219,19 @@ MLFLOW_LOGGING_CONFIG:
 ```yaml
 #  catalog.yml
 
-data/input/input_data_1.csv:
+/:  # Optionally specify the default DataSet
   type: CSVLocalDataSet
+  cached: True
+
+data/input/input_data_1.csv:  # Use the default DataSet
+
+data/load/intermediate_data_1.pickle:
+  type: PickleLocalDataSet
+
+data/load/intermediate_data_2.csv:  # Use the default DataSet
+
+data/load/output_data.csv:  # Use the default DataSet
+  mlflow_logging: True
 
 ```
 
