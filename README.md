@@ -212,18 +212,18 @@ RUN_CONFIG:
 PIPELINES:
   __default__:
     =: pipelinex.FlexiblePipeline
-    module:  # Optionally specify the default module 
-    decorator:  # Optionally specify the function decorator to apply to each node
+    module:  # Optionally specify the default Python module so you can omit the module name to which functions belongs
+    decorator:  # Optionally specify function decorator(s) to apply to each node
     nodes:
 
       - inputs: input_data_1
-        func: processing_task_1
+        func: my_module.processing_task_1
         outputs: [intermediate_data_1, intermediate_data_2]
 
       - inputs: intermediate_data_1
         func: 
-          - processing_task_2
-          - processing_task_3
+          - my_module.processing_task_2
+          - my_module.processing_task_3
         outputs: output_data
 
 MLFLOW_LOGGING_CONFIG:
