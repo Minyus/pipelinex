@@ -5,6 +5,20 @@ import pandas as pd
 import numpy as np
 
 
+sklearn_version = getattr(sklearn, "__version__")
+
+if sklearn_version and sklearn_version < "0.22":
+
+    class EstimatorTransformer(BaseEstimator, TransformerMixin):
+        pass
+
+
+else:
+
+    class EstimatorTransformer(TransformerMixin, BaseEstimator):
+        pass
+
+
 def extract_from_df(df, cols, target_col):
     if isinstance(df, pd.DataFrame):
         cols = cols or df.columns
@@ -20,7 +34,7 @@ def extract_from_df(df, cols, target_col):
         return dict(X=X), cols
 
 
-class ZeroToZeroTransformer(BaseEstimator, TransformerMixin):
+class ZeroToZeroTransformer(EstimatorTransformer):
     def __init__(self, zero_to_zero=False, **kwargs):
         self.zero_to_zero = zero_to_zero
         super().__init__(**kwargs)
