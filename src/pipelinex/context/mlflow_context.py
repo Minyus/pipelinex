@@ -1,7 +1,7 @@
 from kedro.context import KedroContext
 from .flexible_context import FlexibleContext
 from datetime import datetime, timedelta
-from mlflow import log_artifact, log_metric, log_param
+from mlflow import set_tracking_uri, log_artifact, log_metric, log_param
 from pathlib import Path
 import time
 from typing import Any, Iterable  # NOQA
@@ -11,17 +11,20 @@ log = logging.getLogger(__name__)
 
 
 class MLflowContext(KedroContext):
+    uri = ""  # type: str
     logging_artifacts = []  # type: Iterable[str]
     offset_hours = 0  # type: int
 
     def __init__(
         self,
         *args,  # type: Any
+        uri="",  # type: str
         logging_artifacts=[],  # type: Iterable[str]
         offset_hours=0,  # type: int
         **kwargs  # type: Any
     ):
         super().__init__(*args, **kwargs)
+        self.uri = uri or self.uri
         self.logging_artifacts = logging_artifacts or self.logging_artifacts
         self.offset_hours = offset_hours or self.offset_hours
 
@@ -46,12 +49,16 @@ class MLflowContext(KedroContext):
         parameters = self.catalog._data_sets["parameters"].load()
         mlflow_logging_params = parameters.get("MLFLOW_LOGGING_CONFIG")
         if mlflow_logging_params:
+            self.uri = mlflow_logging_params.get("uri") or self.uri
             self.offset_hours = (
                 mlflow_logging_params.get("offset_hours") or self.offset_hours
             )
             self.logging_artifacts = (
                 mlflow_logging_params.get("logging_artifacts") or self.logging_artifacts
             )
+
+        if self.uri:
+            set_tracking_uri(self.uri)
 
         conf_path = Path(self.config_loader.conf_paths[0]) / "parameters.yml"
         log_artifact(conf_path)
