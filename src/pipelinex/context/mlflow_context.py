@@ -1,7 +1,15 @@
 from kedro.context import KedroContext
 from .flexible_context import FlexibleContext
 from datetime import datetime, timedelta
-from mlflow import set_tracking_uri, log_artifact, log_metric, log_param
+from mlflow import (
+    create_experiment,
+    start_run,
+    end_run,
+    set_tracking_uri,
+    log_artifact,
+    log_metric,
+    log_param,
+)
 from pathlib import Path
 import time
 from typing import Any, Iterable  # NOQA
@@ -11,6 +19,8 @@ log = logging.getLogger(__name__)
 
 
 class MLflowContext(KedroContext):
+    experiment_name = ""  # type: str
+    artifact_location = ""  # type: str
     uri = ""  # type: str
     logging_artifacts = []  # type: Iterable[str]
     offset_hours = 0  # type: int
@@ -18,12 +28,16 @@ class MLflowContext(KedroContext):
     def __init__(
         self,
         *args,  # type: Any
+        experiment_name="",  # type: str
+        artifact_location="",  # type: str
         uri="",  # type: str
         logging_artifacts=[],  # type: Iterable[str]
         offset_hours=0,  # type: int
         **kwargs  # type: Any
     ):
         super().__init__(*args, **kwargs)
+        self.experiment_name = experiment_name or self.experiment_name
+        self.artifact_location = artifact_location or self.artifact_location
         self.uri = uri or self.uri
         self.logging_artifacts = logging_artifacts or self.logging_artifacts
         self.offset_hours = offset_hours or self.offset_hours
@@ -49,6 +63,12 @@ class MLflowContext(KedroContext):
         parameters = self.catalog._data_sets["parameters"].load()
         mlflow_logging_params = parameters.get("MLFLOW_LOGGING_CONFIG")
         if mlflow_logging_params:
+            self.experiment_name = (
+                mlflow_logging_params.get("experiment_name") or self.experiment_name
+            )
+            self.artifact_location = (
+                mlflow_logging_params.get("artifact_location") or self.artifact_location
+            )
             self.uri = mlflow_logging_params.get("uri") or self.uri
             self.offset_hours = (
                 mlflow_logging_params.get("offset_hours") or self.offset_hours
@@ -59,6 +79,12 @@ class MLflowContext(KedroContext):
 
         if self.uri:
             set_tracking_uri(self.uri)
+
+        if self.experiment_name:
+            experiment_id = create_experiment(
+                self.experiment_name, artifact_location=self.artifact_location
+            )
+            start_run(experiment_id=experiment_id)
 
         conf_path = Path(self.config_loader.conf_paths[0]) / "parameters.yml"
         log_artifact(conf_path)
@@ -86,6 +112,8 @@ class MLflowContext(KedroContext):
                     log.info("'{}' was logged by MLflow.".format(fp))
                 else:
                     log.warning("_filepath of '{}' could not be found.".format(d))
+
+        end_run()
 
         return nodes
 
