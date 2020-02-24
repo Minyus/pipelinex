@@ -3,6 +3,7 @@ from .flexible_context import FlexibleContext
 from datetime import datetime, timedelta
 from mlflow import (
     create_experiment,
+    set_experiment,
     start_run,
     end_run,
     set_tracking_uri,
@@ -10,6 +11,7 @@ from mlflow import (
     log_metric,
     log_param,
 )
+from mlflow.exceptions import MlflowException
 from pathlib import Path
 import time
 from typing import Any, Iterable  # NOQA
@@ -81,10 +83,13 @@ class MLflowContext(KedroContext):
             set_tracking_uri(self.uri)
 
         if self.experiment_name:
-            experiment_id = create_experiment(
-                self.experiment_name, artifact_location=self.artifact_location
-            )
-            start_run(experiment_id=experiment_id)
+            try:
+                experiment_id = create_experiment(
+                    self.experiment_name, artifact_location=self.artifact_location
+                )
+                start_run(experiment_id=experiment_id)
+            except MlflowException:
+                set_experiment(self.experiment_name)
 
         conf_path = Path(self.config_loader.conf_paths[0]) / "parameters.yml"
         log_artifact(conf_path)
