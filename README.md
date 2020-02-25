@@ -192,8 +192,12 @@ PipelineX enables you to use Kedro in more convenient ways:
   - Specify `inputs`, `func`, and `outputs` for each node
     - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
 - Integration with MLflow
+  - Optionally specify the MLflow tracking database URI 
+  (For more details, see [SQLAlchemy database uri](https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls))
+  - Optionally specify the experiment name
+  - Optionally specify the location to save artifacts
   - Optionally specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
-  - Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
+  - Optionally specify the artifacts (e.g. parameters, trained model, prediction) to save
 - Syntactic sugar for `catalog.yml`
   - Optionally specify the `filepath` as the catalog entry name so the file name without extension is used as the DataSet instance name
   - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
@@ -227,6 +231,9 @@ PIPELINES:
         outputs: output_data
 
 MLFLOW_LOGGING_CONFIG:
+  uri: sqlite:///mlruns/sqlite.db
+  experiment_name: experiment_001
+  artifact_location: ./mlruns/experiment_001
   offset_hours: 0  # Specify the offset hour (local time zone) to show in MLflow tracking
   logging_artifacts:  # Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
 
