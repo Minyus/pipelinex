@@ -210,7 +210,7 @@ def as_tuple(x):
 
 
 def setup_conv_params(
-    kernel_size=(1, 1),
+    kernel_size=1,
     dilation=None,
     padding=None,
     stride=None,
