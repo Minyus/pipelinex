@@ -341,8 +341,19 @@ class TensorSkip(torch.nn.Module):
         return input
 
 
-class TensorIdentity(TensorSkip):
-    pass
+class TensorIdentity(torch.nn.Module):
+    def forward(self, input):
+        return input
+
+
+class ModuleConcatSkip(ModuleConcat):
+    def __init__(self, *modules):
+        super().__init__(TensorIdentity(), torch.nn.Sequential(*modules))
+
+
+class ModuleSumSkip(ModuleSum):
+    def __init__(self, *modules):
+        super().__init__(TensorIdentity(), torch.nn.Sequential(*modules))
 
 
 class TensorForward(torch.nn.Module):
