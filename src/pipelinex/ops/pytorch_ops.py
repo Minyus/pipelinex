@@ -244,16 +244,37 @@ def setup_conv_params(
     return args, kwargs
 
 
+batchnorm_dict = {
+    "1": torch.nn.BatchNorm1d,
+    "2": torch.nn.BatchNorm2d,
+    "3": torch.nn.BatchNorm3d,
+}
+
+
 class ModuleConvWrap(torch.nn.Sequential):
     core = None
 
-    def __init__(self, activation=None, *args, **kwargs):
+    def __init__(self, batchnorm=None, activation=None, *args, **kwargs):
         args, kwargs = setup_conv_params(*args, **kwargs)
         module = self.core(*args, **kwargs)
+        modules = [module]
+        if batchnorm:
+            if len(args) >= 2:
+                out_channels = args[1]
+            else:
+                out_channels = kwargs["out_channels"]
+            dim_str = self.core.__name__[-2]
+            batchnorm_obj = batchnorm_dict[dim_str]
+            if isinstance(batchnorm, dict):
+                batchnorm_module = batchnorm_obj(num_features=out_channels, **batchnorm)
+            else:
+                batchnorm_module = batchnorm_obj(num_features=out_channels)
+            modules.append(batchnorm_module)
         if activation:
-            super().__init__(module, activation)
-        else:
-            super().__init__(module)
+            if isinstance(activation, str):
+                activation = getattr(torch.nn, activation)()
+            modules.append(activation)
+        super().__init__(*modules)
 
 
 class TensorConv1d(ModuleConvWrap):
