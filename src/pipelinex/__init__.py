@@ -60,4 +60,4 @@ if find_spec("cv2"):
 if find_spec("skimage"):
     from .ops.skimage_ops import *  # NOQA
 
-__version__ = "0.1.7"
+__version__ = "0.1.8"
