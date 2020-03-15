@@ -207,6 +207,37 @@ print("train_params object: \n", train_params, "\n")
 >  {'train_batch_size': 32, 'val_batch_size': 32} 
 ```
 
+### Expression by parentheses
+
+Strings wrapped in parentheses are evaluated as an expression.
+
+```python
+from pipelinex import HatchDict
+import yaml
+from pprint import pformat
+
+# Read parameters dict from a YAML file in actual use 
+params_yaml="""
+train_params:
+  train_batch_size: (8+8+8+8)
+"""
+parameters = yaml.safe_load(params_yaml)
+
+train_params_dict = parameters.get("train_params")
+print("train_params dict: \n", pformat(train_params_dict), "\n")
+
+train_params = HatchDict(parameters).get("train_params")
+print("train_params object: \n", train_params, "\n")
+```
+
+```
+> train_params dict: 
+>  {'train_batch_size': '(8+8+8+8)'} 
+> 
+> train_params object: 
+>  {'train_batch_size': 32} 
+```
+
 
 ## Use with Kedro
 
