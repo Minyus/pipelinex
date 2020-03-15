@@ -484,11 +484,20 @@ print("model object: \n", model, "\n")
 
 ## Use with Ignite
 
-Wrappers of Ignite provides features including:
+Wrappers of Ignite provides features useful for training including:
 - Integration with MLflow
 - Use only partial samples in dataset for prototyping
 - Flexible model checkpoint using timestamp in the model file name
 - Time limit for training
+
+
+## Use with OpenCV
+
+A challenge of image processing is that the parameters and algorithms that work with an image often do not work with another image. You will want to output intermediate images from each image processing pipeline step for visual check during development, but you will not want to output all the intermediate images to save time and disk space in production.
+
+Wrappers of OpenCV and `ImagesLocalDataSet` are the solution. You can concentrate on developping your image processing pipeline for an image (3-D or 2-D numpy array), and it will run for all the images in a folder.
+
+If you are devepping an image processing pipeline consisting of 5 steps and you have 10 images, for example, you can check 10 generated images in each of 5 folders, 50 images in total, during development.
 
 
 ## Author
