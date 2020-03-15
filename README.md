@@ -82,19 +82,25 @@ After I confirmed my package worked well with the Kaggle competition, I released
 
 ## Example/Demo Projects
 
-- [Basic example](https://github.com/Minyus/pipelinex_pytorch)
+- [Computer Vision using PyTorch](https://github.com/Minyus/pipelinex_pytorch)
   - Packages: PyTorch, Ignite, Shap, Kedro, MLflow
   - Application: Image classification
-  - Model: CNN (Convolutional Neural Network)
   - Data: MNIST images
+  - Model: CNN (Convolutional Neural Network)
   - Loss: Cross-entropy
 
-- [Complex example](https://github.com/Minyus/kaggle_nfl)
+- [Kaggle competition using PyTorch](https://github.com/Minyus/kaggle_nfl)
   - Packages: PyTorch, Ignite, pandas, numpy, Kedro, MLflow
   - Application: Kaggle competition to predict the results of American Football plays
-  - Model: Combination of CNN and MLP
   - Data: Sparse heatmap-like field images and tabular data
+  - Model: Combination of CNN and MLP
   - Loss: Continuous Rank Probability Score (CRPS)
+
+- [Computer Vision using OpenCV](https://github.com/Minyus/pipelinex_image_processing)
+  - Packages: OpenCV, Scikit-image, numpy, TensorFlow (pretrained model), Kedro, MLflow
+  - Application: Image processing to estimate the empty area ratio of cuboid container on a truck
+  - Data: container images
+
 
 ## Template
 
