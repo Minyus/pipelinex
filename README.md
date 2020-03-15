@@ -102,7 +102,9 @@ General PipelineX project template is available at:
 https://github.com/Minyus/pipelinex_template
 
 
-## Basic usage with *any* Python packages
+## Use as a powerful YAML/JSON parser
+
+### Python objects as parameters
 
 To manage experiments, it is a common practice to store parameters in YAML or JSON config files.
 Parameters for Machine Learning are, however not limited to (list of) numbers or string.
@@ -169,6 +171,40 @@ print("model object: \n", model, "\n")
 >                    random_state=42, solver='warn', tol=0.0001, verbose=0,
 >                    warm_start=False) 
 > 
+```
+
+### Self-lookup 
+
+You can look up another value in the YAML/JSON file using `=` key, which is simpler than YAML's Anchor&Alias and Jsonnet's Variable.
+To specify the nested key (key in a dict of dict), use `.` as the separator.
+
+```python
+from pipelinex import HatchDict
+import yaml
+from pprint import pformat
+
+# Read parameters dict from a YAML file in actual use 
+params_yaml="""
+train_params:
+  train_batch_size: 32
+  val_batch_size: {=: train_params.train_batch_size}
+"""
+parameters = yaml.safe_load(params_yaml)
+
+train_params_dict = parameters.get("train_params")
+print("train_params dict: \n", pformat(train_params_dict), "\n")
+
+train_params = HatchDict(parameters).get("train_params")
+print("train_params object: \n", train_params, "\n")
+```
+
+```
+> train_params dict: 
+>  {'train_batch_size': 32,
+>  'val_batch_size': {'=': 'train_params.train_batch_size'}} 
+> 
+> train_params object: 
+>  {'train_batch_size': 32, 'val_batch_size': 32} 
 ```
 
 
