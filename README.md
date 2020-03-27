@@ -500,6 +500,20 @@ Wrappers of OpenCV and `ImagesLocalDataSet` are the solution. You can concentrat
 If you are devepping an image processing pipeline consisting of 5 steps and you have 10 images, for example, you can check 10 generated images in each of 5 folders, 50 images in total, during development.
 
 
+## Use with Docker container
+
+### Build Docker image
+
+```bash
+# docker build -t pipelinex:3.7.7-slim -f dockerfiles/dockerfile .
+```
+
+### Use with Docker container
+
+```bash
+# docker run -it --name pipelinex pipelinex:3.7.7-slim /bin/bash
+```
+
 ## Author
 Yusuke Minami
 
