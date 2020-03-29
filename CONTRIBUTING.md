@@ -24,4 +24,5 @@
 - Formatting by [Black](https://github.com/psf/black)
 - [PEP 484 type hints](https://www.python.org/dev/peps/pep-0484/)
 - [Google docstrings](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
+- Compatibility with Python 3.5 and 3.7 while Python 3.6 is recommended.
 - For string formatting, use [str.format()](https://docs.python.org/3/library/stdtypes.html#str.format) method rather than [f-strings](https://www.python.org/dev/peps/pep-0498/#id13)
