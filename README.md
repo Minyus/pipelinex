@@ -511,3 +511,7 @@ Yusuke Minami
 - [GitHub](https://github.com/Minyus)
 - [Linkedin](https://www.linkedin.com/in/yusukeminami/)
 - [Twitter](https://twitter.com/Minyus86)
+
+## Contributors
+
+- [shibuiwilliam](https://github.com/shibuiwilliam)
