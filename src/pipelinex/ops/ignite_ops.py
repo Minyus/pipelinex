@@ -33,7 +33,7 @@ class NetworkTrain:
 
         if mlflow_logging:
             try:
-                import mlflow
+                import mlflow  # NOQA
             except ImportError:
                 log.warning("Failed to import mlflow. MLflow logging is disabled.")
                 mlflow_logging = False
