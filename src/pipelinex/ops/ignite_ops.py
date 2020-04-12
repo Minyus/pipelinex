@@ -95,9 +95,9 @@ class NetworkTrain:
         if cudnn_benchmark:
             torch.backends.cudnn.benchmark = cudnn_benchmark
 
-        optimizer_ = optimizer(model.parameters(), **optimizer_params)
-
         device = "cuda" if torch.cuda.is_available() else "cpu"
+        model.to(device)
+        optimizer_ = optimizer(model.parameters(), **optimizer_params)
         trainer = create_supervised_trainer(
             model, optimizer_, loss_fn=loss_fn, device=device
         )
