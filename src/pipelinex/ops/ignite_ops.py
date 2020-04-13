@@ -18,6 +18,17 @@ log = logging.getLogger(__name__)
 
 
 class NetworkTrain:
+    """Create a trainer for a supervised PyTorch model.
+
+    Args:
+        train_params (dict): Training parameters.
+        mlflow_logging (bool): If True and MLflow is installed, MLflow logging is enabled.
+
+    Returns:
+        trainer (callable): a callable to train a PyTorch model.
+
+    """
+
     def __init__(
         self,
         train_params,  # type: dict
@@ -27,6 +38,17 @@ class NetworkTrain:
         self.mlflow_logging = mlflow_logging
 
     def __call__(self, model, train_dataset, val_dataset=None, parameters=None):
+        """ Train a PyTorch model.
+        
+        Args:
+            model (torch.nn.Module): PyTorch model to train.
+            train_dataset (torch.utils.data.Dataset): Dataset used to train.
+            val_dataset (torch.utils.data, optional): Dataset used to validate.
+            parameters (dict, optional) : Ignored.
+        
+        Returns:
+            trained_model (torch.nn.Module): Trained PyTorch model.
+        """
         assert train_dataset is not None
         train_params = self.train_params
         mlflow_logging = self.mlflow_logging
