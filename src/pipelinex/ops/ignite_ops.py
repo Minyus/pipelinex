@@ -33,6 +33,9 @@ import logging
 log = logging.getLogger(__name__)
 
 
+__all__ = ["NetworkTrain"]
+
+
 """ 
 Copied from https://github.com/pytorch/ignite/blob/v0.2.1/ignite/handlers/checkpoint.py 
 due to the change in ignite v0.3.0
