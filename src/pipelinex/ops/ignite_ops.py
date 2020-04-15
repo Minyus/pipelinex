@@ -1,7 +1,12 @@
 import copy
-import os
 from datetime import datetime, timedelta
+import numpy as np
+import os
 from pathlib import Path
+from pkg_resources import parse_version
+import tempfile
+import time
+
 import torch
 from torch.utils.data import DataLoader
 import ignite
@@ -9,10 +14,20 @@ from ignite.engine import Events, create_supervised_trainer, create_supervised_e
 from ignite.metrics import RunningAverage
 from ignite.handlers import EarlyStopping
 from ignite.contrib.handlers.tqdm_logger import ProgressBar
-import numpy as np
-import time
-from pkg_resources import parse_version
-import tempfile
+
+if parse_version(ignite.__version__) >= parse_version("0.2.1"):
+    from ignite.contrib.handlers.mlflow_logger import (
+        MLflowLogger,
+        OutputHandler,
+        global_step_from_engine,
+    )
+else:
+    from .ignite.contrib.handlers.mlflow_logger import (
+        MLflowLogger,
+        OutputHandler,
+        global_step_from_engine,
+    )
+
 import logging
 
 log = logging.getLogger(__name__)
@@ -252,21 +267,6 @@ class NetworkTrain:
             except ImportError:
                 log.warning("Failed to import mlflow. MLflow logging is disabled.")
                 mlflow_logging = False
-
-        if mlflow_logging:
-
-            if parse_version(ignite.__version__) >= parse_version("0.2.1"):
-                from ignite.contrib.handlers.mlflow_logger import (
-                    MLflowLogger,
-                    OutputHandler,
-                    global_step_from_engine,
-                )
-            else:
-                from .ignite.contrib.handlers.mlflow_logger import (
-                    MLflowLogger,
-                    OutputHandler,
-                    global_step_from_engine,
-                )
 
         train_dataset_size_limit = train_params.get("train_dataset_size_limit")
         val_dataset_size_limit = train_params.get("val_dataset_size_limit")
