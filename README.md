@@ -1,14 +1,22 @@
+<p align="center">
+<img src="img/PipelineX_Logo.png">
+</p>
+
 # PipelineX
+
+Pipeline for eXperimentation
 
 [![PyPI version](https://badge.fury.io/py/pipelinex.svg)](https://badge.fury.io/py/pipelinex)
 ![Python Version](https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7-blue.svg)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
 
-Pipeline for eXperimentation
-
 ## Overview
 
 PipelineX is a Python package to develop pipelines for rapid Machine/Deep Learning experimentation.
+
+<p align="center">
+<img src="img/ML_project_from_experimentation_to_production.png">
+</p
 
 Please refer [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow) to find out how PipelineX differs from other pipeline/workflow packages: Airflow, Luigi, Gokart, Metaflow, and Kedro.
 
