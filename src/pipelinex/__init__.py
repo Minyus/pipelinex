@@ -43,7 +43,7 @@ if find_spec("torch"):
     from .ops.pytorch_ops import *  # NOQA
 
 if find_spec("ignite"):
-    from .ops.ignite_ops import *  # NOQA
+    from .ops.ignite.declaratives.declarative_trainer import *  # NOQA
 
 if find_spec("shap"):
     from .ops.shap_ops import *  # NOQA
