@@ -150,3 +150,8 @@ static
 
 # macOS
 *.DS_Store
+
+# data
+*.pt
+*.gz
+*ubyte
