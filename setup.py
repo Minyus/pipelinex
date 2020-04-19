@@ -6,7 +6,7 @@ setup(
     name=package_name,
     packages=find_packages(where="src", exclude=["tests"]),
     package_dir={"": "src"},
-    version="0.1.8",
+    version="0.1.9",
     license="Apache Software License (Apache 2.0)",
     author="Yusuke Minami",
     author_email="me@minyus.github.com",
