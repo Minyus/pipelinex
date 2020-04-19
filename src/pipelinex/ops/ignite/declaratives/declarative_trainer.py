@@ -45,10 +45,12 @@ class NetworkTrain:
         evaluate_val_data (str, optional): When to compute evaluation_metrics using validation dataset.
             Accepts events at https://pytorch.org/ignite/engine.html#ignite.engine.Events
         progress_update (bool, optional): Whether to show progress bar using tqdm package
-        scheduler (ignite.contrib.handle.param_scheduler.ParamScheduler, optional): Param scheduler
+        scheduler (ignite.contrib.handle.param_scheduler.ParamScheduler, optional): Param scheduler.
             Accepts a ParamScheduler at
             https://pytorch.org/ignite/contrib/handlers.html#module-ignite.contrib.handlers.param_scheduler
         scheduler_params (dict, optional): Parameters for scheduler
+        model_checkpoint (ignite.handlers.ModelCheckpoint, optional): Model Checkpoint.
+            Accepts a ModelCheckpoint at https://pytorch.org/ignite/handlers.html#ignite.handlers.ModelCheckpoint
         model_checkpoint_params (dict, optional): Parameters for ModelCheckpoint at
             https://pytorch.org/ignite/handlers.html#ignite.handlers.ModelCheckpoint
         early_stopping_params (dict, optional): Parameters for EarlyStopping at
@@ -84,6 +86,7 @@ class NetworkTrain:
         progress_update=None,
         scheduler=None,
         scheduler_params=dict(),
+        model_checkpoint=None,
         model_checkpoint_params=dict(),
         early_stopping_params=dict(),
         time_limit=None,
@@ -108,6 +111,7 @@ class NetworkTrain:
             progress_update=progress_update,
             scheduler=scheduler,
             scheduler_params=scheduler_params,
+            model_checkpoint=model_checkpoint,
             model_checkpoint_params=model_checkpoint_params,
             early_stopping_params=early_stopping_params,
             time_limit=time_limit,
@@ -168,6 +172,7 @@ class NetworkTrain:
         scheduler = train_params.get("scheduler")
         scheduler_params = train_params.get("scheduler_params", dict())
 
+        model_checkpoint = train_params.get("model_checkpoint")
         model_checkpoint_params = train_params.get("model_checkpoint_params")
         early_stopping_params = train_params.get("early_stopping_params")
         time_limit = train_params.get("time_limit")
@@ -243,7 +248,7 @@ class NetworkTrain:
                     "score_function", get_score_function("ema_loss", minimize=minimize)
                 )
             model_checkpoint_params.setdefault("score_name", "ema_loss")
-            mc = ModelCheckpoint(**model_checkpoint_params)
+            mc = model_checkpoint(**model_checkpoint_params)
             trainer.add_event_handler(Events.EPOCH_COMPLETED, mc, {"model": model})
 
         if early_stopping_params:

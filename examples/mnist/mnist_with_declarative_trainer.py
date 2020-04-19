@@ -1,11 +1,10 @@
-
-import torch
 from torch import nn
 from torch.optim import SGD
 import torch.nn.functional as F
 from torchvision.transforms import Compose, ToTensor, Normalize
 from torchvision.datasets import MNIST
 from ignite.metrics import Accuracy, Loss
+from ignite.handlers import ModelCheckpoint
 from ignite.contrib.handlers.param_scheduler import LinearCyclicalScheduler
 from pipelinex import NetworkTrain
 
@@ -73,8 +72,10 @@ if __name__ == "__main__":
             "end_value_mult": 1.0,
             "save_history": False,
         },
-        # [Optional] parameters for ModelCheckpoint at
+        # [Optinal] ModelCheckpoint accepts a ModelCheckpoint at
         # https://pytorch.org/ignite/handlers.html#ignite.handlers.ModelCheckpoint
+        "model_checkpoint": ModelCheckpoint,
+        # [Optional] parameters for ModelCheckpoint
         "model_checkpoint_params": {
             "dirname": "../checkpoint",
             "filename_prefix": "model",
