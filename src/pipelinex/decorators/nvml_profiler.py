@@ -13,6 +13,7 @@ if find_spec("pynvml"):
         nvmlDeviceGetHandleByIndex,
         nvmlDeviceGetName,
         nvmlDeviceGetMemoryInfo,
+        nvmlDeviceGetUtilizationRates,
         nvmlShutdown,
     )
 elif find_spec("py3nvml"):
@@ -24,6 +25,7 @@ elif find_spec("py3nvml"):
         nvmlDeviceGetHandleByIndex,
         nvmlDeviceGetName,
         nvmlDeviceGetMemoryInfo,
+        nvmlDeviceGetUtilizationRates,
         nvmlShutdown,
     )
 else:
@@ -57,6 +59,10 @@ def get_nv_info():
             dev_info["Total_Memory"] = memory_info.total
             dev_info["Free_Memory"] = memory_info.free
             dev_info["Used_Memory"] = memory_info.used
+
+            util_rates = nvmlDeviceGetUtilizationRates(handle)
+            dev_info["GPU_Utilization_Rate"] = util_rates.gpu
+            dev_info["Memory_Utilization_Rate"] = util_rates.memory
 
             devices.append(dev_info)
 
