@@ -93,7 +93,7 @@ def nvml_profile(func: Callable) -> Callable:
             used_memory_diffs.append(used_memory_diff)
 
         log.info(
-            "After running <{}>, NVML returned: {}. Used memory diff: {}".format(
+            "Ran: '{}', NVML returned: {}, Used memory diff: {}".format(
                 _func_full_name(func), nv_info, used_memory_diffs,
             )
         )
