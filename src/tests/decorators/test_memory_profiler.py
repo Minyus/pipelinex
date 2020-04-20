@@ -1,5 +1,5 @@
 
-from pipelinex.decorators.memory_profiler import mem_profile
+from pipelinex import mem_profile
 from time import sleep
 import logging
 

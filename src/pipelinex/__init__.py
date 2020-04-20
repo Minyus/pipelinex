@@ -60,4 +60,11 @@ if find_spec("cv2"):
 if find_spec("skimage"):
     from .ops.skimage_ops import *  # NOQA
 
+if find_spec("memory_profiler"):
+    from .decorators.memory_profiler import *  # NOQA
+
+if find_spec("pynvml") or find_spec("py3nvml"):
+    from .decorators.nvml_profiler import *  # NOQA
+
+
 __version__ = "0.1.9"

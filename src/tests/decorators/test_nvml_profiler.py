@@ -1,4 +1,4 @@
-from pipelinex.decorators.nvml_profiler import nvml_profile
+from pipelinex import nvml_profile
 from time import sleep
 import logging
 
