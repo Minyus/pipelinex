@@ -41,8 +41,8 @@ def get_nv_info():
     try:
         nvmlInit()
 
-        nv_info["_Driver_Version"] = nvmlSystemGetDriverVersion()
-        nv_info["_NVML_Version"] = nvmlSystemGetNVMLVersion()
+        nv_info["_Driver_Version"] = str(nvmlSystemGetDriverVersion(), errors="ignore")
+        nv_info["_NVML_Version"] = str(nvmlSystemGetNVMLVersion(), errors="ignore")
 
         device_count = nvmlDeviceGetCount()
         nv_info["Device_Count"] = device_count
@@ -53,7 +53,7 @@ def get_nv_info():
             dev_info = dict()
 
             handle = nvmlDeviceGetHandleByIndex(i)
-            dev_info["_Name"] = nvmlDeviceGetName(handle)
+            dev_info["_Name"] = str(nvmlDeviceGetName(handle), errors="ignore")
 
             memory_info = nvmlDeviceGetMemoryInfo(handle)
             dev_info["Total_Memory"] = memory_info.total
