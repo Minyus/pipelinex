@@ -23,8 +23,7 @@ limitations under the License.
 
 
 Regarding the following parts:
-- `ignite.contrib.handlers.mlflow_logger.py` copied from https://github.com/pytorch/ignite/blob/v0.2.1/ignite/contrib/handlers/base_logger.py
-- `ignite.contrib.handlers.base_logger.py` copied from https://github.com/pytorch/ignite/blob/v0.2.1/ignite/contrib/handlers/mlflow_logger.py
+- `flexible_checkpoint.py` based on https://github.com/pytorch/ignite/blob/v0.2.1/ignite/handlers/checkpoint.py
 
 BSD 3-Clause License
 
