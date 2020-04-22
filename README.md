@@ -483,7 +483,7 @@ print("model object: \n", model, "\n")
 
 ## Use with PyTorch Ignite
 
-Wrappers of PyTorch Ignite provides most of features available in Ignite, including integratino with MLflow, in an easy declarative way.
+Wrappers of PyTorch Ignite provides most of features available in Ignite, including integration with MLflow, in an easy declarative way.
 
 In addition, the following optional features are available in PipelineX.
 
