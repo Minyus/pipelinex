@@ -533,6 +533,8 @@ cudnn_benchmark (bool, optional): Value for torch.backends.cudnn.benchmark.
 mlflow_logging (bool, optional): If True and MLflow is installed, MLflow logging is enabled.
 ```
 
+Please see the [example code using MNIST dataset](https://github.com/Minyus/pipelinex/blob/master/examples/mnist/mnist_with_declarative_trainer.py) prepared based on the [original code](https://github.com/pytorch/ignite/blob/master/examples/mnist/mnist.py).
+
 It is also possible to use:
 
 - [FlexibleModelCheckpoint](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/ops/ignite/handlers/flexible_checkpoint.py) handler which enables to use timestamp in the model checkpoint file name to clarify which one is the latest.
