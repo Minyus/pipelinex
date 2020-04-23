@@ -12,7 +12,14 @@ Pipeline for eXperimentation
 
 ## Overview
 
-PipelineX is a Python package to develop pipelines for rapid Machine/Deep Learning experimentation.
+PipelineX is a Python package to develop pipelines for efficient Machine/Deep Learning experimentation by separating:
+
+- Pipeline/DAG definition (in a YAML/JSON file)
+- File I/O, database access
+- Logging, performance benchmarking
+- Parameter configuration (in YAML/JSON files)
+- Saving metrics to a database supported by SQLAlchemy (SQLite, PostgreSQL, etc.)
+- Analysis of experiments
 
 <p align="center">
 <img src="img/ML_project_from_experimentation_to_production.png">
