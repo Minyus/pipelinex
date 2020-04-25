@@ -18,13 +18,13 @@ PipelineX is a Python package designed to make Machine Learning projects efficie
 <img src="img/ML_project_from_experimentation_to_production.png">
 </p
 
-PipelineX provides Pythonic enhanced YAML/JSON support useful for parameter management as follows.
+PipelineX provides [Pythonic enhanced YAML/JSON](https://github.com/Minyus/pipelinex#pythonic-enhanced-yamljson) support useful for parameter management summarized as follows.
 
 - Import-less Python object: Include (nested) Python classes and functions in a YAML/JSON file
 - Anchor-less aliasing: Look up another key in the same YAML/JSON file
 - Python expression in YAML/JSON filess
 
-PipelineX wraps and enhances [Kedro](https://github.com/quantumblacklabs/kedro) to provide the following features.
+PipelineX provides [YAML-configurable enhanced Kedro](https://github.com/Minyus/pipelinex#yamlconfigurable-enhanced-kedro) support summarized as follows.
 
 - To enhance Kedro-style Pipeline/DAG definition:
   - Resume pipeline execution using the intermediate files
@@ -304,7 +304,7 @@ print("train_params parsed dict: \n", pformat(train_params), "\n")
 >
 ```
 
-## Use with Kedro
+## YAML-configurable enhanced Kedro
 
 Kedro is a Python package to develop pipelines consisting of tasks (called `node`).
 
