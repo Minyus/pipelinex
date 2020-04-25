@@ -59,7 +59,7 @@ PipelineX shares similar philosophy, concepts, or API styles with:
 - [Allennlp](https://github.com/allenai/allennlp)
 - [Ludwig](https://uber.github.io/ludwig/)
 - [Detectron2](https://github.com/facebookresearch/detectron2)
-- [Hydras](https://github.com/facebookresearch/hydra)
+- [Hydra](https://github.com/facebookresearch/hydra)
 - [Jsonnet](https://github.com/google/jsonnet)
 
 ## Installation
