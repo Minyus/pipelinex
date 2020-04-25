@@ -14,12 +14,22 @@ Pipeline for eXperimentation
 
 PipelineX is a Python package to develop pipelines for efficient Machine/Deep Learning experimentation by separating:
 
-- Pipeline/DAG definition (in a YAML/JSON file)
+[With Kedro]
+
+- Pipeline/DAG definition
+  - [With PipelineX] Pipeline/DAG definition in a YAML/JSON file
+  - [With PipelineX] Syntactic sugars (easier grammar) including Sequential API
 - File I/O, database access
-- Logging, performance benchmarking
-- Parameter configuration (in YAML/JSON files)
+  - [With PipelineX] Additional Kedro-style `DataSet`s, including multiple images in a foldler
+- Logging, performance benchmarking (time and memory profiling) using decorators
+  - [With PipelineX] Additional decorators including GPU memory profiling using NVIDIA Management Library (NVML)
+- Parameter configuration in YAML/JSON files
+  - [With PipelineX] Include (nested) Python classes and functions in YAML/JSON files
+
+[With MLflow]
+
 - Saving metrics to a database supported by SQLAlchemy (SQLite, PostgreSQL, etc.)
-- Analysis of experiments
+- Analysis of experiments with a dashboard
 
 <p align="center">
 <img src="img/ML_project_from_experimentation_to_production.png">
