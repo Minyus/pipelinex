@@ -114,6 +114,8 @@ After I confirmed my package worked well with the Kaggle competition, I released
 
 - [Computer Vision using PyTorch](https://github.com/Minyus/pipelinex_pytorch)
 
+  - `parameters.yml` at [conf/base/parameters.yml](https://github.com/Minyus/pipelinex_pytorch/blob/master/conf/base/parameters.yml)
+
   - Packages: PyTorch, Ignite, Shap, Kedro, MLflow
   - Application: Image classification
   - Data: MNIST images
@@ -122,13 +124,17 @@ After I confirmed my package worked well with the Kaggle competition, I released
 
 - [Kaggle competition using PyTorch](https://github.com/Minyus/kaggle_nfl)
 
-  - Packages: PyTorch, Ignite, pandas, numpy, Kedro, MLflow
+  - `parameters.yml` at [kaggle/conf/base/parameters.yml](https://github.com/Minyus/kaggle_nfl/blob/master/kaggle/conf/base/parameters.yml)
+
+  - Packages: PyTorch, Ignite, pandas, numpy, Kedro, MLflows
   - Application: Kaggle competition to predict the results of American Football plays
   - Data: Sparse heatmap-like field images and tabular data
   - Model: Combination of CNN and MLP
   - Loss: Continuous Rank Probability Score (CRPS)
 
 - [Computer Vision using OpenCV](https://github.com/Minyus/pipelinex_image_processing)
+
+  - `parameters.yml` at [conf/base/parameters.yml](https://github.com/Minyus/pipelinex_image_processing/blob/master/conf/base/parameters.yml)
   - Packages: OpenCV, Scikit-image, numpy, TensorFlow (pretrained model), Kedro, MLflow
   - Application: Image processing to estimate the empty area ratio of cuboid container on a truck
   - Data: container images
@@ -215,10 +221,12 @@ print("model object: \n", model, "\n")
 >
 ```
 
-### Anchor-less Self-lookup
+For more examples, please see the `parameters.yml` in [example/demo projects](https://github.com/Minyus/pipelinex#exampledemo-projects) .
+
+### Anchor-less aliasing (self-lookup)
 
 You can look up another value in the same YAML/JSON file using `=` key.
-This anchor-less self-lookup can replace invasive [YAML's Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) or [Jsonnet's Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet).
+This anchor-less aliasing can replace invasive [YAML's Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) or [Jsonnet's Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet).
 
 To specify the nested key (key in a dict of dict), use `.` as the separator.
 
