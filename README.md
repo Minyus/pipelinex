@@ -16,7 +16,9 @@ PipelineX is a Python package designed to make Machine Learning projects efficie
 
 <p align="center">
 <img src="img/ML_project_from_experimentation_to_production.png">
-</p
+</p>
+
+Please refer [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow) to find out how PipelineX differs from other pipeline/workflow packages: Airflow, Luigi, Gokart, Metaflow, and Kedro.
 
 PipelineX provides [Pythonic enhanced YAML/JSON](https://github.com/Minyus/pipelinex#pythonic-enhanced-yamljson) support useful for parameter management summarized as follows.
 
@@ -27,20 +29,16 @@ PipelineX provides [Pythonic enhanced YAML/JSON](https://github.com/Minyus/pipel
 PipelineX provides [YAML-configurable enhanced Kedro](https://github.com/Minyus/pipelinex#yamlconfigurable-enhanced-kedro) support summarized as follows.
 
 - To enhance Kedro-style Pipeline/DAG definition:
-  - Resume pipeline execution using the intermediate files
+  - Option to resume pipeline execution using the intermediate files
   - Pipeline/DAG definition in a YAML/JSON file
-  - Syntactic sugars (easier grammar) including Sequential API
+  - Optional syntactic sugars (easier grammar) including Sequential API
 - In addition Kedro's file I/O and database access abstraction layers:
-  - `DataSet` for multiple images in a foldler for image processing application
+  - `DataSet` for multiple images in a foldler for image processing applications
 - In addition to Kedro's performance benchmarking (time and memory profiling) decorators:
   - GPU memory profiling using NVIDIA Management Library (NVML)
-
-PipelineX wraps [MLflow](https://github.com/mlflow/mlflow) to provide the following features.
-
-- Saving metrics to a database supported by SQLAlchemy (SQLite, PostgreSQL, etc.)
-- Analysis of experiments with a dashboard
-
-Please refer [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow) to find out how PipelineX differs from other pipeline/workflow packages: Airflow, Luigi, Gokart, Metaflow, and Kedro.
+- Integration with MLflow that enables to:
+  - Save metrics to a database supported by SQLAlchemy (SQLite, PostgreSQL, etc.)
+  - Analyze the experiments with a dashboard
 
 PipelineX includes integration with the following Python packages.
 
@@ -58,9 +56,6 @@ These wrappers are all independent and optional. You do _not_ need to install al
 
 PipelineX shares similar philosophy, concepts, or API styles with:
 
-- [Kedro](https://github.com/quantumblacklabs/kedro)
-- [PyTorch](https://github.com/pytorch/pytorch)
-- [TensorFlow/Keras](https://github.com/tensorflow/tensorflow)
 - [Allennlp](https://github.com/allenai/allennlp)
 - [Ludwig](https://uber.github.io/ludwig/)
 - [Detectron2](https://github.com/facebookresearch/detectron2)
@@ -142,7 +137,7 @@ After I confirmed my package worked well with the Kaggle competition, I released
 
 ## Template
 
-General PipelineX project template is available at:
+PipelineX project template is available at:
 https://github.com/Minyus/pipelinex_template
 
 ## Pythonic enhanced YAML/JSON
