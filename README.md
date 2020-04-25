@@ -12,9 +12,13 @@ Pipeline for eXperimentation
 
 ## Overview
 
-PipelineX is a Python package to develop pipelines for efficient Machine/Deep Learning experimentation by separating:
+PipelineX is a Python package designed to make Machine Learning projects efficient with modular, reusable, and easy-to-use features for experimentation.
 
-[With Kedro]
+<p align="center">
+<img src="img/ML_project_from_experimentation_to_production.png">
+</p
+
+PipelineX wraps and enhances [Kedro](https://github.com/quantumblacklabs/kedro) to provide the following features.
 
 - Pipeline/DAG definition
   - [With PipelineX] Pipeline/DAG definition in a YAML/JSON file
@@ -26,14 +30,10 @@ PipelineX is a Python package to develop pipelines for efficient Machine/Deep Le
 - Parameter configuration in YAML/JSON files
   - [With PipelineX] Include (nested) Python classes and functions in YAML/JSON files
 
-[With MLflow]
+PipelineX wraps [MLflow](https://github.com/mlflow/mlflow) to provide the following features.
 
 - Saving metrics to a database supported by SQLAlchemy (SQLite, PostgreSQL, etc.)
 - Analysis of experiments with a dashboard
-
-<p align="center">
-<img src="img/ML_project_from_experimentation_to_production.png">
-</p
 
 Please refer [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow) to find out how PipelineX differs from other pipeline/workflow packages: Airflow, Luigi, Gokart, Metaflow, and Kedro.
 
