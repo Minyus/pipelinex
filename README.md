@@ -18,17 +18,21 @@ PipelineX is a Python package designed to make Machine Learning projects efficie
 <img src="img/ML_project_from_experimentation_to_production.png">
 </p
 
+PipelineX provides the following features useful for parameter management.
+
+- Import-less Python object: Include (nested) Python classes and functions in a YAML/JSON file
+- Anchor-less self-lookup: Look up another key in the same YAML/JSON file
+
 PipelineX wraps and enhances [Kedro](https://github.com/quantumblacklabs/kedro) to provide the following features.
 
-- Pipeline/DAG definition
-  - [With PipelineX] Pipeline/DAG definition in a YAML/JSON file
-  - [With PipelineX] Syntactic sugars (easier grammar) including Sequential API
-- File I/O, database access
-  - [With PipelineX] Additional Kedro-style `DataSet`s, including multiple images in a foldler
-- Logging, performance benchmarking (time and memory profiling) using decorators
-  - [With PipelineX] Additional decorators including GPU memory profiling using NVIDIA Management Library (NVML)
-- Parameter configuration in YAML/JSON files
-  - [With PipelineX] Include (nested) Python classes and functions in YAML/JSON files
+- To enhance Kedro-style Pipeline/DAG definition:
+  - Resume pipeline execution using the intermediate files
+  - Pipeline/DAG definition in a YAML/JSON file
+  - Syntactic sugars (easier grammar) including Sequential API
+- In addition Kedro's file I/O and database access abstraction layers:
+  - `DataSet` for multiple images in a foldler for image processing application
+- In addition to Kedro's performance benchmarking (time and memory profiling) decorators:
+  - GPU memory profiling using NVIDIA Management Library (NVML)
 
 PipelineX wraps [MLflow](https://github.com/mlflow/mlflow) to provide the following features.
 
