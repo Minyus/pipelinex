@@ -136,7 +136,7 @@ https://github.com/Minyus/pipelinex_template
 
 ## Use as a powerful YAML/JSON parser
 
-### Python objects as parameters
+### Python objects (classes/functions) as parameters
 
 To manage experiments, it is a common practice to store parameters in YAML or JSON config files.
 Parameters for Machine Learning are, however not limited to (list of) numbers or string.
@@ -206,9 +206,11 @@ print("model object: \n", model, "\n")
 >
 ```
 
-### Self-lookup
+### Self-lookup (anchor-less aliasing)
 
-You can look up another value in the YAML/JSON file using `=` key, which is simpler than YAML's Anchor&Alias and Jsonnet's Variable.
+You can look up another value in the YAML/JSON file using `=` key.
+This anchor-less aliasing can replace invasive [YAML's Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) or [Jsonnet's Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet).
+
 To specify the nested key (key in a dict of dict), use `.` as the separator.
 
 ```python
