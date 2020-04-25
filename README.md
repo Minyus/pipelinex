@@ -63,13 +63,13 @@ PipelineX shares similar philosophy, concepts, or API styles with:
 Option 1: install from the PyPI
 
 ```bash
-$ pip3 install pipelinex
+$ pip install pipelinex
 ```
 
 Option 2: install from the GitHub repository
 
 ```bash
-$ pip3 install git+https://github.com/Minyus/pipelinex.git
+$ pip install git+https://github.com/Minyus/pipelinex.git
 ```
 
 Option 3: clone the [GitHub repository](https://github.com/Minyus/pipelinex.git), cd into the
