@@ -136,16 +136,21 @@ https://github.com/Minyus/pipelinex_template
 
 ## Use as a powerful YAML/JSON parser
 
-### Python objects (classes/functions) as parameters
+### Import-less Python object (class/function)
 
 To manage experiments, it is a common practice to store parameters in YAML or JSON config files.
 Parameters for Machine Learning are, however not limited to (list of) numbers or string.
 Which _package_ or _class/function_ (model, neural network module, optimizer, etc.) to use is also a parameter.
 
-PipelineX can parse Python dictionaries read from YAML or JSON files and convert to objects or instances.
+PipelineX can parse Python dictionaries read from YAML or JSON files and convert to Python objects without explicit `import`. This Python object support can replace [PyYAML's `!!python/object` and `!!python/name`](https://pyyaml.org/wiki/PyYAMLDocumentation) which requires explicit `import` in advance.
 
-- Use `=` key to specify the package, module, and class/function.
-- Use `_` key to specify positional arguments.
+- Use `=` key to specify the package, module, and class/function with `.` separator in `foo_package.bar_module.baz_class` format.
+- [Optional] Use `_` key to specify (list of) positional arguments (args) if any.
+- [Optional] Add keyword arguments (kwargs) if any.
+
+To return an object instance like PyYAML's `!!python/object`, feed positional and/or keyword arguments. If there is no arguments, just feed null (known as `None` in Python) to `_` key.
+
+To return an uninstantiated (raw) object like PyYAML's `!!python/name`, just feed `=` key without positional nor keyword arugments.
 
 Example:
 
@@ -206,10 +211,10 @@ print("model object: \n", model, "\n")
 >
 ```
 
-### Self-lookup (anchor-less aliasing)
+### Anchor-less Self-lookup
 
-You can look up another value in the YAML/JSON file using `=` key.
-This anchor-less aliasing can replace invasive [YAML's Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) or [Jsonnet's Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet).
+You can look up another value in the same YAML/JSON file using `=` key.
+This anchor-less self-lookup can replace invasive [YAML's Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) or [Jsonnet's Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet).
 
 To specify the nested key (key in a dict of dict), use `.` as the separator.
 
