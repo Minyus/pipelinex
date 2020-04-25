@@ -37,17 +37,19 @@ PipelineX wraps [MLflow](https://github.com/mlflow/mlflow) to provide the follow
 
 Please refer [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow) to find out how PipelineX differs from other pipeline/workflow packages: Airflow, Luigi, Gokart, Metaflow, and Kedro.
 
-PipelineX includes integration with:
+PipelineX includes integration with the following Python packages.
 
-- [Kedro](https://github.com/quantumblacklabs/kedro) (A Python library for building robust production-ready data and analytics pipelines.)
-  - Optional integration with [MLflow](https://github.com/mlflow/mlflow) (Open source platform for the machine learning lifecycle)
+- [Kedro](https://github.com/quantumblacklabs/kedro)
+- [MLflow](https://github.com/mlflow/mlflow)
 - [PyTorch](https://github.com/pytorch/pytorch)
-- [Ignite](https://github.com/pytorch/ignite) (High-level library to help with training neural networks in PyTorch)
-- [pandas](https://github.com/pandas-dev/pandas)
-- [Shap](https://github.com/slundberg/shap) (A unified approach to explain the output of any machine learning model.)
+- [Ignite](https://github.com/pytorch/ignite)
+- [Pandas](https://github.com/pandas-dev/pandas)
 - [OpenCV](https://github.com/skvark/opencv-python)
+- [Memory Profiler](https://github.com/pythonprofilers/memory_profiler)
+- [Python bindings to the NVIDIA Management Library](https://github.com/gpuopenanalytics/pynvml)
+- [Shap](https://github.com/slundberg/shap)
 
-These wrappers are all independent and optional. You do _not_ need to install all of these packages.
+These wrappers are all independent and optional. You do _not_ need to install all of these Python packages.
 
 PipelineX shares similar philosophy, concepts, or API styles with:
 
@@ -56,6 +58,8 @@ PipelineX shares similar philosophy, concepts, or API styles with:
 - [TensorFlow/Keras](https://github.com/tensorflow/tensorflow)
 - [Allennlp](https://github.com/allenai/allennlp)
 - [Ludwig](https://uber.github.io/ludwig/)
+- [Detectron2](https://github.com/facebookresearch/detectron2)
+- [Hydras](https://github.com/facebookresearch/hydra)
 - [Jsonnet](https://github.com/google/jsonnet)
 
 ## Installation
