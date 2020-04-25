@@ -18,10 +18,11 @@ PipelineX is a Python package designed to make Machine Learning projects efficie
 <img src="img/ML_project_from_experimentation_to_production.png">
 </p
 
-PipelineX provides the following features useful for parameter management.
+PipelineX provides Pythonic enhanced YAML/JSON support useful for parameter management as follows.
 
 - Import-less Python object: Include (nested) Python classes and functions in a YAML/JSON file
-- Anchor-less self-lookup: Look up another key in the same YAML/JSON file
+- Anchor-less aliasing: Look up another key in the same YAML/JSON file
+- Python expression in YAML/JSON filess
 
 PipelineX wraps and enhances [Kedro](https://github.com/quantumblacklabs/kedro) to provide the following features.
 
@@ -144,7 +145,7 @@ After I confirmed my package worked well with the Kaggle competition, I released
 General PipelineX project template is available at:
 https://github.com/Minyus/pipelinex_template
 
-## Use as a powerful YAML/JSON parser
+## Pythonic enhanced YAML/JSON
 
 ### Import-less Python object (class/function)
 
@@ -259,7 +260,7 @@ print("train_params object: \n", train_params, "\n")
 >  {'train_batch_size': 32, 'val_batch_size': 32}
 ```
 
-### Expression by parentheses
+### Python expression
 
 Strings wrapped in parentheses are evaluated as an expression.
 
