@@ -269,25 +269,38 @@ import yaml
 from pprint import pformat
 
 # Read parameters dict from a YAML file in actual use
-params_yaml="""
+params_yaml = """
 train_params:
-  train_batch_size: (8+8+8+8)
+  param1_tuple: (1, 2, 3)
+  param2_formula: (2 + 3)
+  param3_inf: (float("Inf"))
+  param4_str_1e10: 1e10
+  param5_integer_1e10: (int(1e10))
 """
 parameters = yaml.safe_load(params_yaml)
 
 train_params_dict = parameters.get("train_params")
-print("train_params dict: \n", pformat(train_params_dict), "\n")
+print("train_params raw dict: \n", pformat(train_params_dict), "\n")
 
 train_params = HatchDict(parameters).get("train_params")
-print("train_params object: \n", train_params, "\n")
+print("train_params parsed dict: \n", pformat(train_params), "\n")
 ```
 
 ```
-> train_params dict:
->  {'train_batch_size': '(8+8+8+8)'}
+> train_params raw dict:
+>  {'param1_tuple': '(1, 2, 3)',
+>  'param2_formula': '(2 + 3)',
+>  'param3_inf': '(float("Inf"))',
+>  'param4_str_1e10': '1e10',
+>  'param5_integer_1e10': '(int(1e10))'}
 >
-> train_params object:
->  {'train_batch_size': 32}
+> train_params parsed dict:
+>  {'param1_tuple': (1, 2, 3),
+>  'param2_formula': 5,
+>  'param3_inf': inf,
+>  'param4_str_1e10': '1e10',
+>  'param5_integer_1e10': 10000000000}
+>
 ```
 
 ## Use with Kedro
