@@ -9,7 +9,7 @@ class HatchDict:
         egg,  # type: Union[dict, List]
         lookup={},  # type: dict
         support_nested_keys=True,  # type: bool
-        self_lookup_key="=",  # type: str
+        self_lookup_key="$",  # type: str
         support_import=True,  # type: bool
         additional_import_modules=["pipelinex"],  # type: Union[List, str]
         obj_key="=",  # type: str

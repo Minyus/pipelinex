@@ -280,7 +280,7 @@ For more examples, please see the `parameters.yml` in [example/demo projects](ht
 
 ### Anchor-less aliasing (self-lookup)
 
-You can look up another value in the same YAML/JSON file using `=` key.
+You can look up another value in the same YAML/JSON file using `$` key.
 This anchor-less aliasing can replace invasive [YAML's Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) or [Jsonnet's Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet).
 
 To specify the nested key (key in a dict of dict), use `.` as the separator.
@@ -294,7 +294,7 @@ from pprint import pformat
 params_yaml="""
 train_params:
   train_batch_size: 32
-  val_batch_size: {=: train_params.train_batch_size}
+  val_batch_size: {$: train_params.train_batch_size}
 """
 parameters = yaml.safe_load(params_yaml)
 
@@ -308,7 +308,7 @@ print("train_params object: \n", train_params, "\n")
 ```
 > train_params dict:
 >  {'train_batch_size': 32,
->  'val_batch_size': {'=': 'train_params.train_batch_size'}}
+>  'val_batch_size': {'$': 'train_params.train_batch_size'}}
 >
 > train_params object:
 >  {'train_batch_size': 32, 'val_batch_size': 32}
