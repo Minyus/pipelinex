@@ -164,6 +164,7 @@ Example:
 
 ```python
 from sklearn.linear_model import LogisticRegression
+
 model = LogisticRegression(C=1.0, random_state=42, max_iter=100)
 print("model object: \n", model, "\n")
 ```
@@ -177,12 +178,61 @@ print("model object: \n", model, "\n")
 > 				   warm_start=False)
 ```
 
-- Using experimentation config:
+- Using YAML with static import statements:
+
+```python
+import yaml
+from pprint import pformat
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+# Read parameters dict from a YAML file in actual use
+params_yaml = """
+model_kind: LogisticRegression
+model_params:
+  C: 1.23456
+  max_iter: 987
+  random_state: 42
+"""
+parameters = yaml.safe_load(params_yaml)
+print("model dict: \n", pformat(parameters), "\n")
+
+model_kind = parameters.get("model_kind")
+model_params_dict = parameters.get("model_params")
+if model_kind == "LogisticRegression":
+    model = LogisticRegression(**model_params_dict)
+elif model_kind == "DecisionTree":
+    model = DecisionTreeClassifier(**model_params_dict)
+elif model_kind == "RandomForest":
+    model = RandomForestClassifier(**model_params_dict)
+else:
+    raise ValueError("Unsupported model_kind.")
+
+print("model object: \n", model, "\n")
+
+```
+
+```
+> model dict:
+>  {'model_kind': 'LogisticRegression',
+>  'model_params': {'C': 1.23456, 'max_iter': 987, 'random_state': 42}}
+>
+> model object:
+>  LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
+>                    intercept_scaling=1, l1_ratio=None, max_iter=987,
+>                    multi_class='warn', n_jobs=None, penalty='l2',
+>                    random_state=42, solver='warn', tol=0.0001, verbose=0,
+>                    warm_start=False)
+```
+
+- Using import-less Python object in YAML:
 
 ```python
 from pipelinex import HatchDict
 import yaml
 from pprint import pformat
+# You do not need to add `import sklearn.linear_model.LogisticRegression` !
 
 # Read parameters dict from a YAML file in actual use
 params_yaml="""
