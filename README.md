@@ -144,11 +144,11 @@ https://github.com/Minyus/pipelinex_template
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/HatchDict_demo.ipynb)
 
-### Import-less Python object (class/function)
+### Import-less Python object (class and function)
 
-For Machine Learning experimentation, it is common to try a lot of objects (model, neural network module, optimizer, etc.)
+Python packages for Machine Learning provides components (e.g. model, neural network module, optimizer, etc.) as Python objects (classes and functions)
 
-To use a Python object (class or function), you need 2 steps: import and construction/call.
+To use a Python object (class or function), in general, you need 2 steps: import and construct/call.
 
 Example:
 
