@@ -67,4 +67,4 @@ if find_spec("pynvml") or find_spec("py3nvml"):
     from .decorators.nvml_profiler import *  # NOQA
 
 
-__version__ = "0.1.9"
+__version__ = "0.2.0"
