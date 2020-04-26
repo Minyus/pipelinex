@@ -446,6 +446,51 @@ data/load/output_data.csv: # Use the default DataSet
   mlflow_logging: True
 ```
 
+## Decorator-based benchmarking
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/decorators_demo.ipynb)
+
+PipelineX provides Python decorators for benchmarking.
+
+- `log_time` logs the difference of timestamp before and after running the function.
+
+  - Slightly modified version of [Kedro's log_time](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/pipeline/decorators.py#L59)
+
+- `mem_profile` logs the peak memory usage during running the function.
+
+  - `memory_profiler` needs to be installed.
+  - Slightly modified version of [Kedro's mem_profile](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/extras/decorators/memory_profiler.py#L48)
+
+- `nvml_profile` logs the difference of NVIDIA GPU usage before and after running the function.
+  - `pynvml` or `py3nvml` needs to be installed.
+
+```python
+from pipelinex import log_time
+from pipelinex import mem_profile  # Need to install memory_profiler for memory profiling
+from pipelinex import nvml_profile  # Need to install pynvml for NVIDIA GPU profiling
+from time import sleep
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+@nvml_profile
+@mem_profile
+@log_time
+def foo_func(i=1):
+    sleep(0.5)  # Needed to avoid the bug reported at https://github.com/pythonprofilers/memory_profiler/issues/216
+    return "a" * i
+
+output = foo_func(100_000_000)
+```
+
+```
+> INFO:pipelinex.decorators.decorators:Running 'foo_func' took 549ms [0.549s]
+> INFO:pipelinex.decorators.memory_profiler:Running 'foo_func' consumed 579.02MiB memory at peak time
+> INFO:pipelinex.decorators.nvml_profiler:Ran: 'foo_func', NVML returned: {'_Driver_Version': '418.67', '_NVML_Version': '10.418.67', 'Device_Count': 1, 'Devices': [{'_Name': 'Tesla P100-PCIE-16GB', 'Total_Memory': 17071734784, 'Free_Memory': 17071669248, 'Used_Memory': 65536, 'GPU_Utilization_Rate': 0, 'Memory_Utilization_Rate': 0}]}, Used memory diff: [0]
+```
+
+These decorators can be set up for each or every task in the Kedro pipeline in `parameters.yml` taking advantage of the import-less Python object feature.
+
 ## Use with PyTorch
 
 To develop a simple neural network, it is convenient to use Sequential API
