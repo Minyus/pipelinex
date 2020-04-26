@@ -317,13 +317,16 @@ from pprint import pformat
 # Read parameters dict from a YAML file in actual use
 params_yaml = """
 train_params:
-  param1_tuple: (1, 2, 3)
-  param2_formula: (2 + 3)
-  param3_inf: (float("Inf"))
-  param4_str_1e10: 1e10
-  param5_integer_1e10: (int(1e10))
+  param1_tuple_python: (1, 2, 3)
+  param1_tuple_yaml: !!python/tuple [1, 2, 3]
+  param2_formula_python: (2 + 3)
+  param3_neg_inf_python: (float("-Inf"))
+  param3_neg_inf_yaml: -.Inf
+  param4_float_1e9_python: (1e9)
+  param4_float_1e9_yaml: 1.0e+09
+  param5_int_1e9_python: (int(1e9))
 """
-parameters = yaml.safe_load(params_yaml)
+parameters = yaml.load(params_yaml)
 
 train_params_dict = parameters.get("train_params")
 print("train_params raw dict: \n", pformat(train_params_dict), "\n")
@@ -334,19 +337,24 @@ print("train_params parsed dict: \n", pformat(train_params), "\n")
 
 ```
 > train_params raw dict:
->  {'param1_tuple': '(1, 2, 3)',
->  'param2_formula': '(2 + 3)',
->  'param3_inf': '(float("Inf"))',
->  'param4_str_1e10': '1e10',
->  'param5_integer_1e10': '(int(1e10))'}
+>  {'param1_tuple_python': '(1, 2, 3)',
+>  'param1_tuple_yaml': (1, 2, 3),
+>  'param2_formula_python': '(2 + 3)',
+>  'param3_neg_inf_python': '(float("-Inf"))',
+>  'param3_neg_inf_yaml': -inf,
+>  'param4_float_1e9_python': '(1e9)',
+>  'param4_float_1e9_yaml': 1000000000.0,
+>  'param5_int_1e9_python': '(int(1e9))'}
 >
 > train_params parsed dict:
->  {'param1_tuple': (1, 2, 3),
->  'param2_formula': 5,
->  'param3_inf': inf,
->  'param4_str_1e10': '1e10',
->  'param5_integer_1e10': 10000000000}
->
+>  {'param1_tuple_python': (1, 2, 3),
+>  'param1_tuple_yaml': (1, 2, 3),
+>  'param2_formula_python': 5,
+>  'param3_neg_inf_python': -inf,
+>  'param3_neg_inf_yaml': -inf,
+>  'param4_float_1e9_python': 1000000000.0,
+>  'param4_float_1e9_yaml': 1000000000.0,
+>  'param5_int_1e9_python': 1000000000}
 ```
 
 ## YAML-configurable enhanced Kedro
