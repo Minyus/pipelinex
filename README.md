@@ -140,7 +140,9 @@ After I confirmed my package worked well with the Kaggle competition, I released
 PipelineX project template is available at:
 https://github.com/Minyus/pipelinex_template
 
-## Pythonic enhanced YAML/JSON
+## Pythonic enhanced YAML/JSON (`HatchDict`)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/HatchDict_demo.ipynb)
 
 ### Import-less Python object (class/function)
 
