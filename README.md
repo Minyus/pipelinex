@@ -280,10 +280,40 @@ For more examples, please see the `parameters.yml` in [example/demo projects](ht
 
 ### Anchor-less aliasing (self-lookup)
 
-You can look up another value in the same YAML/JSON file using `$` key.
-This anchor-less aliasing can replace invasive [YAML's Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) or [Jsonnet's Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet).
+To avoid repeating, YAML natively provides Anchor&Alias [Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) feature, and [Jsonnet](https://github.com/google/jsonnet) provides [Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet) feature to JSON.
+
+Example:
+
+```python
+import yaml
+from pprint import pformat
+
+# Read parameters dict from a YAML file in actual use
+params_yaml="""
+train_params:
+  train_batch_size: &batch_size 32
+  val_batch_size: *batch_size
+"""
+parameters = yaml.safe_load(params_yaml)
+
+train_params_dict = parameters.get("train_params")
+print("train_params dict: \n", pformat(train_params_dict), "\n")
+```
+
+```
+> train_params dict:
+>  {'train_batch_size': 32, 'val_batch_size': 32}
+```
+
+Unfortunately, YAML and Jsonnet require a medium to share the same value.
+
+This is why PipelineX provides Anchor-less aliasing feature.
+
+You can directly look up another value in the same YAML/JSON file using `$` key without an anchor nor variable.
 
 To specify the nested key (key in a dict of dict), use `.` as the separator.
+
+Example:
 
 ```python
 from pipelinex import HatchDict
