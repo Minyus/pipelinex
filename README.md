@@ -144,23 +144,11 @@ https://github.com/Minyus/pipelinex_template
 
 ### Import-less Python object (class/function)
 
-To manage experiments, it is a common practice to store parameters in YAML or JSON config files.
-Parameters for Machine Learning are, however not limited to (list of) numbers or string.
-Which _package_ or _class/function_ (model, neural network module, optimizer, etc.) to use is also a parameter.
+For Machine Learning experimentation, it is common to try a lot of objects (model, neural network module, optimizer, etc.)
 
-PipelineX can parse Python dictionaries read from YAML or JSON files and convert to Python objects without explicit `import`. This Python object support can replace [PyYAML's `!!python/object` and `!!python/name`](https://pyyaml.org/wiki/PyYAMLDocumentation) which requires explicit `import` in advance.
-
-- Use `=` key to specify the package, module, and class/function with `.` separator in `foo_package.bar_module.baz_class` format.
-- [Optional] Use `_` key to specify (list of) positional arguments (args) if any.
-- [Optional] Add keyword arguments (kwargs) if any.
-
-To return an object instance like PyYAML's `!!python/object`, feed positional and/or keyword arguments. If there is no arguments, just feed null (known as `None` in Python) to `_` key.
-
-To return an uninstantiated (raw) object like PyYAML's `!!python/name`, just feed `=` key without positional nor keyword arugments.
+To use a Python object (class or function), you need 2 steps: import and construction/call.
 
 Example:
-
-- Hardcoded:
 
 ```python
 from sklearn.linear_model import LogisticRegression
@@ -178,7 +166,9 @@ print("model object: \n", model, "\n")
 > 				   warm_start=False)
 ```
 
-- Using YAML with static import statements:
+To manage experiments, it is a common practice to store parameters in YAML or JSON config files.
+
+Example:
 
 ```python
 import yaml
@@ -226,7 +216,24 @@ print("model object: \n", model, "\n")
 >                    warm_start=False)
 ```
 
-- Using import-less Python object in YAML:
+This way, however, is inefficient as you need to add `import` and `if` statements for the options in the Python code in addition to modifying the YAML/JSON config file.
+
+This is why PipelineX provides import-less dynamic Python object support.
+PipelineX enables you to include Python objects in YAML or JSON files in an easy way.
+PipelineX can parse Python dictionaries read from YAML or JSON files and convert to Python objects without explicit `import` or `if` statements.
+This feature can replace [PyYAML's `!!python/object` and `!!python/name`](https://pyyaml.org/wiki/PyYAMLDocumentation) which requires explicit `import` in advance.
+
+Here is the syntax:
+
+- Use `=` key to specify the package, module, and class/function with `.` separator in `foo_package.bar_module.baz_class` format.
+- [Optional] Use `_` key to specify (list of) positional arguments (args) if any.
+- [Optional] Add keyword arguments (kwargs) if any.
+
+To return an object instance like PyYAML's `!!python/object`, feed positional and/or keyword arguments. If there is no arguments, just feed null (known as `None` in Python) to `_` key.
+
+To return an uninstantiated (raw) object like PyYAML's `!!python/name`, just feed `=` key without positional nor keyword arugments.
+
+Example:
 
 ```python
 from pipelinex import HatchDict
@@ -307,7 +314,7 @@ print("train_params object: \n", train_params, "\n")
 
 ### Python expression
 
-Strings wrapped in parentheses are evaluated as an expression.
+Strings wrapped in parentheses are evaluated as a Python expression.
 
 ```python
 from pipelinex import HatchDict
