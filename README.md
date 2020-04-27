@@ -76,10 +76,11 @@ Option 2: install from the GitHub repository
 $ pip install git+https://github.com/Minyus/pipelinex.git
 ```
 
-Option 3: clone the [GitHub repository](https://github.com/Minyus/pipelinex.git), cd into the
-downloaded repository, and run:
+Option 3: clone the [GitHub repository](https://github.com/Minyus/pipelinex.git), cd into the downloaded repository, and install using setup.py:
 
 ```bash
+$ git clone https://github.com/Minyus/pipelinex.git
+$ cd pipelinex
 $ python setup.py install
 ```
 
