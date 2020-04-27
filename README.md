@@ -527,6 +527,8 @@ These decorators can be set up for each or every task in the Kedro pipeline in `
 
 ## Use with PyTorch
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/PyTorch_demo.ipynb)
+
 To develop a simple neural network, it is convenient to use Sequential API
 (e.g. `torch.nn.Sequential`, `tf.keras.Sequential`).
 
