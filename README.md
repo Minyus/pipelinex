@@ -747,6 +747,14 @@ Wrappers of OpenCV and `ImagesLocalDataSet` are the solution. You can concentrat
 
 If you are devepping an image processing pipeline consisting of 5 steps and you have 10 images, for example, you can check 10 generated images in each of 5 folders, 50 images in total, during development.
 
+## Use with PyTorch Lightning
+
+(To-do)
+
+## Use with TensorFlow/Keras
+
+(To Do.)
+
 ## Use with Docker container
 
 ### Build Docker image
@@ -760,6 +768,10 @@ If you are devepping an image processing pipeline consisting of 5 steps and you 
 ```bash
 # docker run -it --name pipelinex pipelinex:3.7.7-slim /bin/bash
 ```
+
+## Contributors wanted!
+
+Please see [CONTRIBUTING.md](https://github.com/Minyus/pipelinex/blob/master/CONTRIBUTING.md) for details.
 
 ## Author
 
