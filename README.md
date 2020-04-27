@@ -278,8 +278,7 @@ print("model object: \n", model, "\n")
 
 This import-less Python object supports nested objects (objects that receives object arguments) by recursive depth-first search.
 
-For more examples, please see [Use with PyTorch](https://github.com/Minyus/pipelinex#use-with-pytorch)
-https://github.com/Minyus/pipelinex#use-with-pytorch and `parameters.yml` in [example/demo projects](https://github.com/Minyus/pipelinex#exampledemo-projects) .
+For more examples, please see [Use with PyTorch](https://github.com/Minyus/pipelinex#use-with-pytorch) and `parameters.yml` in [example/demo projects](https://github.com/Minyus/pipelinex#exampledemo-projects) .
 
 This import-less Python object feature, inspired by the fact that Kedro uses `load_obj` for file I/O (`DataSet`), uses `load_obj` copied from [kedro.utils](https://github.com/quantumblacklabs/kedro/blob/0.15.4/kedro/utils.py) which dynamically imports Python objects using [`importlib`](https://docs.python.org/3.6/library/importlib.html), a Python standard library.
 
