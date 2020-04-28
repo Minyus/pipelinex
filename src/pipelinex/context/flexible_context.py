@@ -11,4 +11,4 @@ class FlexibleContext(
     OnlyMissingStringRunnerDefaultOptionContext,
 ):
     project_name = "KedroProject"
-    project_version = "0.15.4"
+    project_version = "0.15.9"

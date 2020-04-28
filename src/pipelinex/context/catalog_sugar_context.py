@@ -64,9 +64,9 @@ class CatalogSyntacticSugarContext(KedroContext):
         cached = False
         if "cached" in ds_dict:
             cached = ds_dict.pop("cached")
-        if cached and (ds_dict.get("type") != "kedro.contrib.io.cached.CachedDataSet"):
+        if cached and (ds_dict.get("type") != "kedro.io.CachedDataSet"):
             ds_dict = {
-                "type": "kedro.contrib.io.cached.CachedDataSet",
+                "type": "kedro.io.CachedDataSet",
                 "dataset": ds_dict,
             }
         return ds_name, ds_dict
