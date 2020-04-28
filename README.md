@@ -147,6 +147,41 @@ https://github.com/Minyus/pipelinex_template
 
 ### Import-less Python object (class and function)
 
+YAML is a common text format used for application config files.
+
+YAML's most notable advantage is allowing users to mix 2 styles, block style and flow style.
+
+Example:
+
+```python
+import yaml
+from pprint import pprint  # pretty-print for clearer look
+
+# Read parameters dict from a YAML file in actual use
+params_yaml="""
+block_style_demo:
+  key1: value1
+  key2: value2
+flow_style_demo: {key1: value1, key2: value2}
+"""
+parameters = yaml.safe_load(params_yaml)
+
+print("### 2 styles in YAML ###")
+pprint(parameters)
+```
+
+```
+### 2 styles in YAML ###
+{'block_style_demo': {'key1': 'value1', 'key2': 'value2'},
+ 'flow_style_demo': {'key1': 'value1', 'key2': 'value2'}}
+```
+
+YAML's block style, which uses indentation, allows users to omit opening and closing symbols to specify a Python dict or list (`{}` or `[]`).
+
+YAML's flow style, which uses opening and closing symbols, allows users to specify a Python dict or list within a single line.
+
+To store highly nested (hierarchical) dict or list, YAML is more conveinient than hard-coding in Python code.
+
 Python packages for Machine Learning provides components (e.g. model, neural network module, optimizer, etc.) as Python objects (classes and functions)
 
 To use a Python object (class or function), in general, you need 2 steps: import and construct/call.
@@ -171,7 +206,7 @@ LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
                    warm_start=False)
 ```
 
-To manage experiments, it is a common practice to store parameters in YAML or JSON config files.
+To manage experiments, it is a common practice to store parameters in a YAML or JSON file.
 
 Example:
 
