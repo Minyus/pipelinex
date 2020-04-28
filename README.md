@@ -157,16 +157,18 @@ Example:
 from sklearn.linear_model import LogisticRegression
 
 model = LogisticRegression(C=1.0, random_state=42, max_iter=100)
-print("model object: \n", model, "\n")
+
+print("### model object by hard-coding ###")
+print(model)
 ```
 
 ```
-> model object:
->  LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
-> 				   intercept_scaling=1, l1_ratio=None, max_iter=100,
-> 				   multi_class='warn', n_jobs=None, penalty='l2',
-> 				   random_state=42, solver='warn', tol=0.0001, verbose=0,
-> 				   warm_start=False)
+### model object by hard-coding ###
+LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=100,
+                   multi_class='warn', n_jobs=None, penalty='l2',
+                   random_state=42, solver='warn', tol=0.0001, verbose=0,
+                   warm_start=False)
 ```
 
 To manage experiments, it is a common practice to store parameters in YAML or JSON config files.
@@ -175,10 +177,8 @@ Example:
 
 ```python
 import yaml
-from pprint import pformat
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from pprint import pprint  # pretty-print for clearer look
+
 
 # Read parameters dict from a YAML file in actual use
 params_yaml = """
@@ -189,34 +189,43 @@ model_params:
   random_state: 42
 """
 parameters = yaml.safe_load(params_yaml)
-print("model dict: \n", pformat(parameters), "\n")
+
+print("### Before ###")
+pprint(parameters)
 
 model_kind = parameters.get("model_kind")
 model_params_dict = parameters.get("model_params")
+
 if model_kind == "LogisticRegression":
+    from sklearn.linear_model import LogisticRegression
     model = LogisticRegression(**model_params_dict)
+
 elif model_kind == "DecisionTree":
+    from sklearn.tree import DecisionTreeClassifier
     model = DecisionTreeClassifier(**model_params_dict)
+
 elif model_kind == "RandomForest":
+    from sklearn.ensemble import RandomForestClassifier
     model = RandomForestClassifier(**model_params_dict)
+
 else:
     raise ValueError("Unsupported model_kind.")
 
-print("model object: \n", model, "\n")
-
+print("\n### After ###")
+print(model)
 ```
 
 ```
-> model dict:
->  {'model_kind': 'LogisticRegression',
->  'model_params': {'C': 1.23456, 'max_iter': 987, 'random_state': 42}}
->
-> model object:
->  LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
->                    intercept_scaling=1, l1_ratio=None, max_iter=987,
->                    multi_class='warn', n_jobs=None, penalty='l2',
->                    random_state=42, solver='warn', tol=0.0001, verbose=0,
->                    warm_start=False)
+### Before ###
+{'model_kind': 'LogisticRegression',
+ 'model_params': {'C': 1.23456, 'max_iter': 987, 'random_state': 42}}
+
+### After ###
+LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=987,
+                   multi_class='warn', n_jobs=None, penalty='l2',
+                   random_state=42, solver='warn', tol=0.0001, verbose=0,
+                   warm_start=False)
 ```
 
 This way, however, is inefficient as you need to add `import` and `if` statements for the options in the Python code in addition to modifying the YAML/JSON config file.
@@ -241,8 +250,8 @@ Example:
 ```python
 from pipelinex import HatchDict
 import yaml
-from pprint import pformat
-# You do not need to add `import sklearn.linear_model.LogisticRegression` !
+from pprint import pprint  # pretty-print for clearer look
+# Note: You do not need to add `import sklearn.linear_model.LogisticRegression` !
 
 # Read parameters dict from a YAML file in actual use
 params_yaml="""
@@ -255,26 +264,29 @@ model:
 parameters = yaml.safe_load(params_yaml)
 
 model_dict = parameters.get("model")
-print("model dict: \n", pformat(model_dict), "\n")
+
+print("### Before ###")
+pprint(model_dict)
 
 model = HatchDict(parameters).get("model")
-print("model object: \n", model, "\n")
+
+print("\n### After ###")
+pprint(model)
 ```
 
 ```
-> model dict:
->  {'=': 'sklearn.linear_model.LogisticRegression',
->  'C': 1.23456,
->  'max_iter': 987,
->  'random_state': 42}
->
-> model object:
->  LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
->                    intercept_scaling=1, l1_ratio=None, max_iter=987,
->                    multi_class='warn', n_jobs=None, penalty='l2',
->                    random_state=42, solver='warn', tol=0.0001, verbose=0,
->                    warm_start=False)
->
+### Before ###
+{'=': 'sklearn.linear_model.LogisticRegression',
+ 'C': 1.23456,
+ 'max_iter': 987,
+ 'random_state': 42}
+
+### After ###
+LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
+                   intercept_scaling=1, l1_ratio=None, max_iter=987,
+                   multi_class='warn', n_jobs=None, penalty='l2',
+                   random_state=42, solver='warn', tol=0.0001, verbose=0,
+                   warm_start=False)
 ```
 
 This import-less Python object supports nested objects (objects that receives object arguments) by recursive depth-first search.
@@ -291,7 +303,7 @@ Example:
 
 ```python
 import yaml
-from pprint import pformat
+from pprint import pprint  # pretty-print for clearer look
 
 # Read parameters dict from a YAML file in actual use
 params_yaml="""
@@ -302,12 +314,14 @@ train_params:
 parameters = yaml.safe_load(params_yaml)
 
 train_params_dict = parameters.get("train_params")
-print("train_params dict: \n", pformat(train_params_dict), "\n")
+
+print("### Conversion by YAML's Anchor&Alias feature ###")
+pprint(train_params_dict)
 ```
 
 ```
-> train_params dict:
->  {'train_batch_size': 32, 'val_batch_size': 32}
+### Conversion by YAML's Anchor&Alias feature ###
+{'train_batch_size': 32, 'val_batch_size': 32}
 ```
 
 Unfortunately, YAML and Jsonnet require a medium to share the same value.
@@ -323,7 +337,7 @@ Example:
 ```python
 from pipelinex import HatchDict
 import yaml
-from pprint import pformat
+from pprint import pprint  # pretty-print for clearer look
 
 # Read parameters dict from a YAML file in actual use
 params_yaml="""
@@ -334,19 +348,23 @@ train_params:
 parameters = yaml.safe_load(params_yaml)
 
 train_params_dict = parameters.get("train_params")
-print("train_params dict: \n", pformat(train_params_dict), "\n")
+
+print("### Before ###")
+pprint(train_params_dict)
 
 train_params = HatchDict(parameters).get("train_params")
-print("train_params object: \n", train_params, "\n")
+
+print("\n### After ###")
+pprint(train_params)
 ```
 
 ```
-> train_params dict:
->  {'train_batch_size': 32,
->  'val_batch_size': {'$': 'train_params.train_batch_size'}}
->
-> train_params object:
->  {'train_batch_size': 32, 'val_batch_size': 32}
+### Before ###
+{'train_batch_size': 32,
+ 'val_batch_size': {'$': 'train_params.train_batch_size'}}
+
+### After ###
+{'train_batch_size': 32, 'val_batch_size': 32}
 ```
 
 ### Python expression
@@ -356,7 +374,7 @@ Strings wrapped in parentheses are evaluated as a Python expression.
 ```python
 from pipelinex import HatchDict
 import yaml
-from pprint import pformat
+from pprint import pprint  # pretty-print for clearer look
 
 # Read parameters dict from a YAML file in actual use
 params_yaml = """
@@ -372,33 +390,37 @@ train_params:
 """
 parameters = yaml.load(params_yaml)
 
-train_params_dict = parameters.get("train_params")
-print("train_params raw dict: \n", pformat(train_params_dict), "\n")
+train_params_raw = parameters.get("train_params")
 
-train_params = HatchDict(parameters).get("train_params")
-print("train_params parsed dict: \n", pformat(train_params), "\n")
+print("### Before ###")
+pprint(train_params_raw)
+
+train_params_converted = HatchDict(parameters).get("train_params")
+
+print("\n### After ###")
+pprint(train_params_converted)
 ```
 
 ```
-> train_params raw dict:
->  {'param1_tuple_python': '(1, 2, 3)',
->  'param1_tuple_yaml': (1, 2, 3),
->  'param2_formula_python': '(2 + 3)',
->  'param3_neg_inf_python': '(float("-Inf"))',
->  'param3_neg_inf_yaml': -inf,
->  'param4_float_1e9_python': '(1e9)',
->  'param4_float_1e9_yaml': 1000000000.0,
->  'param5_int_1e9_python': '(int(1e9))'}
->
-> train_params parsed dict:
->  {'param1_tuple_python': (1, 2, 3),
->  'param1_tuple_yaml': (1, 2, 3),
->  'param2_formula_python': 5,
->  'param3_neg_inf_python': -inf,
->  'param3_neg_inf_yaml': -inf,
->  'param4_float_1e9_python': 1000000000.0,
->  'param4_float_1e9_yaml': 1000000000.0,
->  'param5_int_1e9_python': 1000000000}
+### Before ###
+{'param1_tuple_python': '(1, 2, 3)',
+ 'param1_tuple_yaml': (1, 2, 3),
+ 'param2_formula_python': '(2 + 3)',
+ 'param3_neg_inf_python': '(float("-Inf"))',
+ 'param3_neg_inf_yaml': -inf,
+ 'param4_float_1e9_python': '(1e9)',
+ 'param4_float_1e9_yaml': 1000000000.0,
+ 'param5_int_1e9_python': '(int(1e9))'}
+
+### After ###
+{'param1_tuple_python': (1, 2, 3),
+ 'param1_tuple_yaml': (1, 2, 3),
+ 'param2_formula_python': 5,
+ 'param3_neg_inf_python': -inf,
+ 'param3_neg_inf_yaml': -inf,
+ 'param4_float_1e9_python': 1000000000.0,
+ 'param4_float_1e9_yaml': 1000000000.0,
+ 'param5_int_1e9_python': 1000000000}
 ```
 
 ## YAML-configurable enhanced Kedro
@@ -519,9 +541,9 @@ output = foo_func(100_000_000)
 ```
 
 ```
-> INFO:pipelinex.decorators.decorators:Running 'foo_func' took 549ms [0.549s]
-> INFO:pipelinex.decorators.memory_profiler:Running 'foo_func' consumed 579.02MiB memory at peak time
-> INFO:pipelinex.decorators.nvml_profiler:Ran: 'foo_func', NVML returned: {'_Driver_Version': '418.67', '_NVML_Version': '10.418.67', 'Device_Count': 1, 'Devices': [{'_Name': 'Tesla P100-PCIE-16GB', 'Total_Memory': 17071734784, 'Free_Memory': 17071669248, 'Used_Memory': 65536, 'GPU_Utilization_Rate': 0, 'Memory_Utilization_Rate': 0}]}, Used memory diff: [0]
+INFO:pipelinex.decorators.decorators:Running 'foo_func' took 549ms [0.549s]
+INFO:pipelinex.decorators.memory_profiler:Running 'foo_func' consumed 579.02MiB memory at peak time
+INFO:pipelinex.decorators.nvml_profiler:Ran: 'foo_func', NVML returned: {'_Driver_Version': '418.67', '_NVML_Version': '10.418.67', 'Device_Count': 1, 'Devices': [{'_Name': 'Tesla P100-PCIE-16GB', 'Total_Memory': 17071734784, 'Free_Memory': 17071669248, 'Used_Memory': 65536, 'GPU_Utilization_Rate': 0, 'Memory_Utilization_Rate': 0}]}, Used memory diff: [0]
 ```
 
 These decorators can be set up for each or every task in the Kedro pipeline in `parameters.yml` taking advantage of the import-less Python object feature.
@@ -542,23 +564,25 @@ model = Sequential(
     Conv2d(in_channels=3, out_channels=16, kernel_size=[3, 3]),
     ReLU(),
 )
-print("model object: \n", model, "\n")
+
+print("### model object by hard-coding ###")
+print(model)
 ```
 
 ```
-> model object:
->  Sequential(
->   (0): Conv2d(3, 16, kernel_size=[3, 3], stride=(1, 1))
->   (1): ReLU()
-> )
+### model object by hard-coding ###
+Sequential(
+  (0): Conv2d(3, 16, kernel_size=[3, 3], stride=(1, 1))
+  (1): ReLU()
+)
 ```
 
-- Using experimentation config:
+- Using import-less Python object feature:
 
 ```python
 from pipelinex import HatchDict
 import yaml
-from pprint import pformat
+from pprint import pprint  # pretty-print for clearer look
 
 # Read parameters dict from a YAML file in actual use
 params_yaml="""
@@ -571,26 +595,30 @@ model:
 parameters = yaml.safe_load(params_yaml)
 
 model_dict = parameters.get("model")
-print("model dict: \n", pformat(model_dict), "\n")
+
+print("### Before ###")
+pprint(model_dict)
 
 model = HatchDict(parameters).get("model")
-print("model object: \n", model, "\n")
+
+print("\n### After ###")
+print(model)
 ```
 
 ```
-> model dict:
->  {'=': 'torch.nn.Sequential',
->  '_': [{'=': 'torch.nn.Conv2d',
->         'in_channels': 3,
->         'kernel_size': [3, 3],
->         'out_channels': 16},
->        {'=': 'torch.nn.ReLU', '_': None}]}
->
-> model object:
->  Sequential(
->   (0): Conv2d(3, 16, kernel_size=[3, 3], stride=(1, 1))
->   (1): ReLU()
-> )
+### Before ###
+{'=': 'torch.nn.Sequential',
+ '_': [{'=': 'torch.nn.Conv2d',
+        'in_channels': 3,
+        'kernel_size': [3, 3],
+        'out_channels': 16},
+       {'=': 'torch.nn.ReLU', '_': None}]}
+
+### After ###
+Sequential(
+  (0): Conv2d(3, 16, kernel_size=[3, 3], stride=(1, 1))
+  (1): ReLU()
+)
 ```
 
 In addition to `Sequential`, TensorFLow/Keras provides modules to merge branches such as
@@ -611,27 +639,27 @@ model = Sequential(
     ),
     ReLU(),
 )
-print("model object: \n", model, "\n")
+print("### model object by hard-coding ###")
+print(model)
 ```
 
 ```
-> model object:
->  Sequential(
->   (0): ModuleConcat(
->     (0): Conv2d(3, 16, kernel_size=[3, 3], stride=[2, 2], padding=[1, 1])
->     (1): AvgPool2d(kernel_size=[3, 3], stride=[2, 2], padding=[1, 1])
->   )
->   (1): ReLU()
-> )
->
+### model object by hard-coding ###
+Sequential(
+  (0): ModuleConcat(
+    (0): Conv2d(3, 16, kernel_size=[3, 3], stride=[2, 2], padding=[1, 1])
+    (1): AvgPool2d(kernel_size=[3, 3], stride=[2, 2], padding=[1, 1])
+  )
+  (1): ReLU()
+)
 ```
 
-- Using experimentation config:
+- Using import-less Python object feature:
 
 ```python
 from pipelinex import HatchDict
 import yaml
-from pprint import pformat
+from pprint import pprint  # pretty-print for clearer look
 
 # Read parameters dict from a YAML file in actual use
 params_yaml="""
@@ -647,36 +675,40 @@ model:
 parameters = yaml.safe_load(params_yaml)
 
 model_dict = parameters.get("model")
-print("model dict: \n", pformat(model_dict), "\n")
+
+print("### Before ###")
+pprint(model_dict)
 
 model = HatchDict(parameters).get("model")
-print("model object: \n", model, "\n")
+
+print("\n### After ###")
+print(model)
 ```
 
 ```
-> model dict:
->  {'=': 'torch.nn.Sequential',
->  '_': [{'=': 'pipelinex.ModuleConcat',
->         '_': [{'=': 'torch.nn.Conv2d',
->                'in_channels': 3,
->                'kernel_size': [3, 3],
->                'out_channels': 16,
->                'padding': [1, 1],
->                'stride': [2, 2]},
->               {'=': 'torch.nn.AvgPool2d',
->                'kernel_size': [3, 3],
->                'padding': [1, 1],
->                'stride': [2, 2]}]},
->        {'=': 'torch.nn.ReLU', '_': None}]}
->
-> model object:
->  Sequential(
->   (0): ModuleConcat(
->     (0): Conv2d(3, 16, kernel_size=[3, 3], stride=[2, 2], padding=[1, 1])
->     (1): AvgPool2d(kernel_size=[3, 3], stride=[2, 2], padding=[1, 1])
->   )
->   (1): ReLU()
-> )
+### Before ###
+{'=': 'torch.nn.Sequential',
+ '_': [{'=': 'pipelinex.ModuleConcat',
+        '_': [{'=': 'torch.nn.Conv2d',
+               'in_channels': 3,
+               'kernel_size': [3, 3],
+               'out_channels': 16,
+               'padding': [1, 1],
+               'stride': [2, 2]},
+              {'=': 'torch.nn.AvgPool2d',
+               'kernel_size': [3, 3],
+               'padding': [1, 1],
+               'stride': [2, 2]}]},
+       {'=': 'torch.nn.ReLU', '_': None}]}
+
+### After ###
+Sequential(
+  (0): ModuleConcat(
+    (0): Conv2d(3, 16, kernel_size=[3, 3], stride=[2, 2], padding=[1, 1])
+    (1): AvgPool2d(kernel_size=[3, 3], stride=[2, 2], padding=[1, 1])
+  )
+  (1): ReLU()
+)
 ```
 
 ## Use with PyTorch Ignite
