@@ -265,12 +265,46 @@ LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
 
 This way, however, is inefficient as you need to add `import` and `if` statements for the options in the Python code in addition to modifying the YAML/JSON config file.
 
-This is why PipelineX provides import-less dynamic Python object support.
-PipelineX enables you to include Python objects in YAML or JSON files in an easy way.
-PipelineX can parse Python dictionaries read from YAML or JSON files and convert to Python objects without explicit `import` or `if` statements.
-This feature can replace [PyYAML's `!!python/object` and `!!python/name`](https://pyyaml.org/wiki/PyYAMLDocumentation) which requires explicit `import` in advance.
+PyYAML provides [UnsafeLoader](<https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation>) which can load Python objects without `import`.
 
-Here is the syntax:
+```python
+import yaml
+# You do not need `import sklearn.linear_model` using PyYAML's UnsafeLoader
+
+
+# Read parameters dict from a YAML file in actual use
+params_yaml = """
+model:
+  !!python/object:sklearn.linear_model.LogisticRegression
+  C: 1.23456
+  max_iter: 987
+  random_state: 42
+"""
+
+parameters = yaml.unsafe_load(params_yaml)  # unsafe_load required
+
+model = parameters.get("model")
+
+print("### model object by PyYAML's UnsafeLoader ###")
+print(model)
+```
+
+```
+### model object by PyYAML's UnsafeLoader ###
+LogisticRegression(C=1.23456, class_weight=None, dual=None, fit_intercept=None,
+                   intercept_scaling=None, l1_ratio=None, max_iter=987,
+                   multi_class=None, n_jobs=None, penalty=None, random_state=42,
+                   solver=None, tol=None, verbose=None, warm_start=None)
+```
+
+[PyYAML's `!!python/object` and `!!python/name`](https://pyyaml.org/wiki/PyYAMLDocumentation), however, has the following problems.
+
+- `!!python/object` or `!!python/name` are too long to write.
+- Positional (non-keyword) arguments are apparently not supported.
+
+PipelineX's HatchDict is the solution.
+
+PipelineX's HatchDict provides an easier syntax, as follows, to convert Python dictionaries read from YAML or JSON files to Python objects without `import`.
 
 - Use `=` key to specify the package, module, and class/function with `.` separator in `foo_package.bar_module.baz_class` format.
 - [Optional] Use `_` key to specify (list of) positional arguments (args) if any.
@@ -286,7 +320,7 @@ Example:
 from pipelinex import HatchDict
 import yaml
 from pprint import pprint  # pretty-print for clearer look
-# Note: You do not need to add `import sklearn.linear_model.LogisticRegression` !
+# You do not need `import sklearn.linear_model` using PipelineX's HatchDict
 
 # Read parameters dict from a YAML file in actual use
 params_yaml="""
@@ -306,7 +340,7 @@ pprint(model_dict)
 model = HatchDict(parameters).get("model")
 
 print("\n### After ###")
-pprint(model)
+print(model)
 ```
 
 ```
