@@ -66,5 +66,7 @@ if find_spec("memory_profiler"):
 if find_spec("pynvml") or find_spec("py3nvml"):
     from .decorators.nvml_profiler import *  # NOQA
 
+if find_spec("easydict"):
+    from .ops.easydict_ops import *  # NOQA
 
 __version__ = "0.2.0"
