@@ -2,14 +2,13 @@ import copy
 from pathlib import Path
 from typing import Any, Dict, List, Union
 import cv2
-from kedro.contrib.io import DefaultArgumentsMixIn
 from kedro.io.core import AbstractVersionedDataSet, DataSetError, Version
 import logging
 
 log = logging.getLogger(__name__)
 
 
-class OpenCVImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
+class OpenCVImagesLocalDataSet(AbstractVersionedDataSet):
     def __init__(
         self,
         filepath: str,

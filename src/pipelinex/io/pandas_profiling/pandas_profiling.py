@@ -1,11 +1,10 @@
 from pathlib import Path
 from typing import Any, Dict
 import pandas as pd
-from kedro.contrib.io import DefaultArgumentsMixIn
 from kedro.io.core import AbstractVersionedDataSet, DataSetError, Version
 
 
-class PandasProfilingDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
+class PandasProfilingDataSet(AbstractVersionedDataSet):
     """``PandasProfilingDataSet`` is an ``AbstractVersionedDataSet`` to generate
     pandas profiling report.
     See https://github.com/pandas-profiling/pandas-profiling for details.

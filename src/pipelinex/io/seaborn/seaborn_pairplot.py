@@ -4,14 +4,13 @@ from typing import Any, Dict, List
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from kedro.contrib.io import DefaultArgumentsMixIn
 from kedro.io.core import AbstractVersionedDataSet, DataSetError, Version
 import logging
 
 log = logging.getLogger(__name__)
 
 
-class SeabornPairPlotDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
+class SeabornPairPlotDataSet(AbstractVersionedDataSet):
 
     DEFAULT_SAVE_ARGS = dict()  # type: Dict[str, Any]
 

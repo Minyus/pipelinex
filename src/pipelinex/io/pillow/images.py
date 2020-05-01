@@ -4,14 +4,13 @@ from pathlib import Path
 from typing import Any, Dict, List, Union
 import numpy as np
 from PIL import Image
-from kedro.contrib.io import DefaultArgumentsMixIn
 from kedro.io.core import AbstractVersionedDataSet, DataSetError, Version
 import logging
 
 log = logging.getLogger(__name__)
 
 
-class ImagesLocalDataSet(DefaultArgumentsMixIn, AbstractVersionedDataSet):
+class ImagesLocalDataSet(AbstractVersionedDataSet):
     def __init__(
         self,
         filepath: str,
