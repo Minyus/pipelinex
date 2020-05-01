@@ -16,6 +16,7 @@ if find_spec("kedro"):
         from .context.mlflow_context import *  # NOQA
 
     if find_spec("pandas"):
+        from .io.pandas.csv_local import *  # NOQA
         from .io.pandas.efficient_csv_local import *  # NOQA
         from .io.pandas.pandas_cat_matrix import *  # NOQA
         from .io.pandas.pandas_describe import *  # NOQA
