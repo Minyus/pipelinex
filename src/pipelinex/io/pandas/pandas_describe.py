@@ -1,6 +1,6 @@
 from typing import Any, Dict
 import pandas as pd
-from kedro.io.csv_local import CSVLocalDataSet
+from .csv_local import CSVLocalDataSet
 
 
 class PandasDescribeDataSet(CSVLocalDataSet):

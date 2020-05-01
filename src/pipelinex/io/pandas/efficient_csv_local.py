@@ -1,7 +1,7 @@
 import copy
 from typing import Any, Dict, Union
 import numpy as np
-from kedro.io.csv_local import CSVLocalDataSet
+from .csv_local import CSVLocalDataSet
 import logging
 
 log = logging.getLogger(__name__)
