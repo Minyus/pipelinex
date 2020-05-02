@@ -59,8 +59,10 @@ class HatchDict:
     ):
         # type: (...) -> Any
 
-        assert key.__class__.__name__ in {"str", "int"}
-        assert lookup.__class__.__name__ in {"dict"}
+        assert key.__class__.__name__ in {"str", "int"}, "Received key: {}".format(key)
+        assert lookup.__class__.__name__ in {"dict"}, "Received lookup: s{}".format(
+            lookup
+        )
 
         if key is None:
             d = self.egg
@@ -111,6 +113,13 @@ class HatchDict:
 
     def get_params(self):
         return self.snapshot
+
+    def keys(self):
+        return self.egg.keys()
+
+    def items(self):
+        assert isinstance(self.egg, dict)
+        return [(k, self.get(k)) for k in self.egg.keys()]
 
 
 def _dfs_apply(
