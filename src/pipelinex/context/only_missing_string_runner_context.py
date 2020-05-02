@@ -156,7 +156,7 @@ class OnlyMissingStringRunnerDefaultOptionContext(
         self,
         *args,  # type: Any
         runner=None,  # type: Optional[AbstractRunner]
-        only_missing=True,  # type: bool
+        only_missing=None,  # type: bool
         **kwargs,  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
