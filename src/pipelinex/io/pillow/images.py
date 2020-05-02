@@ -1,7 +1,7 @@
 from ...ops.pytorch_ops import to_channel_first_arr, to_channel_last_arr
 import copy
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, Union
 import numpy as np
 from PIL import Image
 from kedro.io.core import AbstractVersionedDataSet, DataSetError, Version
@@ -22,11 +22,10 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
     ) -> None:
 
         super().__init__(
-            filepath=Path(filepath),
-            load_args=load_args,
-            save_args=save_args,
-            version=version,
+            filepath=Path(filepath), version=version, exists_function=self._exists,
         )
+        self._load_args = load_args
+        self._save_args = save_args
         self._channel_first = channel_first
         self._reverse_color = reverse_color
 

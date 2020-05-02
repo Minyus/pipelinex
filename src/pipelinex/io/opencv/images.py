@@ -1,6 +1,6 @@
 import copy
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict
 import cv2
 from kedro.io.core import AbstractVersionedDataSet, DataSetError, Version
 import logging
@@ -19,11 +19,10 @@ class OpenCVImagesLocalDataSet(AbstractVersionedDataSet):
     ) -> None:
 
         super().__init__(
-            filepath=Path(filepath),
-            load_args=load_args,
-            save_args=save_args,
-            version=version,
+            filepath=Path(filepath), version=version, exists_function=self._exists,
         )
+        self._load_args = load_args
+        self._save_args = save_args
         self.channel_first = channel_first
 
     def _load(self) -> Any:

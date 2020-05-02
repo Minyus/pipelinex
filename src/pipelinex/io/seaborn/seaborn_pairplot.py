@@ -22,7 +22,11 @@ class SeabornPairPlotDataSet(AbstractVersionedDataSet):
         version: Version = None,
     ) -> None:
 
-        super().__init__(filepath=Path(filepath), save_args=save_args, version=version)
+        super().__init__(
+            filepath=Path(filepath), version=version, exists_function=self._exists
+        )
+        self._load_args = {}
+        self._save_args = save_args
         self._sample_args = sample_args
 
     def _describe(self) -> Dict[str, Any]:
