@@ -1,5 +1,4 @@
 from kedro.context import KedroContext
-from typing import Any, Dict, Iterable, Optional, Union  # NOQA
 import logging
 
 log = logging.getLogger(__name__)
