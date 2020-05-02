@@ -1,6 +1,5 @@
 import importlib
 from typing import Any, Union, List, Iterable  # NOQA
-from six import iteritems
 
 
 class HatchDict:
@@ -144,7 +143,7 @@ def _dfs_apply(
         obj_str = d_input.get(obj_key)
 
         d, s = {}, {}
-        for k, v in iteritems(d_input):
+        for k, v in d_input.items():
             d[k], s[k] = _dfs_apply(v, hatch_args)
 
         if obj_str:

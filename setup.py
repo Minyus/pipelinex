@@ -12,7 +12,7 @@ setup(
     author_email="me@minyus.github.com",
     url="https://github.com/Minyus/pipelinex",
     description="Pipeline for eXperimentation",
-    install_requires=["six"],
+    install_requires=[],
     keywords="pipelines, machine learning, deep learning, data science, data engineering",
     zip_safe=False,
     test_suite="tests",
