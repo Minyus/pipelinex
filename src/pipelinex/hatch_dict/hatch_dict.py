@@ -250,6 +250,14 @@ class ToPipeline:
         return self.args
 
 
+class Construct:
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __call__(self, *args, **kwargs):
+        return self.obj(*args, **kwargs)
+
+
 class Method:
     method = None
 
@@ -296,15 +304,16 @@ def _builtin_funcs():
         pass_=pass_,
         pass_through=pass_through,
         ToPipeline=ToPipeline,
+        Construct=Construct,
         Method=Method,
         Get=Get,
     )
 
 
-""" 
+"""
 Copyright 2018-2019 QuantumBlack Visual Analytics Limited
 regarding `load_obj` function copied from
-https://github.com/quantumblacklabs/kedro/blob/0.15.4/kedro/utils.py 
+https://github.com/quantumblacklabs/kedro/blob/0.15.4/kedro/utils.py
 """
 
 
