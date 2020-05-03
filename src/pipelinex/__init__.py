@@ -11,9 +11,7 @@ if find_spec("kedro"):
     from .context.flexible_context import *  # NOQA
     from .context.only_missing_string_runner_context import *  # NOQA
     from .context.pipelines_in_parameters_context import *  # NOQA
-
-    if find_spec("mlflow"):
-        from .context.mlflow_context import *  # NOQA
+    from .context.mlflow_context import *  # NOQA
 
     if find_spec("pandas"):
         from .io.pandas.csv_local import *  # NOQA
