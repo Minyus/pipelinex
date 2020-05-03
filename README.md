@@ -64,24 +64,24 @@ PipelineX shares similar philosophy, concepts, or API styles with:
 
 ## Installation
 
-Option 1: install from the PyPI
+- [Option 1] To install the latest release from the PyPI:
 
 ```bash
 $ pip install pipelinex
 ```
 
-Option 2: install from the GitHub repository
+- [Option 2] To install the latest pre-release:
 
 ```bash
 $ pip install git+https://github.com/Minyus/pipelinex.git
 ```
 
-Option 3: clone the [GitHub repository](https://github.com/Minyus/pipelinex.git), cd into the downloaded repository, and install using setup.py:
+- [Option 3] To install the latest pre-release without need to reinstall after modifying the source code:
 
 ```bash
 $ git clone https://github.com/Minyus/pipelinex.git
 $ cd pipelinex
-$ python setup.py install
+$ python setup.py develop
 ```
 
 ## Why and how PipelineX was born
