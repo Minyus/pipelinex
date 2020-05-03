@@ -1,6 +1,5 @@
 from functools import wraps
 from typing import Callable
-import operator
 import logging
 
 log = logging.getLogger(__name__)
