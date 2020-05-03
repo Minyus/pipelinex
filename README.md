@@ -76,7 +76,7 @@ $ pip install pipelinex
 $ pip install git+https://github.com/Minyus/pipelinex.git
 ```
 
-- [Option 3] To install the latest pre-release without need to reinstall after modifying the source code:
+- [Option 3] To install the latest pre-release without need to reinstall even after modifying the source code:
 
 ```bash
 $ git clone https://github.com/Minyus/pipelinex.git
