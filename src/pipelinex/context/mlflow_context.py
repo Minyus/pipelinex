@@ -1,21 +1,12 @@
-from kedro.context import KedroContext
-from .flexible_context import FlexibleContext
 from datetime import datetime, timedelta
-from mlflow import (
-    create_experiment,
-    set_experiment,
-    start_run,
-    end_run,
-    set_tracking_uri,
-    log_artifact,
-    log_metric,
-    log_param,
-)
-from mlflow.exceptions import MlflowException
 from pathlib import Path
 import time
 from typing import Any, Iterable  # NOQA
 import logging
+
+from kedro.context import KedroContext
+
+from .flexible_context import FlexibleContext
 
 log = logging.getLogger(__name__)
 
@@ -56,6 +47,18 @@ class MLflowContext(KedroContext):
             self.logging_artifacts = (
                 mlflow_logging_params.get("logging_artifacts") or []
             )
+
+            from mlflow import (
+                create_experiment,
+                set_experiment,
+                start_run,
+                end_run,
+                set_tracking_uri,
+                log_artifact,
+                log_metric,
+                log_param,
+            )
+            from mlflow.exceptions import MlflowException
 
             if self.uri:
                 set_tracking_uri(self.uri)
