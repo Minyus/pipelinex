@@ -577,7 +577,7 @@ PipelineX enables you to use Kedro in more convenient ways:
 - Syntactic sugar for `catalog.yml`
   - Optionally specify the `filepath` as the catalog entry name so the file name without extension is used as the DataSet instance name
   - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
-  - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. (`kedro.contrib.io.cached.CachedDataSet` is used under the hood.)
+  - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
   - Optionally specify the default `DataSet` and its parameters using `/` key so you can reduce copying.
 
 ```yaml
