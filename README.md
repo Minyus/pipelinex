@@ -506,6 +506,33 @@ Kedro is a Python package to develop pipelines consisting of tasks (called `node
 Regarding Kedro, please see the [Kedro's document](https://kedro.readthedocs.io/en/latest/)
 and comparison with other pipeline/workflow packages [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow).
 
+Example Kedro run code (modified and simplified version of [kedro-tutorial's run.py](https://github.com/quantumblacklabs/kedro-examples/blob/master/kedro-tutorial/src/kedro_tutorial/run.py)):
+
+```python
+from typing import Dict
+
+from kedro.context import KedroContext
+from kedro.pipeline import Pipeline
+
+from kedro_tutorial.pipeline import create_pipelines
+
+
+class ProjectContext(KedroContext):
+    """Users can override the remaining methods from the parent class here,
+    or create new ones (e.g. as required by plugins)
+    """
+
+    project_name = "kedro-tutorial"
+    project_version = "0.15.9"
+
+    def _get_pipelines(self) -> Dict[str, Pipeline]:
+        return create_pipelines()
+
+
+context = ProjectContext()
+context.run(pipeline_name="__default__", runner=SequentialRunner())
+```
+
 Example Kedro Pipeline:
 
 ```python
