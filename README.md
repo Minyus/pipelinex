@@ -506,6 +506,57 @@ Kedro is a Python package to develop pipelines consisting of tasks (called `node
 Regarding Kedro, please see the [Kedro's document](https://kedro.readthedocs.io/en/latest/)
 and comparison with other pipeline/workflow packages [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow).
 
+Example Kedro Pipeline:
+
+```python
+from kedro.pipeline import Pipeline, node
+
+from my_module import processing_task_1, processing_task_2, processing_task_3
+
+def create_pipeline(**kwargs):
+    return Pipeline(
+        [
+            node(
+                func=processing_task_1,
+                inputs="input_data_1",
+                outputs=["intermediate_data_1", "intermediate_data_2"],
+            ),
+            node(
+                func=processing_task_2,
+                inputs="intermediate_data_1",
+                outputs="trivial_intermediate_data",
+            ),
+            node(
+                func=processing_task_3,
+                inputs="trivial_intermediate_data",
+                outputs="output_data",
+            ),
+        ]
+    )
+```
+
+Example Kedro Catalog:
+
+```yaml
+#  catalog.yml
+
+input_data_1:
+  type: CSVLocalDataSet
+  filepath: data/input/input_data_1.csv
+
+intermediate_data_1:
+  type: PickleLocalDataSet
+  filepath: data/load/intermediate_data_1.pickle
+
+intermediate_data_2:
+  type: CSVLocalDataSet
+  filepath: data/load/intermediate_data_2.csv
+
+output_data:
+  type: CSVLocalDataSet
+  filepath: data/load/output_data.csv
+```
+
 PipelineX enables you to use Kedro in more convenient ways:
 
 - Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
