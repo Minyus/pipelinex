@@ -1,3 +1,5 @@
+__version__ = "0.2.0"
+
 from importlib.util import find_spec
 from .utils import *  # NOQA
 from .hatch_dict.hatch_dict import *  # NOQA
@@ -67,5 +69,3 @@ if find_spec("pynvml") or find_spec("py3nvml"):
 
 if find_spec("easydict"):
     from .ops.easydict_ops import *  # NOQA
-
-__version__ = "0.2.0"
