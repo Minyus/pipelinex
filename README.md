@@ -183,37 +183,15 @@ pprint(parameters)
  'flow_style_demo': {'key1': 'value1', 'key2': 'value2'}}
 ```
 
-YAML's block style, which uses indentation, allows users to omit opening and closing symbols to specify a Python dict or list (`{}` or `[]`).
-
-YAML's flow style, which uses opening and closing symbols, allows users to specify a Python dict or list within a single line.
-
 To store highly nested (hierarchical) dict or list, YAML is more conveinient than hard-coding in Python code.
 
-Python packages for Machine Learning provides components (e.g. model, neural network module, optimizer, etc.) as Python objects (classes and functions)
+- YAML's block style, which uses indentation, allows users to omit opening and closing symbols to specify a Python dict or list (`{}` or `[]`).
 
-To use a Python object (class or function), in general, you need 2 steps: import and construct/call.
+- YAML's flow style, which uses opening and closing symbols, allows users to specify a Python dict or list within a single line.
 
-Example:
+So simply using YAML with Python will be the best way for Machine Learning experimentation?
 
-```python
-from sklearn.linear_model import LogisticRegression
-
-model = LogisticRegression(C=1.0, random_state=42, max_iter=100)
-
-print("### model object by hard-coding ###")
-print(model)
-```
-
-```
-### model object by hard-coding ###
-LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
-                   intercept_scaling=1, l1_ratio=None, max_iter=100,
-                   multi_class='warn', n_jobs=None, penalty='l2',
-                   random_state=42, solver='warn', tol=0.0001, verbose=0,
-                   warm_start=False)
-```
-
-To manage experiments, it is a common practice to store parameters in a YAML or JSON file.
+Let's check out the next example.
 
 Example:
 
@@ -270,7 +248,9 @@ LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
                    warm_start=False)
 ```
 
-This way, however, is inefficient as you need to add `import` and `if` statements for the options in the Python code in addition to modifying the YAML/JSON config file.
+This way is inefficient as we need to add `import` and `if` statements for the options in the Python code in addition to modifying the YAML config file.
+
+Any better way?
 
 PyYAML provides [UnsafeLoader](<https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation>) which can load Python objects without `import`.
 
@@ -309,7 +289,9 @@ LogisticRegression(C=1.23456, class_weight=None, dual=None, fit_intercept=None,
 - `!!python/object` or `!!python/name` are too long to write.
 - Positional (non-keyword) arguments are apparently not supported.
 
-PipelineX's HatchDict is the solution.
+Any better way?
+
+PipelineX provides the solution.
 
 PipelineX's HatchDict provides an easier syntax, as follows, to convert Python dictionaries read from YAML or JSON files to Python objects without `import`.
 
