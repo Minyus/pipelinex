@@ -20,6 +20,7 @@ if find_spec("kedro"):
         from .io.pandas.efficient_csv_local import *  # NOQA
         from .io.pandas.pandas_cat_matrix import *  # NOQA
         from .io.pandas.pandas_describe import *  # NOQA
+        from .io.pandas.histgram import *  # NOQA
 
     if find_spec("pandas_profiling"):
         from .io.pandas_profiling.pandas_profiling import *  # NOQA
