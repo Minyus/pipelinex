@@ -93,6 +93,7 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
 
         else:
             images = data
+            names = None
 
         if hasattr(images, "save"):
             if not to_scale:
@@ -132,11 +133,8 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
                             img = ReverseChannel(channel_first=self._channel_first)(img)
                         img = np.squeeze(img)
                         img = Image.fromarray(img)
-                    if names:
-                        name = names[i] if names else "{:05d}".format(i)
-                        s = p / "{}{}".format(name, p.suffix)
-                    else:
-                        s = p / "{:05d}{}".format(i, p.suffix)
+                    name = names[i] if names else "{:05d}".format(i)
+                    s = p / "{}{}".format(name, p.suffix)
                     img.save(s, **save_args)
                 return None
             else:
