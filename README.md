@@ -483,10 +483,24 @@ pprint(train_params_converted)
 
 ## YAML-configurable enhanced Kedro
 
-Kedro is a Python package to develop pipelines consisting of tasks (called `node`).
+Kedro is a Python package to develop pipelines consisting of:
 
-Regarding Kedro, please see the [Kedro's document](https://kedro.readthedocs.io/en/latest/)
-and comparison with other pipeline/workflow packages [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow).
+- tasks (called "Nodes") such as:
+  - data transformation
+  - training a model
+  - run inference using a model
+
+- data loading/saving wrappers (called "Data Sets") such as:
+  - [`CSVDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.CSVDataSet.html#kedro.extras.datasets.pandas.CSVDataSet): loads/saves data from/to a CSV file using an underlying filesystem (e.g.: local, S3, GCS).
+  - [`SQLTableDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.SQLTableDataSet.html#kedro.extras.datasets.pandas.SQLTableDataSet): loads data from a SQL table and saves a pandas dataframe to a table.
+  - and [much more](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.html#data-sets)
+
+- pipeline task dependency
+
+Regarding Kedro, please see:
+- [Kedro's document](https://kedro.readthedocs.io/en/latest/)
+- [YouTube playlist: Writing Data Pipelines with Kedro](https://www.youtube.com/playlist?list=PLTU89LAWKRwEdiDKeMOU2ye6yU9Qd4MRo)
+- [Python Packages for Pipeline/Workflow](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow)
 
 Example Kedro run code (modified and simplified version of [kedro-tutorial's run.py](https://github.com/quantumblacklabs/kedro-examples/blob/master/kedro-tutorial/src/kedro_tutorial/run.py)):
 
