@@ -493,7 +493,8 @@ Kedro is a Python package to develop pipelines consisting of:
 - data loading/saving wrappers (called "Data Sets") such as:
   - [`CSVDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.CSVDataSet.html#kedro.extras.datasets.pandas.CSVDataSet): loads/saves data from/to a CSV file using an underlying filesystem (e.g.: local, S3, GCS).
   - [`SQLTableDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.SQLTableDataSet.html#kedro.extras.datasets.pandas.SQLTableDataSet): loads data from a SQL table and saves a pandas dataframe to a table.
-  - and [much more](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.html#data-sets)
+  - and [much more provided by Kedro](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.html#data-sets)
+  - and [even more provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/io)
 
 - pipeline task dependency
 
