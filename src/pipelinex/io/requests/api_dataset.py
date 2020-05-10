@@ -98,6 +98,7 @@ class APIDataSet(AbstractDataSet):
                 "pool_block": False,
             },
         },
+        skip_errors: bool = False,
     ) -> None:
         """Creates a new instance of ``APIDataSet`` to fetch data from an API endpoint.
 
@@ -121,7 +122,9 @@ class APIDataSet(AbstractDataSet):
             pool_config: Dict of mounting prefix key to Dict of requests.apdapters.HTTPAdapter
                 param key to value.
                 https://requests.readthedocs.io/en/master/user/advanced/#transport-adapters
-                https://urllib3.readthedocs.io/en/latest/advanced-usage.html#customizing-pool-behavior
+                https://urllib3.readthedocs.io/en/latest/advanced-usage.html
+            skip_errors: If True, exceptions will not interrupt loading data and be returned
+                instead of the expected responses by _load method. Defaults to False.
         """
         super().__init__()
         self._request_args: Dict[str, Any] = {
@@ -154,6 +157,7 @@ class APIDataSet(AbstractDataSet):
         self._method_func = getattr(session, method)
 
         self._attribute = attribute
+        self._skip_errors = skip_errors
 
     def _describe(self) -> Dict[str, Any]:
         return dict(**self._request_args, attribute=self._attribute)
@@ -171,9 +175,23 @@ class APIDataSet(AbstractDataSet):
                 response.raise_for_status()
                 response_dict[name] = response
             except requests.exceptions.HTTPError as exc:
-                raise DataSetError("Failed to fetch data", exc)
+                e = DataSetError("Failed to fetch data", exc)
+                if self._skip_errors:
+                    response_dict[name] = e
+                else:
+                    raise e
             except socket.error:
-                raise DataSetError("Failed to connect to the remote server")
+                e = DataSetError("Failed to connect to the remote server")
+                if self._skip_errors:
+                    response_dict[name] = e
+                else:
+                    raise e
+            except Exception as exc:
+                e = DataSetError("Exception", exc)
+                if self._skip_errors:
+                    response_dict[name] = e
+                else:
+                    raise e
 
         return response_dict
 
@@ -182,16 +200,23 @@ class APIDataSet(AbstractDataSet):
 
         output_dict = {}
         for name, response in response_dict.items():
-            if not self._attribute:
+            if isinstance(response, Exception):
+                output_dict[name] = response
+            elif response.status_code != requests.codes.ok:
+                output_dict[name] = response
+            elif not self._attribute:
                 output_dict[name] = response
             elif self._attribute == "json":
                 output_dict[name] = response.json()
             elif hasattr(response, self._attribute):
                 output_dict[name] = getattr(response, self._attribute)
             else:
-                raise DataSetError(
-                    "Response has no attribute: {}".format(self._attribute)
-                )
+                if self._skip_errors:
+                    output_dict[name] = None
+                else:
+                    raise DataSetError(
+                        "Response has no attribute: {}".format(self._attribute)
+                    )
 
         if self._dict_output:
             return output_dict
@@ -206,4 +231,9 @@ class APIDataSet(AbstractDataSet):
     def _exists(self) -> bool:
         response_dict = self._execute_request()
 
-        return all([response.ok for response in response_dict.values()])
+        return all(
+            [
+                getattr(response, "status_code") == requests.codes.ok
+                for response in response_dict.values()
+            ]
+        )
