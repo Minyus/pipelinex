@@ -147,6 +147,14 @@ class APIDataSet(AbstractDataSet):
             else:
                 self._url_dict = url
 
+        self._method = method
+        self._pool_config = pool_config
+        self._method_func = self._configure_method_func(method, pool_config)
+
+        self._attribute = attribute
+        self._skip_errors = skip_errors
+
+    def _configure_method_func(self, method, pool_config):
         session = requests.Session()
         for prefix, adapter_params in pool_config.items():
             session.mount(prefix, requests.adapters.HTTPAdapter(**adapter_params))
@@ -154,13 +162,17 @@ class APIDataSet(AbstractDataSet):
         method = method.lower()
         if not hasattr(session, method):
             raise DataSetError("Unsupported method: {}".format(method))
-        self._method_func = getattr(session, method)
-
-        self._attribute = attribute
-        self._skip_errors = skip_errors
+        return getattr(session, method)
 
     def _describe(self) -> Dict[str, Any]:
-        return dict(**self._request_args, attribute=self._attribute)
+        return dict(
+            **self._request_args,
+            url_dict=self._url_dict,
+            method=self._method,
+            pool_config=self._pool_config,
+            attribute=self._attribute,
+            skip_errors=self._skip_errors,
+        )
 
     def _execute_request(self) -> Dict[str, requests.Response]:
 
