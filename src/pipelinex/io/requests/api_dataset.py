@@ -177,37 +177,38 @@ class APIDataSet(AbstractDataSet):
 
     def _execute_request(self) -> Dict[str, requests.Response]:
 
-        request_args = self._request_args
         url_dict = self._url_dict
+
+        request_args = self._request_args
         session = self._session
         method = self._method
+
+        def request(url):
+            response = session.request(method, url=url, **request_args)
+            response.raise_for_status()
+            return response
 
         response_dict = {}
         for name, url in url_dict.items():
             try:
-                response = session.request(method, url=url, **request_args)
-                response.raise_for_status()
-                response_dict[name] = response
-            except requests.exceptions.HTTPError as exc:
-                e = DataSetError("Failed to fetch data", exc)
-                if self._skip_errors:
-                    response_dict[name] = e
-                else:
-                    raise e
-            except socket.error:
-                e = DataSetError("Failed to connect to the remote server")
-                if self._skip_errors:
-                    response_dict[name] = e
-                else:
-                    raise e
+                response_dict[name] = request(url)
             except Exception as exc:
-                e = DataSetError("Exception", exc)
-                if self._skip_errors:
-                    response_dict[name] = e
-                else:
-                    raise e
+                response_dict[name] = self._handle_exceptions(exc)
 
         return response_dict
+
+    def _handle_exceptions(self, exc):
+
+        if isinstance(exc, requests.exceptions.HTTPError):
+            e = DataSetError("Failed to fetch data", exc)
+        elif isinstance(exc, socket.error):
+            e = DataSetError("Failed to connect to the remote server")
+        else:
+            e = DataSetError("Exception", exc)
+
+        if self._skip_errors:
+            return e
+        raise e
 
     def _load(self) -> Any:
         response_dict = self._execute_request()
