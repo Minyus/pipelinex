@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict
 import torchvision
 from ...hatch_dict import HatchDict
-from kedro.io.core import AbstractVersionedDataSet, DataSetError, Version
+from ..core import AbstractVersionedDataSet, DataSetError, Version
 import logging
 
 log = logging.getLogger(__name__)

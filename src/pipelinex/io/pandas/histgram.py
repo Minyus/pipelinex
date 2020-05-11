@@ -1,10 +1,9 @@
-
 from typing import Any, Dict
 import pandas as pd
 import matplotlib.pyplot as plt
 import logging
 
-from kedro.io.core import AbstractDataSet
+from ..core import AbstractDataSet
 
 log = logging.getLogger(__name__)
 
@@ -20,10 +19,7 @@ class HistgramDataSet(AbstractDataSet):
         self._save_args = save_args
 
     def _describe(self) -> Dict[str, Any]:
-        return dict(
-            filepath=self._filepath,
-            save_args=self._save_args,
-        )
+        return dict(filepath=self._filepath, save_args=self._save_args,)
 
     def _load(self) -> Any:
         """ loading is not supported. """
@@ -34,4 +30,3 @@ class HistgramDataSet(AbstractDataSet):
         savefig_args = save_args.pop("savefig_args", {})
         df.hist(**save_args)
         plt.savefig(fname=self._filepath, **savefig_args)
-

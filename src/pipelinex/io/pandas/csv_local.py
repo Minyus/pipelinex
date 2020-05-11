@@ -36,7 +36,7 @@ from typing import Any, Dict
 
 import pandas as pd
 
-from kedro.io.core import (
+from ..core import (
     AbstractVersionedDataSet,
     Version,
 )

@@ -35,18 +35,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 import requests
 from requests.auth import AuthBase
-
-from importlib.util import find_spec
-
-if find_spec("kedro"):
-    from kedro.io.core import AbstractDataSet, DataSetError
-else:
-
-    class AbstractDataSet:
-        pass
-
-    class DataSetError(Exception):
-        pass
+from ..core import AbstractDataSet, DataSetError
 
 
 class APIDataSet(AbstractDataSet):

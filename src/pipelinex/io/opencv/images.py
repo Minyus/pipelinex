@@ -1,9 +1,10 @@
 import copy
 from pathlib import Path
 from typing import Any, Dict
-import cv2
-from kedro.io.core import AbstractVersionedDataSet, DataSetError, Version
 import logging
+
+import cv2
+from ..core import AbstractVersionedDataSet, DataSetError, Version
 
 log = logging.getLogger(__name__)
 
