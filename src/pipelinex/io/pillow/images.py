@@ -15,16 +15,16 @@ log = logging.getLogger(__name__)
 class ImagesLocalDataSet(AbstractVersionedDataSet):
     def __init__(
         self,
-        filepath: str,
+        path: str,
         load_args: Dict[str, Any] = None,
-        save_args: Dict[str, Any] = None,
+        save_args: Dict[str, Any] = {"suffix": ".jpg"},
         channel_first=False,
         reverse_color=False,
         version: Version = None,
     ) -> None:
 
         super().__init__(
-            filepath=Path(filepath), version=version, exists_function=self._exists,
+            filepath=Path(path), version=version, exists_function=self._exists,
         )
         self._load_args = load_args
         self._save_args = save_args
@@ -81,6 +81,7 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
 
         save_args = copy.deepcopy(self._save_args)
         save_args = save_args or dict()
+        suffix = save_args.pop("suffix", ".jpg")
         mode = save_args.pop("mode", None)
         upper = save_args.pop("upper", None)
         lower = save_args.pop("lower", None)
@@ -136,7 +137,7 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
                         img = np.squeeze(img)
                         img = Image.fromarray(img)
                     name = names[i] if names else "{:05d}".format(i)
-                    s = p / "{}{}".format(name, p.suffix)
+                    s = p / "{}{}".format(name, suffix)
                     img.save(s, **save_args)
                 return None
             else:
@@ -158,7 +159,7 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
             img = np.squeeze(img)
             img = Image.fromarray(img, mode=mode)
             name = names[i] if names else "{:05d}".format(i)
-            s = p / "{}{}".format(name, p.suffix)
+            s = p / "{}{}".format(name, suffix)
             img.save(s, **save_args)
         return None
 
