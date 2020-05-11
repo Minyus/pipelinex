@@ -1,4 +1,4 @@
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 
 from importlib.util import find_spec
 from .utils import *  # NOQA
@@ -15,27 +15,27 @@ if find_spec("kedro"):
     from .context.pipelines_in_parameters_context import *  # NOQA
     from .context.mlflow_context import *  # NOQA
 
-    if find_spec("pandas"):
-        from .io.pandas.csv_local import *  # NOQA
-        from .io.pandas.efficient_csv_local import *  # NOQA
-        from .io.pandas.pandas_cat_matrix import *  # NOQA
-        from .io.pandas.pandas_describe import *  # NOQA
-        from .io.pandas.histgram import *  # NOQA
+if find_spec("pandas"):
+    from .io.pandas.csv_local import *  # NOQA
+    from .io.pandas.efficient_csv_local import *  # NOQA
+    from .io.pandas.pandas_cat_matrix import *  # NOQA
+    from .io.pandas.pandas_describe import *  # NOQA
+    from .io.pandas.histgram import *  # NOQA
 
-    if find_spec("pandas_profiling"):
-        from .io.pandas_profiling.pandas_profiling import *  # NOQA
+if find_spec("pandas_profiling"):
+    from .io.pandas_profiling.pandas_profiling import *  # NOQA
 
-    if find_spec("PIL"):
-        from .io.pillow.images import *  # NOQA
+if find_spec("PIL"):
+    from .io.pillow.images import *  # NOQA
 
-    if find_spec("seaborn"):
-        from .io.seaborn.seaborn_pairplot import *  # NOQA
+if find_spec("seaborn"):
+    from .io.seaborn.seaborn_pairplot import *  # NOQA
 
-    if find_spec("torchvision"):
-        from .io.torchvision.iterable_images import *  # NOQA
+if find_spec("torchvision"):
+    from .io.torchvision.iterable_images import *  # NOQA
 
-    if find_spec("cv2"):
-        from .io.opencv.images import *  # NOQA
+if find_spec("cv2"):
+    from .io.opencv.images import *  # NOQA
 
 if find_spec("requests"):
     from .io.requests.api_dataset import *  # NOQA
