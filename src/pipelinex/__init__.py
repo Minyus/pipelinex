@@ -1,4 +1,4 @@
-__version__ = "0.2.3"
+__version__ = "0.2.4"
 
 from importlib.util import find_spec
 from .utils import *  # NOQA
