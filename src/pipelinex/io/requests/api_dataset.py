@@ -84,6 +84,7 @@ class APIDataSet(AbstractDataSet):
         auth: Union[Tuple[str], AuthBase] = None,
         timeout: int = 60,
         attribute: str = "text",
+        session_config: Dict[str, Any] = {},
         pool_config: Dict[str, Dict[str, Any]] = {
             "https://": {
                 "pool_connections": 10,
@@ -119,6 +120,7 @@ class APIDataSet(AbstractDataSet):
                 returns pure text,`json`, which returns JSON in Python Dict format, `content`,
                 which returns a raw content, or `` (empty string), which returns the reponse
                 object itself. Defaults to `text`.
+            session_config: Dict of arguments fed to the session.
             pool_config: Dict of mounting prefix key to Dict of requests.apdapters.HTTPAdapter
                 param key to value.
                 https://requests.readthedocs.io/en/master/user/advanced/#transport-adapters
@@ -148,14 +150,17 @@ class APIDataSet(AbstractDataSet):
                 self._url_dict = url
 
         self._method = method
+        self._session_config = session_config
         self._pool_config = pool_config
-        self._method_func = self._configure_method_func(method, pool_config)
+        self._method_func = self._configure_method_func(
+            method, session_config, pool_config
+        )
 
         self._attribute = attribute
         self._skip_errors = skip_errors
 
-    def _configure_method_func(self, method, pool_config):
-        session = requests.Session()
+    def _configure_method_func(self, method, session_config, pool_config):
+        session = requests.Session(**session_config)
         for prefix, adapter_params in pool_config.items():
             session.mount(prefix, requests.adapters.HTTPAdapter(**adapter_params))
 
@@ -169,6 +174,7 @@ class APIDataSet(AbstractDataSet):
             **self._request_args,
             url_dict=self._url_dict,
             method=self._method,
+            session_config=self._session_config,
             pool_config=self._pool_config,
             attribute=self._attribute,
             skip_errors=self._skip_errors,
