@@ -13,7 +13,7 @@ class SubPipeline(Pipeline):
         module: str = "",
         decorator: Union[Callable, List[Callable]] = None,
         intermediate_node_name_fmt: str = "{}__{:03d}",
-        name: str = None,
+        **kwargs
     ):
         funcs = _load_callables(func, module)
 
@@ -29,7 +29,7 @@ class SubPipeline(Pipeline):
                 if intermediate_flag
                 else outputs
             )
-            nodes.append(node(func=f, inputs=inputs, outputs=intermediate))
+            nodes.append(node(func=f, inputs=inputs, outputs=intermediate, **kwargs))
             if intermediate_flag:
                 inputs = intermediate
 
@@ -37,7 +37,7 @@ class SubPipeline(Pipeline):
             decorators = _load_callables(decorator, module)
             nodes = [n.decorate(*decorators) for n in nodes]
 
-        super().__init__(nodes=nodes, name=name)
+        super().__init__(nodes)
 
 
 def _load_callables(func, default_module):

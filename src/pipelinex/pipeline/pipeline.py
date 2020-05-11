@@ -11,7 +11,7 @@ class FlexiblePipeline(kedro.pipeline.Pipeline):
         parameters_in_inputs=False,  # type: bool
         module="",  # type: str
         decorator=[],  # type: Union[Callable, List[Callable]]
-        name=None  # type: str
+        **kwargs
     ):
 
         for i, node in enumerate(nodes):
@@ -35,4 +35,4 @@ class FlexiblePipeline(kedro.pipeline.Pipeline):
                 node.setdefault("decorator", decorator)
                 nodes[i] = SubPipeline(**node)
 
-        super().__init__(nodes=nodes, name=name)
+        super().__init__(nodes, **kwargs)
