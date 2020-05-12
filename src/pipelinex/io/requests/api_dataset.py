@@ -126,17 +126,14 @@ class APIDataSet(AbstractDataSet):
             "timeout": timeout,
         }
 
-        if isinstance(url, str):
-            self._dict_output = False
+        self._url = url
+
+        if isinstance(self._url, str):
             self._url_dict = {"_": url}
+        elif isinstance(self._url, list):
+            self._url_dict = {i: url for (i, url) in enumerate(url)}
         else:
-            self._dict_output = True
-            if isinstance(url, list):
-                self._url_dict = {
-                    "{:05d}".format(i): url for (i, url) in enumerate(url)
-                }
-            else:
-                self._url_dict = url
+            self._url_dict = url
 
         self._method = method
         self._session_config = session_config
@@ -156,7 +153,7 @@ class APIDataSet(AbstractDataSet):
     def _describe(self) -> Dict[str, Any]:
         return dict(
             **self._request_args,
-            url_dict=self._url_dict,
+            url=self._url,
             method=self._method,
             session_config=self._session_config,
             pool_config=self._pool_config,
@@ -222,10 +219,12 @@ class APIDataSet(AbstractDataSet):
                         "Response has no attribute: {}".format(self._attribute)
                     )
 
-        if self._dict_output:
-            return output_dict
-        else:
+        if isinstance(self._url, str):
             return next(iter(output_dict.values()))
+        elif isinstance(self._url, list):
+            return [output_dict[i] for i in range(len(output_dict))]
+        else:
+            return output_dict
 
     def _save(self, data: Any) -> None:
         raise DataSetError(

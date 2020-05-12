@@ -33,7 +33,7 @@ import pytest
 import requests
 import requests_mock
 
-from pipelinex.io.httpx.async_api_dataset import AsyncAPIDataSet
+from pipelinex.io.httpx.async_api_dataset import AsyncAPIDataSet as APIDataSet
 from kedro.io.core import DataSetError
 
 POSSIBLE_METHODS = ["GET", "OPTIONS", "HEAD", "POST", "PUT", "PATCH", "DELETE"]
@@ -56,7 +56,7 @@ class TestAPIDataSet:
             yield mock
 
     def test_successfully_load_with_text_response(self, requests_mocker, method):
-        api_data_set = AsyncAPIDataSet(
+        api_data_set = APIDataSet(
             url=TEST_URL, method=method, params=TEST_PARAMS, headers=TEST_HEADERS
         )
         requests_mocker.register_uri(
@@ -70,7 +70,7 @@ class TestAPIDataSet:
         assert response == TEST_TEXT_RESPONSE_DATA
 
     def test_successfully_load_with_json_response(self, requests_mocker, method):
-        api_data_set = AsyncAPIDataSet(
+        api_data_set = APIDataSet(
             url=TEST_URL,
             method=method,
             params=TEST_PARAMS,
@@ -88,7 +88,7 @@ class TestAPIDataSet:
         assert response == TEST_JSON_RESPONSE_DATA
 
     def test_http_error(self, requests_mocker, method):
-        api_data_set = AsyncAPIDataSet(
+        api_data_set = APIDataSet(
             url=TEST_URL, method=method, params=TEST_PARAMS, headers=TEST_HEADERS
         )
         requests_mocker.register_uri(
@@ -103,7 +103,7 @@ class TestAPIDataSet:
             api_data_set.load()
 
     def test_socket_error(self, requests_mocker, method):
-        api_data_set = AsyncAPIDataSet(
+        api_data_set = APIDataSet(
             url=TEST_URL, method=method, params=TEST_PARAMS, headers=TEST_HEADERS
         )
         requests_mocker.register_uri(method, TEST_URL_WITH_PARAMS, exc=socket.error)
@@ -115,7 +115,7 @@ class TestAPIDataSet:
         """
         Saving is disabled on the data set.
         """
-        api_data_set = AsyncAPIDataSet(url=TEST_URL, method=method)
+        api_data_set = APIDataSet(url=TEST_URL, method=method)
         with pytest.raises(DataSetError, match="is a read only data set type"):
             api_data_set.save({})
 
@@ -124,7 +124,7 @@ class TestAPIDataSet:
         In case of an unexpected HTTP error,
         ``exists()`` should not silently catch it.
         """
-        api_data_set = AsyncAPIDataSet(
+        api_data_set = APIDataSet(
             url=TEST_URL, method=method, params=TEST_PARAMS, headers=TEST_HEADERS
         )
         requests_mocker.register_uri(
@@ -142,7 +142,7 @@ class TestAPIDataSet:
         If the file actually exists and server responds 200,
         ``exists()`` should return True
         """
-        api_data_set = AsyncAPIDataSet(
+        api_data_set = APIDataSet(
             url=TEST_URL, method=method, params=TEST_PARAMS, headers=TEST_HEADERS
         )
         requests_mocker.register_uri(
@@ -156,7 +156,7 @@ class TestAPIDataSet:
 
 
 def test_successfully_load_with_content_response():
-    api_data_set = AsyncAPIDataSet(
+    api_data_set = APIDataSet(
         url="https://raw.githubusercontent.com/quantumblacklabs/kedro/develop/img/kedro_banner.png",
         method="GET",
         attribute="content",
@@ -166,7 +166,7 @@ def test_successfully_load_with_content_response():
 
 
 def test_successfully_load_with_response_itself():
-    api_data_set = AsyncAPIDataSet(
+    api_data_set = APIDataSet(
         url="https://raw.githubusercontent.com/quantumblacklabs/kedro/develop/img/kedro_banner.png",
         method="GET",
         attribute="",
@@ -178,7 +178,7 @@ def test_successfully_load_with_response_itself():
 
 def test_attribute_not_found():
     attribute = "wrong_attribute"
-    api_data_set = AsyncAPIDataSet(
+    api_data_set = APIDataSet(
         url="https://raw.githubusercontent.com/quantumblacklabs/kedro/develop/img/kedro_banner.png",
         method="GET",
         attribute=attribute,
@@ -196,8 +196,8 @@ bar_image_url = (
 )
 
 
-def test_successfully_load_from_multiple_urls_with_content_response():
-    api_data_set = AsyncAPIDataSet(
+def test_successfully_load_from_url_dict_with_content_response():
+    api_data_set = APIDataSet(
         url={"foo_image.png": foo_image_url, "bar_image.png": bar_image_url},
         method="GET",
         attribute="content",
@@ -211,5 +211,26 @@ def test_successfully_load_from_multiple_urls_with_content_response():
         },
     )
     content_dict = api_data_set.load()
+    assert isinstance(content_dict, dict)
     for content in content_dict.values():
+        assert content[1:4] == b"PNG"  # part of PNG file signature
+
+
+def test_successfully_load_from_url_list_with_content_response():
+    api_data_set = APIDataSet(
+        url=[foo_image_url, bar_image_url],
+        method="GET",
+        attribute="content",
+        pool_config={
+            foobar_prefix: {
+                "pool_connections": 1,
+                "pool_maxsize": 1,
+                "max_retries": 0,
+                "pool_block": False,
+            }
+        },
+    )
+    content_list = api_data_set.load()
+    assert isinstance(content_list, list)
+    for content in content_list:
         assert content[1:4] == b"PNG"  # part of PNG file signature
