@@ -74,6 +74,7 @@ class APIDataSet(AbstractDataSet):
         timeout: int = 60,
         attribute: str = "text",
         skip_errors: bool = False,
+        transforms: List[callable] = [],
         session_config: Dict[str, Any] = {},
         pool_config: Dict[str, Dict[str, Any]] = {
             "https://": {
@@ -111,6 +112,7 @@ class APIDataSet(AbstractDataSet):
                 object itself. Defaults to `text`.
             skip_errors: If True, exceptions will not interrupt loading data and be returned
                 instead of the expected responses by _load method. Defaults to False.
+            transforms: List of callables to transform the output.
             session_config: Dict of arguments fed to the session.
             pool_config: Dict of mounting prefix key to Dict of requests.apdapters.HTTPAdapter
                 param key to value.
@@ -130,6 +132,7 @@ class APIDataSet(AbstractDataSet):
         self._method = method
         self._attribute = attribute
         self._skip_errors = skip_errors
+        self._transforms = transforms
 
         self._session_config = session_config
         self._pool_config = pool_config
@@ -203,21 +206,29 @@ class APIDataSet(AbstractDataSet):
         for name, response in response_dict.items():
             if isinstance(response, Exception):
                 output_dict[name] = response
-            elif response.status_code != requests.codes.ok:
+                continue
+            if response.status_code != requests.codes.ok:
                 output_dict[name] = response
-            elif not self._attribute:
-                output_dict[name] = response
-            elif self._attribute == "json":
-                output_dict[name] = response.json()
+                continue
+
+            if not self._attribute:
+                output = response
             elif hasattr(response, self._attribute):
-                output_dict[name] = getattr(response, self._attribute)
-            else:
-                if self._skip_errors:
-                    output_dict[name] = None
+                if self._attribute == "json":
+                    output = response.json()
                 else:
-                    raise DataSetError(
-                        "Response has no attribute: {}".format(self._attribute)
-                    )
+                    output = getattr(response, self._attribute)
+            elif self._skip_errors:
+                output_dict[name] = response
+                continue
+            else:
+                raise DataSetError(
+                    "Response has no attribute: {}".format(self._attribute)
+                )
+
+            for transform in self._transforms:
+                output = transform(output)
+            output_dict[name] = output
 
         if isinstance(self._url, str):
             return next(iter(output_dict.values()))
@@ -252,6 +263,7 @@ class APIDataSet(AbstractDataSet):
         timeout: int = None,
         attribute: str = None,
         skip_errors: bool = None,
+        transforms: List[callable] = None,
     ):
         if data is not None:
             self._request_args.update({"data": data})
@@ -271,4 +283,6 @@ class APIDataSet(AbstractDataSet):
             self._attribute = attribute
         if skip_errors is not None:
             self._skip_errors = skip_errors
+        if transforms is not None:
+            self._transforms = transforms
         return self._load()
