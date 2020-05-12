@@ -19,11 +19,11 @@ class AsyncAPIDataSet(APIDataSet):
         return httpx.AsyncClient(**session_config)
 
     def _execute_request(self) -> Dict[str, Any]:
-        url_dict = self._url_dict
 
         request_args = self._request_args
         session = self._session
         method = self._method
+        url_dict = self._get_url_dict()
 
         name_url_list = list(url_dict.items())
         url_list = [e[1] for e in name_url_list]

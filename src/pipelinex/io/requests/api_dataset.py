@@ -65,7 +65,7 @@ class APIDataSet(AbstractDataSet):
     # pylint: disable=too-many-arguments
     def __init__(
         self,
-        url: Union[str, List[str], Dict[str, str]],
+        url: Union[str, List[str], Dict[str, str]] = None,
         method: str = "GET",
         data: Any = None,
         params: Dict[str, Any] = None,
@@ -73,6 +73,7 @@ class APIDataSet(AbstractDataSet):
         auth: Union[Tuple[str], AuthBase] = None,
         timeout: int = 60,
         attribute: str = "text",
+        skip_errors: bool = False,
         session_config: Dict[str, Any] = {},
         pool_config: Dict[str, Dict[str, Any]] = {
             "https://": {
@@ -88,7 +89,6 @@ class APIDataSet(AbstractDataSet):
                 "pool_block": False,
             },
         },
-        skip_errors: bool = False,
     ) -> None:
         """Creates a new instance of ``APIDataSet`` to fetch data from an API endpoint.
 
@@ -109,13 +109,13 @@ class APIDataSet(AbstractDataSet):
                 returns pure text,`json`, which returns JSON in Python Dict format, `content`,
                 which returns a raw content, or `` (empty string), which returns the reponse
                 object itself. Defaults to `text`.
+            skip_errors: If True, exceptions will not interrupt loading data and be returned
+                instead of the expected responses by _load method. Defaults to False.
             session_config: Dict of arguments fed to the session.
             pool_config: Dict of mounting prefix key to Dict of requests.apdapters.HTTPAdapter
                 param key to value.
                 https://requests.readthedocs.io/en/master/user/advanced/#transport-adapters
                 https://urllib3.readthedocs.io/en/latest/advanced-usage.html
-            skip_errors: If True, exceptions will not interrupt loading data and be returned
-                instead of the expected responses by _load method. Defaults to False.
         """
         super().__init__()
         self._request_args: Dict[str, Any] = {
@@ -127,21 +127,13 @@ class APIDataSet(AbstractDataSet):
         }
 
         self._url = url
-
-        if isinstance(self._url, str):
-            self._url_dict = {"_": url}
-        elif isinstance(self._url, list):
-            self._url_dict = {i: url for (i, url) in enumerate(url)}
-        else:
-            self._url_dict = url
-
         self._method = method
+        self._attribute = attribute
+        self._skip_errors = skip_errors
+
         self._session_config = session_config
         self._pool_config = pool_config
         self._session = self._configure_session(session_config, pool_config)
-
-        self._attribute = attribute
-        self._skip_errors = skip_errors
 
     def _configure_session(self, session_config, pool_config):
         session = requests.Session(**session_config)
@@ -161,13 +153,21 @@ class APIDataSet(AbstractDataSet):
             skip_errors=self._skip_errors,
         )
 
-    def _execute_request(self) -> Dict[str, requests.Response]:
+    def _get_url_dict(self):
+        if isinstance(self._url, str):
+            url_dict = {"_": self._url}
+        elif isinstance(self._url, list):
+            url_dict = {i: url for (i, url) in enumerate(self._url)}
+        else:
+            url_dict = self._url
+        return url_dict
 
-        url_dict = self._url_dict
+    def _execute_request(self) -> Dict[str, requests.Response]:
 
         request_args = self._request_args
         session = self._session
         method = self._method
+        url_dict = self._get_url_dict()
 
         def request(url):
             response = session.request(method, url=url, **request_args)
@@ -240,3 +240,35 @@ class APIDataSet(AbstractDataSet):
                 for response in response_dict.values()
             ]
         )
+
+    def __call__(
+        self,
+        url: Union[str, List[str], Dict[str, str]] = None,
+        method: str = None,
+        data: Any = None,
+        params: Dict[str, Any] = None,
+        headers: Dict[str, Any] = None,
+        auth: Union[Tuple[str], AuthBase] = None,
+        timeout: int = None,
+        attribute: str = None,
+        skip_errors: bool = None,
+    ):
+        if data is not None:
+            self._request_args.update({"data": data})
+        if params is not None:
+            self._request_args.update({"params": params})
+        if headers is not None:
+            self._request_args.update({"headers": headers})
+        if auth is not None:
+            self._request_args.update({"auth": auth})
+        if timeout is not None:
+            self._request_args.update({"timeout": timeout})
+        if url is not None:
+            self._url = url
+        if method is not None:
+            self._method = method
+        if attribute is not None:
+            self._attribute = attribute
+        if skip_errors is not None:
+            self._skip_errors = skip_errors
+        return self._load()
