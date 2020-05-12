@@ -55,7 +55,7 @@ class CatalogSyntacticSugarContext(KedroContext):
         return ds_name, ds_dict
 
     def _set_filepath(self, ds_name, ds_dict):
-        if "filepath" not in ds_dict:
+        if ("filepath" not in ds_dict) and ("path" not in ds_dict):
             ds_dict["filepath"] = ds_name
             ds_name = Path(ds_name).stem
         return ds_name, ds_dict
