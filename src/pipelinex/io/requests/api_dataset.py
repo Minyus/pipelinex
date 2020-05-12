@@ -226,9 +226,17 @@ class APIDataSet(AbstractDataSet):
                     "Response has no attribute: {}".format(self._attribute)
                 )
 
-            for transform in self._transforms:
-                output = transform(output)
-            output_dict[name] = output
+            try:
+                for transform in self._transforms:
+                    output = transform(output)
+                output_dict[name] = output
+            except Exception as exc:
+                e = DataSetError("Exception", exc)
+                if self._skip_errors:
+                    output_dict[name] = e
+                    continue
+                else:
+                    raise e
 
         if isinstance(self._url, str):
             return next(iter(output_dict.values()))
