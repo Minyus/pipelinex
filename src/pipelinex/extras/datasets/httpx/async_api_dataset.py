@@ -58,6 +58,6 @@ class AsyncAPIDataSet(APIDataSet):
             except Exception as exc:
                 response_dict[name] = self._handle_exceptions(exc)
 
-        await session.aclose()
+        session.aclose()
 
         return response_dict
