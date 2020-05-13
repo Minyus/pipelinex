@@ -251,6 +251,7 @@ def reverse_channel(a, channel_first=False):
             return a[:, ::-1, :, :]
         else:
             return a[:, :, :, ::-1]
+    return a
 
 
 class ReverseChannel:
