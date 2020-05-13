@@ -2,7 +2,7 @@ import copy
 from pathlib import Path
 from typing import Any, Dict
 import torchvision
-from ...hatch_dict import HatchDict
+from ....hatch_dict import HatchDict
 from ..core import AbstractVersionedDataSet, DataSetError, Version
 import logging
 

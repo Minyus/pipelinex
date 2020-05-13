@@ -1,4 +1,4 @@
-from ..utils import DictToDict
+from ...utils import DictToDict
 from skimage import segmentation
 
 

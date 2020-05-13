@@ -1,6 +1,6 @@
 import tempfile
 import numpy as np
-from pipelinex.io.pillow.images import ImagesLocalDataSet
+from pipelinex import ImagesLocalDataSet
 
 
 def test_save_and_load():

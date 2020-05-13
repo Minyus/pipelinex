@@ -35,7 +35,7 @@ import pytest
 import requests
 import requests_mock
 
-from pipelinex.io.httpx.async_api_dataset import AsyncAPIDataSet as APIDataSet
+from pipelinex import APIDataSet
 from kedro.io.core import DataSetError
 
 POSSIBLE_METHODS = ["GET", "OPTIONS", "HEAD", "POST", "PUT", "PATCH", "DELETE"]
