@@ -1,8 +1,25 @@
-from typing import Any, Dict
 import asyncio
+import sys
+from typing import Any, Dict
+
 import httpx
 
 from ..requests.api_dataset import APIDataSet
+
+
+def asyncio_run(aw):
+    if sys.version_info >= (3, 7):
+        return asyncio.run(aw)
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        r = loop.run_until_complete(aw)
+    finally:
+        loop.close()
+        asyncio.set_event_loop(None)
+
+    return r
 
 
 async def coroutine(session, method, url, request_args):
@@ -30,8 +47,7 @@ class AsyncAPIDataSet(APIDataSet):
 
         coroutines = [coroutine(session, method, url, request_args) for url in url_list]
 
-        loop = asyncio.get_event_loop()
-        tasks_done, tasks_pending = loop.run_until_complete(wait_coroutines(coroutines))
+        tasks_done, tasks_pending = asyncio_run(wait_coroutines(coroutines))
 
         name_list = [e[0] for e in name_url_list]
         response_dict = {}
