@@ -10,9 +10,13 @@ if find_spec("kedro"):
 else:
 
     class AbstractDataSet:
-        pass
+        def load(self):
+            return self._load()
 
-    class AbstractVersionedDataSet:
+        def save(self, data):
+            self._save(data)
+
+    class AbstractVersionedDataSet(AbstractDataSet):
         def __init__(
             self, filepath=None, version=None, exists_function=None, glob_function=None
         ):
