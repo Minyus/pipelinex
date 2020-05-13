@@ -75,16 +75,11 @@ class ItemGetter:
         return d[self.item]
 
 
-# def _apply_func_to_dict(d, fn, kwargs={}):
-#     assert callable(fn)
-#     assert isinstance(d, dict)
-#     out = {k: fn(e, **kwargs) for k, e in d.items()}
-#     return out
-#
-#
-# class ItemGetterInDict:
-#     def __init__(self, item):
-#         self.item = item
-#
-#     def __call__(self, d):
-#         return _apply_func_to_dict(d, operator.itemgetter(self.item))
+class TransformCompose:
+    def __init__(self, transforms):
+        self.transforms = transforms
+
+    def __call__(self, d):
+        for t in self.transforms:
+            d = t(d)
+        return d

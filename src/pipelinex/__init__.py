@@ -43,6 +43,9 @@ if find_spec("requests"):
 if find_spec("httpx"):
     from .extras.datasets.httpx.async_api_dataset import *  # NOQA
 
+if find_spec("numpy"):
+    from .extras.ops.numpy_ops import *  # NOQA
+
 if find_spec("pandas"):
     from .extras.ops.pandas_ops import *  # NOQA
     from .extras.decorators.pandas_decorators import *  # NOQA
