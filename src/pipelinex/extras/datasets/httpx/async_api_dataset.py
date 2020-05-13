@@ -33,14 +33,15 @@ async def wait_coroutines(coroutines):
 
 class AsyncAPIDataSet(APIDataSet):
     def _configure_session(self, session_config, _):
-        return httpx.AsyncClient(**session_config)
+        return session_config
 
     def _execute_request(self) -> Dict[str, Any]:
 
         request_args = self._request_args
-        session = self._session
         method = self._method
         url_dict = self._get_url_dict()
+
+        session = httpx.AsyncClient(**self._session)
 
         name_url_list = list(url_dict.items())
         url_list = [e[1] for e in name_url_list]
@@ -56,5 +57,7 @@ class AsyncAPIDataSet(APIDataSet):
                 response_dict[name] = task.result()
             except Exception as exc:
                 response_dict[name] = self._handle_exceptions(exc)
+
+        session.aclose()
 
         return response_dict
