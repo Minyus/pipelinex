@@ -257,6 +257,32 @@ def test_successfully_load_from_url_list_with_content_response_by_call():
         assert content[1:4] == b"PNG"  # part of PNG file signature
 
 
+def test_successfully_load_from_url_list_with_content_response_by_call_twice():
+    api_data_set = APIDataSet(
+        pool_config={
+            foobar_prefix: {
+                "pool_connections": 1,
+                "pool_maxsize": 1,
+                "max_retries": 0,
+                "pool_block": False,
+            }
+        },
+    )
+    content_list = api_data_set(
+        url=[foo_image_url, bar_image_url], method="GET", attribute="content",
+    )
+    assert isinstance(content_list, list)
+    for content in content_list:
+        assert content[1:4] == b"PNG"  # part of PNG file signature
+
+    content_list = api_data_set(
+        url=[foo_image_url, bar_image_url], method="GET", attribute="content",
+    )
+    assert isinstance(content_list, list)
+    for content in content_list:
+        assert content[1:4] == b"PNG"  # part of PNG file signature
+
+
 def test_successfully_load_from_url_list_with_transforms_by_call():
     api_data_set = APIDataSet(
         pool_config={
