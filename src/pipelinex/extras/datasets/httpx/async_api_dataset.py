@@ -22,13 +22,21 @@ def asyncio_run(aw):
     return r
 
 
-async def coroutine(session, method, url, request_args):
+async def request_coroutine(session, method, url, request_args):
     return await session.request(method, url=url, **request_args)
 
 
-async def wait_coroutines(coroutines):
-    tasks = [asyncio.ensure_future(coroutine) for coroutine in coroutines]
-    return await asyncio.wait(tasks)
+async def requests_coroutine(session_config, method, url_list, request_args):
+    async with httpx.AsyncClient(**session_config) as session:
+        request_coroutines = [
+            request_coroutine(session, method, url, request_args) for url in url_list
+        ]
+
+        request_tasks = [
+            asyncio.ensure_future(coroutine) for coroutine in request_coroutines
+        ]
+        r = await asyncio.wait(request_tasks)
+    return r
 
 
 class AsyncAPIDataSet(APIDataSet):
@@ -40,15 +48,13 @@ class AsyncAPIDataSet(APIDataSet):
         request_args = self._request_args
         method = self._method
         url_dict = self._get_url_dict()
-
-        session = httpx.AsyncClient(**self._session)
+        session_config = self._session
 
         name_url_list = list(url_dict.items())
         url_list = [e[1] for e in name_url_list]
-
-        coroutines = [coroutine(session, method, url, request_args) for url in url_list]
-
-        tasks_done, tasks_pending = asyncio_run(wait_coroutines(coroutines))
+        tasks_done, tasks_pending = asyncio_run(
+            requests_coroutine(session_config, method, url_list, request_args)
+        )
 
         name_list = [e[0] for e in name_url_list]
         response_dict = {}
@@ -57,7 +63,5 @@ class AsyncAPIDataSet(APIDataSet):
                 response_dict[name] = task.result()
             except Exception as exc:
                 response_dict[name] = self._handle_exceptions(exc)
-
-        session.aclose()
 
         return response_dict
