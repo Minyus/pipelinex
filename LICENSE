@@ -10,6 +10,7 @@ regarding the following parts:
 - `csv_local.py` copied from https://github.com/quantumblacklabs/kedro/blob/0.15.9/kedro/io/csv_local.py
 - `api_dataset.py` copied from https://github.com/quantumblacklabs/kedro/blob/b996cb673bf7ada4dd8356f7fd22894a9cf7f51d/kedro/extras/datasets/api/api_dataset.py
 - `test_api_dataset.py` copied from https://github.com/quantumblacklabs/kedro/blob/b996cb673bf7ada4dd8356f7fd22894a9cf7f51d/tests/extras/datasets/api/test_api_dataset.py
+- `core.py` copied from https://github.com/quantumblacklabs/kedro/blob/153ab056517b543801dbe0b092c29ddea24b73c9/kedro/io/core.py
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
