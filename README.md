@@ -481,22 +481,89 @@ pprint(train_params_converted)
  'param5_int_1e9_python': 1000000000}
 ```
 
+## Unified interface for data loading/saving
+
+Machine Learning projects involves with loading and saving various data in various ways such as:
+
+- files in local storage or cloud (Amazon S3, GCS) 
+  - e.g. CSV, JSON, YAML, pickle, images, videos, etc.
+- databases 
+  - Postgresql, MySQL etc.
+- Spark
+- REST API
+
+It is often the case that many Machine Learning Engineers code both data loading/saving and data transformation mixed in the same Python module or Jupyter notebook during experimentation/prototyping phase and suffer later on because:
+
+- During experimentation/prototping, we often want to save the intermediate data after each transformation. 
+- In production environments, we often want to skip saving data to minimize latency and storage space.
+- To benchmark the performance or troubleshoot, we often want to switch the data source.
+  - e.g. read image files in local storage or download images through REST API
+
+The proposed solution is the unified interface for data loading/saving.
+
+Objects with `_load`, and `_save` methods are the interface proposed by [Kedro](https://github.com/quantumblacklabs/kedro) and supported by PipelineX.
+
+Here is a simple demo example for loading/saving a CSV file in local storage.
+
+```python
+import pandas as pd
+from pathlib import Path
+
+
+class SimpleCSVLocalDataSet:
+
+    def __init__(self, filepath, load_args, save_args):
+        self._filepath = filepath
+        self._load_args = load_args
+        self._save_args = save_args
+
+    def _load(self) -> pd.DataFrame:
+        return pd.read_csv(self._filepath, **self._load_args)
+
+    def _save(self, data: pd.DataFrame) -> None:
+        save_path = Path(self._filepath)
+        save_path.parent.mkdir(parents=True, exist_ok=True)
+        data.to_csv(str(save_path), **self._save_args)
+
+
+def do_some_transformation(df):
+    # do some transformation here
+    return df
+
+
+if __name__ == "__main__":
+
+    input_dataset = SimpleCSVLocalDataSet(filepath="data/input.csv")
+    output_dataset = SimpleCSVLocalDataSet(filepath="data/output.csv")
+    save_output_flag = True
+
+    df_001 = input_dataset._load()
+    df_002 = do_some_transformation(df_001)
+    if save_output_flag:
+        output_dataset._save(df_002)
+```
+
+This may look better, but not enough.
+
+Let's see what Kedro and PipelineX can do.
+
+
 ## YAML-configurable enhanced Kedro
 
 Kedro is a Python package to develop pipelines consisting of:
+
+- data loading/saving wrappers (called "DataSets") such as:
+  - [`CSVDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.CSVDataSet.html#kedro.extras.datasets.pandas.CSVDataSet): a CSV file in local or cloud (Amazon S3, Google Cloud Storage) utilizing [filesystem_spec (`fsspec`)](https://github.com/intake/filesystem_spec)
+  - [`SQLTableDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.SQLTableDataSet.html#kedro.extras.datasets.pandas.SQLTableDataSet): a table data in an SQL database supported by [SQLAlchemy](https://www.sqlalchemy.org/features.html)
+  - and [much more provided by Kedro](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.html#data-sets)
+  - and [even more provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets)
 
 - tasks (called "Nodes") such as:
   - data transformation
   - training a model
   - run inference using a model
 
-- data loading/saving wrappers (called "Data Sets") such as:
-  - [`CSVDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.CSVDataSet.html#kedro.extras.datasets.pandas.CSVDataSet): loads/saves data from/to a CSV file using an underlying filesystem (e.g.: local, S3, GCS).
-  - [`SQLTableDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.SQLTableDataSet.html#kedro.extras.datasets.pandas.SQLTableDataSet): loads data from a SQL table and saves a pandas dataframe to a table.
-  - and [much more provided by Kedro](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.html#data-sets)
-  - and [even more provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/io)
-
-- pipeline task dependency
+- inter-task dependency
 
 Regarding Kedro, please see:
 - [Kedro's document](https://kedro.readthedocs.io/en/latest/)
