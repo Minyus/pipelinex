@@ -2,6 +2,7 @@ import copy
 from pathlib import Path
 from typing import Any, Dict, Union
 from PIL import Image
+import logging
 
 import numpy as np
 from pipelinex.io.core import AbstractVersionedDataSet, DataSetError, Version
