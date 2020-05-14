@@ -1,10 +1,12 @@
 import copy
 from pathlib import Path
 from typing import Any, Dict
-import torchvision
-from ....hatch_dict import HatchDict
-from ..core import AbstractVersionedDataSet, DataSetError, Version
 import logging
+
+import torchvision
+
+from pipelinex.hatch_dict.hatch_dict import HatchDict
+from pipelinex.io.core import AbstractVersionedDataSet, DataSetError, Version
 
 log = logging.getLogger(__name__)
 

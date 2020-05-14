@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from ..core import AbstractVersionedDataSet, DataSetError, Version
+from pipelinex.io.core import AbstractVersionedDataSet, DataSetError, Version
 import logging
 
 log = logging.getLogger(__name__)

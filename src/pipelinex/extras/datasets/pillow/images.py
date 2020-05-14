@@ -2,10 +2,9 @@ import copy
 from pathlib import Path
 from typing import Any, Dict, Union
 from PIL import Image
-import logging
 
 import numpy as np
-from ..core import AbstractVersionedDataSet, DataSetError, Version
+from pipelinex.io.core import AbstractVersionedDataSet, DataSetError, Version
 
 from ...ops.numpy_ops import to_channel_first_arr, to_channel_last_arr
 

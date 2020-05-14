@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import logging
 
-from ..core import AbstractDataSet
+from pipelinex.io.core import AbstractDataSet
 
 log = logging.getLogger(__name__)
 

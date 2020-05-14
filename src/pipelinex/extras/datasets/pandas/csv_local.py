@@ -36,7 +36,7 @@ from typing import Any, Dict
 
 import pandas as pd
 
-from ..core import (
+from pipelinex.io.core import (
     AbstractVersionedDataSet,
     Version,
 )
