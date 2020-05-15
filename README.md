@@ -506,6 +506,9 @@ Objects with `_load`, and `_save` methods are the interface proposed by [Kedro](
 Here is a simple demo example for loading/saving a CSV file in local storage.
 
 ```python
+
+# Define a data interface: better ones such as "CSVDataSet" are provided by Kedro
+
 import pandas as pd
 from pathlib import Path
 
@@ -526,21 +529,26 @@ class SimpleCSVLocalDataSet:
         data.to_csv(str(save_path), **self._save_args)
 
 
+# Define a task
+
 def do_some_transformation(df):
     # do some transformation here
     return df
 
 
-if __name__ == "__main__":
+# Configure data interface: can be written in catalog.yml using Kedro
 
-    input_dataset = SimpleCSVLocalDataSet(filepath="data/input.csv")
-    output_dataset = SimpleCSVLocalDataSet(filepath="data/output.csv")
-    save_output_flag = True
+input_dataset = SimpleCSVLocalDataSet(filepath="data/input.csv")
+output_dataset = SimpleCSVLocalDataSet(filepath="data/output.csv")
+save_output_flag = True
 
-    df_001 = input_dataset._load()
-    df_002 = do_some_transformation(df_001)
-    if save_output_flag:
-        output_dataset._save(df_002)
+
+# Run tasks: can be configured as a pipeline using Kedro and written in parameters.yml using PipelineX
+df_001 = input_dataset._load()
+df_002 = do_some_transformation(df_001)
+if save_output_flag:
+    output_dataset._save(df_002)
+
 ```
 
 This may look better, but not enough.
