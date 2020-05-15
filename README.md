@@ -514,11 +514,12 @@ from pathlib import Path
 
 
 class SimpleCSVLocalDataSet:
-
-    def __init__(self, filepath, load_args, save_args):
+    def __init__(self, filepath, load_args={}, save_args={}):
         self._filepath = filepath
-        self._load_args = load_args
-        self._save_args = save_args
+        self._load_args = {}
+        self._load_args.update(load_args)
+        self._save_args = {"index": False}
+        self._save_args.update(save_args)
 
     def _load(self) -> pd.DataFrame:
         return pd.read_csv(self._filepath, **self._load_args)
@@ -538,8 +539,16 @@ def do_some_transformation(df):
 
 # Configure data interface: can be written in catalog.yml using Kedro
 
-input_dataset = SimpleCSVLocalDataSet(filepath="data/input.csv")
-output_dataset = SimpleCSVLocalDataSet(filepath="data/output.csv")
+input_dataset = SimpleCSVLocalDataSet(
+    filepath="data/input.csv",
+    load_args={"float_precision": "high"},
+    save_args={"float_format": "%.16e"},
+)
+output_dataset = SimpleCSVLocalDataSet(
+    filepath="data/output.csv",
+    load_args={"float_precision": "high"},
+    save_args={"float_format": "%.16e"},
+)
 save_output_flag = True
 
 
