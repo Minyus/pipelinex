@@ -596,17 +596,17 @@ Just following the data interface framework might be somewhat beneficial in the 
 Let's see what Kedro and PipelineX can do.
 
 
-## YAML-configurable enhanced Kedro
+## Kedro
 
 Kedro is a Python package to develop pipelines consisting of:
 
-- data loading/saving wrappers (called "DataSets") such as:
+- data loading/saving wrappers (called "DataSets") that follows the unified data interface framework such as:
   - [`CSVDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.CSVDataSet.html#kedro.extras.datasets.pandas.CSVDataSet): a CSV file in local or cloud (Amazon S3, Google Cloud Storage) utilizing [filesystem_spec (`fsspec`)](https://github.com/intake/filesystem_spec)
   - [`SQLTableDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.SQLTableDataSet.html#kedro.extras.datasets.pandas.SQLTableDataSet): a table data in an SQL database supported by [SQLAlchemy](https://www.sqlalchemy.org/features.html)
   - and [much more provided by Kedro](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.html#data-sets)
   - and [even more provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets)
 
-- tasks (called "Nodes") such as:
+- tasks (called "Nodes") to run sequentially or in parallel such as:
   - data transformation
   - training a model
   - run inference using a model
@@ -618,34 +618,31 @@ Regarding Kedro, please see:
 - [YouTube playlist: Writing Data Pipelines with Kedro](https://www.youtube.com/playlist?list=PLTU89LAWKRwEdiDKeMOU2ye6yU9Qd4MRo)
 - [Python Packages for Pipeline/Workflow](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow)
 
-Example Kedro run code (modified and simplified version of [kedro-tutorial's run.py](https://github.com/quantumblacklabs/kedro-examples/blob/master/kedro-tutorial/src/kedro_tutorial/run.py)):
+Here is a simple example Kedro project.
 
-```python
-from typing import Dict
+Kedro Catalog:
 
-from kedro.context import KedroContext
-from kedro.pipeline import Pipeline
+```yaml
+#  catalog.yml
 
-from kedro_tutorial.pipeline import create_pipelines
+input_data_1:
+  type: CSVLocalDataSet
+  filepath: data/input/input_data_1.csv
 
+intermediate_data_1:
+  type: PickleLocalDataSet
+  filepath: data/load/intermediate_data_1.pickle
 
-class ProjectContext(KedroContext):
-    """Users can override the remaining methods from the parent class here,
-    or create new ones (e.g. as required by plugins)
-    """
+intermediate_data_2:
+  type: CSVLocalDataSet
+  filepath: data/load/intermediate_data_2.csv
 
-    project_name = "kedro-tutorial"
-    project_version = "0.15.9"
-
-    def _get_pipelines(self) -> Dict[str, Pipeline]:
-        return create_pipelines()
-
-
-context = ProjectContext()
-context.run(pipeline_name="__default__", runner=SequentialRunner())
+output_data:
+  type: CSVLocalDataSet
+  filepath: data/load/output_data.csv
 ```
 
-Example Kedro Pipeline:
+Kedro pipeline code:
 
 ```python
 from kedro.pipeline import Pipeline, node
@@ -674,29 +671,40 @@ def create_pipeline(**kwargs):
     )
 ```
 
-Example Kedro Catalog:
+Kedro run code:
+
+```python
+context = ProjectContext()
+context.run(pipeline_name="__default__", runner=SequentialRunner())
+```
+
+## Kedro enhanced by PipelineX
+
+PipelineX enables you to use Kedro in more convenient ways.
+
+- Optional syntactic sugar for `catalog.yml` with backward-compatibility with pure Kedro
+  - Optionally specify the `filepath` as the catalog entry name so the file name without extension is used as the DataSet instance name
+  - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
+  - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
+  - Optionally specify the default `DataSet` and its parameters using `/` key so you can reduce copying.
 
 ```yaml
 #  catalog.yml
 
-input_data_1:
+/: # Optionally specify the default DataSet
   type: CSVLocalDataSet
-  filepath: data/input/input_data_1.csv
+  cached: True
 
-intermediate_data_1:
+data/input/input_data_1.csv: # Use the default DataSet
+
+data/load/intermediate_data_1.pickle:
   type: PickleLocalDataSet
-  filepath: data/load/intermediate_data_1.pickle
 
-intermediate_data_2:
-  type: CSVLocalDataSet
-  filepath: data/load/intermediate_data_2.csv
+data/load/intermediate_data_2.csv: # Use the default DataSet
 
-output_data:
-  type: CSVLocalDataSet
-  filepath: data/load/output_data.csv
+data/load/output_data.csv: # Use the default DataSet
+  mlflow_logging: True
 ```
-
-PipelineX enables you to use Kedro in more convenient ways:
 
 - Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
   - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
@@ -713,11 +721,6 @@ PipelineX enables you to use Kedro in more convenient ways:
   - Optionally specify the location to save artifacts
   - Optionally specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
   - Optionally specify the artifacts (e.g. parameters, trained model, prediction) to save
-- Syntactic sugar for `catalog.yml`
-  - Optionally specify the `filepath` as the catalog entry name so the file name without extension is used as the DataSet instance name
-  - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
-  - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
-  - Optionally specify the default `DataSet` and its parameters using `/` key so you can reduce copying.
 
 ```yaml
 # parameters.yml
@@ -751,23 +754,6 @@ MLFLOW_LOGGING_CONFIG:
   logging_artifacts: # Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
 ```
 
-```yaml
-#  catalog.yml
-
-/: # Optionally specify the default DataSet
-  type: CSVLocalDataSet
-  cached: True
-
-data/input/input_data_1.csv: # Use the default DataSet
-
-data/load/intermediate_data_1.pickle:
-  type: PickleLocalDataSet
-
-data/load/intermediate_data_2.csv: # Use the default DataSet
-
-data/load/output_data.csv: # Use the default DataSet
-  mlflow_logging: True
-```
 
 ## Decorator-based benchmarking
 
