@@ -481,7 +481,7 @@ pprint(train_params_converted)
  'param5_int_1e9_python': 1000000000}
 ```
 
-## Unified interface for data loading/saving
+## The unified data interface framework
 
 Machine Learning projects involves with loading and saving various data in various ways such as:
 
@@ -494,7 +494,7 @@ Machine Learning projects involves with loading and saving various data in vario
 
 It is often the case that many Machine Learning Engineers code both data loading/saving and data transformation mixed in the same Python module or Jupyter notebook during experimentation/prototyping phase and suffer later on because:
 
-- During experimentation/prototping, we often want to save the intermediate data after each transformation. 
+- During experimentation/prototyping, we often want to save the intermediate data after each transformation. 
 - In production environments, we often want to skip saving data to minimize latency and storage space.
 - To benchmark the performance or troubleshoot, we often want to switch the data source.
   - e.g. read image files in local storage or download images through REST API
@@ -504,6 +504,35 @@ The proposed solution is the unified interface for data loading/saving.
 Objects with `_load`, and `_save` methods are the interface proposed by [Kedro](https://github.com/quantumblacklabs/kedro) and supported by PipelineX.
 
 Here is a simple demo example for loading/saving a CSV file in local storage.
+
+Disregarding the data interface framework:
+
+```python
+
+# Configure: can be written in a config file (YAML, JSON, etc.)
+
+input_filepath = "data/input.csv"
+input_load_args = {"float_precision": "high"}
+
+save_output_flag = True
+output_filepath = "data/output.csv"
+output_save_args = {"index": False, "float_format": "%.16e"}
+
+
+# Run tasks
+
+import pandas as pd
+
+
+df_001 = pd.read_csv(input_filepath, **input_load_args)
+# do some transformation here
+df_002 = df_001
+if save_output_flag:
+    df_002.to_csv(output_filepath, **output_save_args)
+
+```
+
+Following the data interface framework:
 
 ```python
 
@@ -530,29 +559,31 @@ class SimpleCSVLocalDataSet:
         data.to_csv(str(save_path), **self._save_args)
 
 
-# Define a task
+# Define tasks
 
 def do_some_transformation(df):
     # do some transformation here
     return df
 
 
-# Configure data interface: can be written in catalog.yml using Kedro
+# Configure data interface: can be written in catalog config file using Kedro
 
 input_dataset = SimpleCSVLocalDataSet(
     filepath="data/input.csv",
     load_args={"float_precision": "high"},
-    save_args={"float_format": "%.16e"},
+    # save_args={"float_format": "%.16e"},  # You can set save_args for future use
 )
+
+save_output_flag = True
 output_dataset = SimpleCSVLocalDataSet(
     filepath="data/output.csv",
-    load_args={"float_precision": "high"},
+    # load_args={"float_precision": "high"},  # You can set load_args for future use
     save_args={"float_format": "%.16e"},
 )
-save_output_flag = True
 
 
-# Run tasks: can be configured as a pipeline using Kedro and written in parameters.yml using PipelineX
+# Run tasks: can be configured as a pipeline using Kedro
+# and can be written in parameters config file using PipelineX
 df_001 = input_dataset._load()
 df_002 = do_some_transformation(df_001)
 if save_output_flag:
@@ -560,7 +591,7 @@ if save_output_flag:
 
 ```
 
-This may look better, but not enough.
+Just following the data interface framework might be somewhat beneficial in the long run, but not enough.
 
 Let's see what Kedro and PipelineX can do.
 
