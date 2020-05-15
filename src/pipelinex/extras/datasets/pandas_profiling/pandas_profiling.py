@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Any, Dict
 import pandas as pd
-from pipelinex.io.core import AbstractVersionedDataSet, DataSetError, Version
+from ..core import AbstractVersionedDataSet, DataSetError, Version
 
 
 class PandasProfilingDataSet(AbstractVersionedDataSet):

@@ -35,7 +35,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 import requests
 from requests.auth import AuthBase
-from pipelinex.io.core import AbstractDataSet, DataSetError
+from ..core import AbstractDataSet, DataSetError
 
 
 class APIDataSet(AbstractDataSet):

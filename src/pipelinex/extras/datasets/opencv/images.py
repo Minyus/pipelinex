@@ -4,7 +4,7 @@ from typing import Any, Dict
 import logging
 
 import cv2
-from pipelinex.io.core import AbstractVersionedDataSet, DataSetError, Version
+from ..core import AbstractVersionedDataSet, DataSetError, Version
 
 log = logging.getLogger(__name__)
 

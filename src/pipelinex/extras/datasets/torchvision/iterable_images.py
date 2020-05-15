@@ -6,7 +6,7 @@ import logging
 import torchvision
 
 from pipelinex.hatch_dict.hatch_dict import HatchDict
-from pipelinex.io.core import AbstractVersionedDataSet, DataSetError, Version
+from ..core import AbstractVersionedDataSet, DataSetError, Version
 
 log = logging.getLogger(__name__)
 
