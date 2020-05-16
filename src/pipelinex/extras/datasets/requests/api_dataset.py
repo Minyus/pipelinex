@@ -72,7 +72,7 @@ class APIDataSet(AbstractDataSet):
         headers: Dict[str, Any] = None,
         auth: Union[Tuple[str], AuthBase] = None,
         timeout: int = 60,
-        attribute: str = "text",
+        attribute: str = "",
         skip_errors: bool = False,
         transforms: List[callable] = [],
         session_config: Dict[str, Any] = {},
@@ -108,8 +108,8 @@ class APIDataSet(AbstractDataSet):
                 https://requests.readthedocs.io/en/master/user/quickstart/#timeouts
             attribute: The attribute of response to return. Normally it's either `text`, which
                 returns pure text,`json`, which returns JSON in Python Dict format, `content`,
-                which returns a raw content, or `` (empty string), which returns the reponse
-                object itself. Defaults to `text`.
+                which returns a raw content, or `` (empty string), which returns the response
+                object itself. Defaults to `` (empty string).
             skip_errors: If True, exceptions will not interrupt loading data and be returned
                 instead of the expected responses by _load method. Defaults to False.
             transforms: List of callables to transform the output.

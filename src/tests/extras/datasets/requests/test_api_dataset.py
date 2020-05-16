@@ -59,7 +59,11 @@ class TestAPIDataSet:
 
     def test_successfully_load_with_text_response(self, requests_mocker, method):
         api_data_set = APIDataSet(
-            url=TEST_URL, method=method, params=TEST_PARAMS, headers=TEST_HEADERS
+            url=TEST_URL,
+            method=method,
+            params=TEST_PARAMS,
+            headers=TEST_HEADERS,
+            attribute="text",
         )
         requests_mocker.register_uri(
             method,
