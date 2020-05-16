@@ -6,8 +6,6 @@ import logging
 
 from kedro.context import KedroContext
 
-from .flexible_context import FlexibleContext
-
 log = logging.getLogger(__name__)
 
 
@@ -111,7 +109,3 @@ def get_timestamp(offset_hours=0, fmt="%Y-%m-%dT%H:%M:%S"):
 
 def get_timestamp_int(offset_hours=0):
     return int(get_timestamp(offset_hours=offset_hours, fmt="%Y%m%d%H%M"))
-
-
-class MLflowFlexibleContext(MLflowContext, FlexibleContext):
-    pass
