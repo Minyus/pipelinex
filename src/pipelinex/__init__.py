@@ -1,6 +1,7 @@
 __version__ = "0.2.7"
 
 from importlib.util import find_spec
+from .configure import *  # NOQA
 from .utils import *  # NOQA
 from .hatch_dict.hatch_dict import *  # NOQA
 from .extras.decorators.decorators import *  # NOQA
