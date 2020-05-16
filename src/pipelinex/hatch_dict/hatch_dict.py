@@ -58,7 +58,9 @@ class HatchDict:
     ):
         # type: (...) -> Any
 
-        assert key.__class__.__name__ in {"str", "int"}, "Received key: {}".format(key)
+        assert (key is None) or (
+            key.__class__.__name__ in {"str", "int",}
+        ), "Received key: {}".format(key)
         assert lookup.__class__.__name__ in {"dict"}, "Received lookup: s{}".format(
             lookup
         )
