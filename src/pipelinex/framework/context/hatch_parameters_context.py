@@ -7,5 +7,5 @@ class HatchParametersContext(KedroContext):
     @property
     def params(self) -> Dict[str, Any]:
         params = super().params
-        params = HatchDict(params)
+        params = HatchDict(params).get()
         return params
