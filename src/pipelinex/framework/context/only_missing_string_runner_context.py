@@ -4,7 +4,7 @@ from typing import Any, Dict, Iterable, Optional, Union  # NOQA
 from warnings import warn
 from kedro.io.core import generate_timestamp
 from kedro.versioning import Journal
-from kedro.context import KedroContext, KedroContextError
+from .context import KedroContext, KedroContextError
 from kedro.runner import AbstractRunner, ParallelRunner, SequentialRunner
 
 log = logging.getLogger(__name__)

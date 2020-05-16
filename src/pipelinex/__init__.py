@@ -1,20 +1,22 @@
 __version__ = "0.2.7"
 
 from importlib.util import find_spec
-from .configure import *  # NOQA
+
 from .utils import *  # NOQA
 from .hatch_dict.hatch_dict import *  # NOQA
+
 from .extras.decorators.decorators import *  # NOQA
 from .extras.ops.argparse_ops import *  # NOQA
 
 if find_spec("kedro"):
     from .pipeline.pipeline import *  # NOQA
     from .pipeline.sub_pipeline import *  # NOQA
-    from .context.catalog_sugar_context import *  # NOQA
-    from .context.flexible_context import *  # NOQA
-    from .context.only_missing_string_runner_context import *  # NOQA
-    from .context.pipelines_in_parameters_context import *  # NOQA
-    from .context.mlflow_context import *  # NOQA
+    from .framework.configure import *  # NOQA
+    from .framework.context.catalog_sugar_context import *  # NOQA
+    from .framework.context.flexible_context import *  # NOQA
+    from .framework.context.only_missing_string_runner_context import *  # NOQA
+    from .framework.context.pipelines_in_parameters_context import *  # NOQA
+    from .framework.context.mlflow_context import *  # NOQA
 
 if find_spec("pandas"):
     from .extras.datasets.pandas.csv_local import *  # NOQA

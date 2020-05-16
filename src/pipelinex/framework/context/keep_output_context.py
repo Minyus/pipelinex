@@ -1,4 +1,4 @@
-from kedro.context import KedroContext
+from .context import KedroContext
 import logging
 
 log = logging.getLogger(__name__)

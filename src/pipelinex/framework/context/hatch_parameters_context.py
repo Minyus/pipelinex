@@ -1,6 +1,6 @@
 from typing import Any, Dict  # NOQA
-from kedro.context import KedroContext
-from ..hatch_dict.hatch_dict import HatchDict
+from .context import KedroContext
+from pipelinex import HatchDict
 
 
 class HatchParametersContext(KedroContext):

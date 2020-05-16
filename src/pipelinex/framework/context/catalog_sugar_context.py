@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict  # NOQA
 
-from kedro.context import KedroContext
+from .context import KedroContext
 from kedro.io import DataCatalog
 
 log = logging.getLogger(__name__)

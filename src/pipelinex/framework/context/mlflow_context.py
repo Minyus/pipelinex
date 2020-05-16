@@ -4,7 +4,7 @@ import time
 from typing import Any, Iterable  # NOQA
 import logging
 
-from kedro.context import KedroContext
+from .context import KedroContext
 
 log = logging.getLogger(__name__)
 
