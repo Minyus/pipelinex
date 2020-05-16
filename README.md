@@ -503,7 +503,21 @@ The proposed solution is the unified interface for data loading/saving.
 
 Objects with `_load`, and `_save` methods are the interface proposed by [Kedro](https://github.com/quantumblacklabs/kedro) and supported by PipelineX.
 
-Here is a simple demo example for loading/saving a CSV file in local storage.
+Here is a simple demo example.
+
+Common code to define tasks:
+
+```python
+# Define tasks
+
+def train_model(df):
+    model = df  # train model here
+    return model
+
+def run_inference(model, df):
+    # run inference here
+    return df
+```
 
 Disregarding the data interface framework:
 
@@ -511,12 +525,14 @@ Disregarding the data interface framework:
 
 # Configure: can be written in a config file (YAML, JSON, etc.)
 
-input_filepath = "data/input.csv"
-input_load_args = {"float_precision": "high"}
+train_data_filepath = "data/input/train.csv"
+train_data_load_args = {"float_precision": "high"}
 
-save_output_flag = True
-output_filepath = "data/output.csv"
-output_save_args = {"index": False, "float_format": "%.16e"}
+test_data_filepath = "data/input/test.csv"
+test_data_load_args = {"float_precision": "high"}
+
+pred_data_filepath = "data/load/pred.csv"
+pred_data_save_args = {"index": False, "float_format": "%.16e"}
 
 
 # Run tasks
@@ -524,11 +540,12 @@ output_save_args = {"index": False, "float_format": "%.16e"}
 import pandas as pd
 
 
-df_001 = pd.read_csv(input_filepath, **input_load_args)
-# do some transformation here
-df_002 = df_001
-if save_output_flag:
-    df_002.to_csv(output_filepath, **output_save_args)
+train_df = pd.read_csv(train_data_filepath, **train_data_load_args)
+model = train_model(train_df)
+
+test_df = pd.read_csv(test_data_filepath, **test_data_load_args)
+pred_df = run_inference(model, test_df)
+pred_df.to_csv(pred_data_filepath, **pred_data_save_args)
 
 ```
 
@@ -542,7 +559,7 @@ import pandas as pd
 from pathlib import Path
 
 
-class SimpleCSVLocalDataSet:
+class CSVDataSet:
     def __init__(self, filepath, load_args={}, save_args={}):
         self._filepath = filepath
         self._load_args = {}
@@ -559,24 +576,22 @@ class SimpleCSVLocalDataSet:
         data.to_csv(str(save_path), **self._save_args)
 
 
-# Define tasks
-
-def do_some_transformation(df):
-    # do some transformation here
-    return df
-
-
 # Configure data interface: can be written in catalog config file using Kedro
 
-input_dataset = SimpleCSVLocalDataSet(
-    filepath="data/input.csv",
+train_dataset = CSVDataSet(
+    filepath="data/input/train.csv",
     load_args={"float_precision": "high"},
     # save_args={"float_format": "%.16e"},  # You can set save_args for future use
 )
 
-save_output_flag = True
-output_dataset = SimpleCSVLocalDataSet(
-    filepath="data/output.csv",
+test_dataset = CSVDataSet(
+    filepath="data/input/test.csv",
+    load_args={"float_precision": "high"},
+    # save_args={"float_format": "%.16e"},  # You can set save_args for future use
+)
+
+pred_dataset = CSVDataSet(
+    filepath="data/load/pred.csv",
     # load_args={"float_precision": "high"},  # You can set load_args for future use
     save_args={"float_format": "%.16e"},
 )
@@ -584,10 +599,13 @@ output_dataset = SimpleCSVLocalDataSet(
 
 # Run tasks: can be configured as a pipeline using Kedro
 # and can be written in parameters config file using PipelineX
-df_001 = input_dataset._load()
-df_002 = do_some_transformation(df_001)
-if save_output_flag:
-    output_dataset._save(df_002)
+train_df = train_dataset._load()
+model = train_model(train_df)
+
+test_df = test_dataset._load()
+pred_df = run_inference(model, test_df)
+
+pred_dataset._save(pred_df)
 
 ```
 
@@ -625,21 +643,30 @@ Kedro Catalog:
 ```yaml
 #  catalog.yml
 
-input_data_1:
-  type: CSVLocalDataSet
-  filepath: data/input/input_data_1.csv
+train_df:
+  type: pandas.CSVDataSet # short for kedro.extras.datasets.pandas.CSVDataSet
+  filepath: data/input/train.csv
+  load_args: 
+    float_precision: high
+  # save_args: # You can set save_args for future use
+    # float_format": "%.16e" 
 
-intermediate_data_1:
-  type: PickleLocalDataSet
-  filepath: data/load/intermediate_data_1.pickle
+test_df:
+  type: pandas.CSVDataSet # short for kedro.extras.datasets.pandas.CSVDataSet
+  filepath: data/input/test.csv
+  load_args: 
+    float_precision: high
+  # save_args: # You can set save_args for future use
+    # float_format": "%.16e" 
 
-intermediate_data_2:
-  type: CSVLocalDataSet
-  filepath: data/load/intermediate_data_2.csv
+pred_df:
+  type: pandas.CSVDataSet # short for kedro.extras.datasets.pandas.CSVDataSet
+  filepath: data/load/pred.csv
+  # load_args: # You can set load_args for future use
+    # float_precision: high
+  save_args: 
+    float_format": "%.16e" 
 
-output_data:
-  type: CSVLocalDataSet
-  filepath: data/load/output_data.csv
 ```
 
 Kedro pipeline code:
@@ -647,25 +674,20 @@ Kedro pipeline code:
 ```python
 from kedro.pipeline import Pipeline, node
 
-from my_module import processing_task_1, processing_task_2, processing_task_3
+from my_module import train_model, run_inference
 
 def create_pipeline(**kwargs):
     return Pipeline(
         [
             node(
-                func=processing_task_1,
-                inputs="input_data_1",
-                outputs=["intermediate_data_1", "intermediate_data_2"],
+                func=train_model,
+                inputs="train_df",
+                outputs="model",
             ),
             node(
-                func=processing_task_2,
-                inputs="intermediate_data_1",
-                outputs="trivial_intermediate_data",
-            ),
-            node(
-                func=processing_task_3,
-                inputs="trivial_intermediate_data",
-                outputs="output_data",
+                func=run_inference,
+                inputs=["model", "test_df"],
+                outputs="pred_df",
             ),
         ]
     )
@@ -674,6 +696,10 @@ def create_pipeline(**kwargs):
 Kedro run code:
 
 ```python
+from kedro.runner import SequntialRunner
+
+# Set up ProjectContext here
+
 context = ProjectContext()
 context.run(pipeline_name="__default__", runner=SequentialRunner())
 ```
@@ -683,37 +709,41 @@ context.run(pipeline_name="__default__", runner=SequentialRunner())
 PipelineX enables you to use Kedro in more convenient ways.
 
 - Optional syntactic sugar for `catalog.yml` with backward-compatibility with pure Kedro
-  - Optionally specify the `filepath` as the catalog entry name so the file name without extension is used as the DataSet instance name
+  - Optionally specify the default `DataSet` and its parameters using `/` key so you can reduce copying. (Alternatively, you can also use YAML's anchor&alias feature.
   - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
   - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
-  - Optionally specify the default `DataSet` and its parameters using `/` key so you can reduce copying.
 
 ```yaml
 #  catalog.yml
 
-/: # Optionally specify the default DataSet
-  type: CSVLocalDataSet
+/: # Optionally specify the default DataSet 
+  type: pandas.CSVDataSet
+  load_args: 
+    float_precision: high
+  save_args:
+    float_format": "%.16e" 
   cached: True
 
-data/input/input_data_1.csv: # Use the default DataSet
+train_df:
+  filepath: data/input/train.csv
 
-data/load/intermediate_data_1.pickle:
-  type: PickleLocalDataSet
+test_df:
+  filepath: data/input/test.csv
 
-data/load/intermediate_data_2.csv: # Use the default DataSet
-
-data/load/output_data.csv: # Use the default DataSet
+pred_df:
+  filepath: data/load/pred.csv
   mlflow_logging: True
+
 ```
 
-- Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
-  - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
-  - Optionally run nodes in parallel
 - Define Kedro pipeline in `parameters.yml` using `PIPELINES` key
   - Optionally specify the default Python module (path of .py file) if you want to omit the module name
   - Optionally specify the Python function decorator to apply to each node
   - Specify `inputs`, `func`, and `outputs` for each node
     - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
+- Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
+  - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
+  - Optionally run nodes in parallel
 - Integration with MLflow
   - Optionally specify the MLflow tracking database URI
     (For more details, see [SQLAlchemy database uri](https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls))
@@ -725,26 +755,24 @@ data/load/output_data.csv: # Use the default DataSet
 ```yaml
 # parameters.yml
 
-RUN_CONFIG:
-  pipeline_name: __default__
-  only_missing: False # Set True to run only missing nodes
-  runner: SequentialRunner # Set to "ParallelRunner" to run in parallel
-
 PIPELINES:
   __default__:
     =: pipelinex.FlexiblePipeline
     module: # Optionally specify the default Python module so you can omit the module name to which functions belongs
     decorator: # Optionally specify function decorator(s) to apply to each node
     nodes:
-      - inputs: input_data_1
-        func: my_module.processing_task_1
-        outputs: [intermediate_data_1, intermediate_data_2]
+      - inputs: train_df
+        func: my_module.train_model
+        outputs: model
 
-      - inputs: intermediate_data_1
-        func:
-          - my_module.processing_task_2
-          - my_module.processing_task_3
-        outputs: output_data
+      - inputs: [model, test_df]
+        func: my_module.run_inference
+        outputs: pred_df
+
+RUN_CONFIG:
+  pipeline_name: __default__
+  runner: SequentialRunner # Set to "ParallelRunner" to run in parallel
+  only_missing: False # Set True to run only missing nodes
 
 MLFLOW_LOGGING_CONFIG:
   uri: sqlite:///mlruns/sqlite.db
