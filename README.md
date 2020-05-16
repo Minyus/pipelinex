@@ -510,8 +510,8 @@ Common code to define tasks:
 ```python
 # Define tasks
 
-def train_model(df):
-    model = df  # train model here
+def train_model(model, df):
+    # train a model here
     return model
 
 def run_inference(model, df):
@@ -534,14 +534,24 @@ test_data_load_args = {"float_precision": "high"}
 pred_data_filepath = "data/load/pred.csv"
 pred_data_save_args = {"index": False, "float_format": "%.16e"}
 
+model_kind = "LogisticRegression"
+model_params_dict = {
+  "C": 1.23456
+  "max_iter": 987
+  "random_state": 42
+}
 
 # Run tasks
 
+
 import pandas as pd
 
+if model_kind == "LogisticRegression":
+    from sklearn.linear_model import LogisticRegression
+    model = LogisticRegression(**model_params_dict)
 
 train_df = pd.read_csv(train_data_filepath, **train_data_load_args)
-model = train_model(train_df)
+model = train_model(model, train_df)
 
 test_df = pd.read_csv(test_data_filepath, **test_data_load_args)
 pred_df = run_inference(model, test_df)
@@ -596,11 +606,22 @@ pred_dataset = CSVDataSet(
     save_args={"float_format": "%.16e"},
 )
 
+model_kind = "LogisticRegression"
+model_params_dict = {
+  "C": 1.23456
+  "max_iter": 987
+  "random_state": 42
+}
 
 # Run tasks: can be configured as a pipeline using Kedro
 # and can be written in parameters config file using PipelineX
+
+if model_kind == "LogisticRegression":
+    from sklearn.linear_model import LogisticRegression
+    model = LogisticRegression(**model_params_dict)
+
 train_df = train_dataset._load()
-model = train_model(train_df)
+model = train_model(model, train_df)
 
 test_df = test_dataset._load()
 pred_df = run_inference(model, test_df)
@@ -638,7 +659,6 @@ Regarding Kedro, please see:
 
 Here is a simple example Kedro project.
 
-Kedro Catalog:
 
 ```yaml
 #  catalog.yml
@@ -669,9 +689,20 @@ pred_df:
 
 ```
 
-Kedro pipeline code:
+```yaml
+# parameters.yml
+
+model:
+  !!python/object:sklearn.linear_model.LogisticRegression
+  C: 1.23456
+  max_iter: 987
+  random_state: 42
+
+```
 
 ```python
+# pipeline.py
+
 from kedro.pipeline import Pipeline, node
 
 from my_module import train_model, run_inference
@@ -681,7 +712,7 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=train_model,
-                inputs="train_df",
+                inputs=["params:model", "train_df"],
                 outputs="model",
             ),
             node(
@@ -693,9 +724,9 @@ def create_pipeline(**kwargs):
     )
 ```
 
-Kedro run code:
-
 ```python
+# run.py
+
 from kedro.runner import SequntialRunner
 
 # Set up ProjectContext here
@@ -721,7 +752,7 @@ PipelineX enables you to use Kedro in more convenient ways.
   load_args: 
     float_precision: high
   save_args:
-    float_format": "%.16e" 
+    float_format: "%.16e" 
   cached: True
 
 train_df:
@@ -755,18 +786,24 @@ pred_df:
 ```yaml
 # parameters.yml
 
+model:
+  =: sklearn.linear_model.LogisticRegression
+  C: 1.23456
+  max_iter: 987
+  random_state: 42
+
 PIPELINES:
   __default__:
     =: pipelinex.FlexiblePipeline
     module: # Optionally specify the default Python module so you can omit the module name to which functions belongs
     decorator: # Optionally specify function decorator(s) to apply to each node
     nodes:
-      - inputs: train_df
-        func: my_module.train_model
+      - inputs: ["params:model", train_df]
+        func: sklearn_demo.train_model
         outputs: model
 
       - inputs: [model, test_df]
-        func: my_module.run_inference
+        func: sklearn_demo.run_inference
         outputs: pred_df
 
 RUN_CONFIG:
