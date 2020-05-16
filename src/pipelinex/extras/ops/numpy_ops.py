@@ -18,3 +18,25 @@ def to_channel_first_arr(a):
         return np.transpose(a, axes=_to_channel_first_dict.get(a.ndim))
     else:
         return a
+
+
+def reverse_channel(a, channel_first=False):
+    if a.ndim == 3:
+        if channel_first:
+            return a[::-1, :, :]
+        else:
+            return a[:, :, ::-1]
+    if a.ndim == 4:
+        if channel_first:
+            return a[:, ::-1, :, :]
+        else:
+            return a[:, :, :, ::-1]
+    return a
+
+
+class ReverseChannel:
+    def __init__(self, channel_first=False):
+        self.channel_first = channel_first
+
+    def __call__(self, a):
+        return reverse_channel(a, channel_first=self.channel_first)

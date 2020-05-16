@@ -7,7 +7,7 @@ import logging
 import numpy as np
 from ..core import AbstractVersionedDataSet, DataSetError, Version
 
-from ...ops.numpy_ops import to_channel_first_arr, to_channel_last_arr
+from ...ops.numpy_ops import to_channel_first_arr, to_channel_last_arr, ReverseChannel
 
 log = logging.getLogger(__name__)
 
@@ -238,25 +238,3 @@ class Np3DArrDatasetFromList:
 
     def __len__(self):
         return len(self.a)
-
-
-def reverse_channel(a, channel_first=False):
-    if a.ndim == 3:
-        if channel_first:
-            return a[::-1, :, :]
-        else:
-            return a[:, :, ::-1]
-    if a.ndim == 4:
-        if channel_first:
-            return a[:, ::-1, :, :]
-        else:
-            return a[:, :, :, ::-1]
-    return a
-
-
-class ReverseChannel:
-    def __init__(self, channel_first=False):
-        self.channel_first = channel_first
-
-    def __call__(self, a):
-        return reverse_channel(a, channel_first=self.channel_first)
