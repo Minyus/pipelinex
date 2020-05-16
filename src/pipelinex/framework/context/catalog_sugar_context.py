@@ -5,6 +5,7 @@ from typing import Any, Dict  # NOQA
 
 from .context import KedroContext
 from kedro.io import DataCatalog
+from pipelinex import HatchDict
 
 log = logging.getLogger(__name__)
 
@@ -34,6 +35,9 @@ class CatalogSyntacticSugarContext(KedroContext):
         )
 
     def _format_kedro_catalog(self, conf_catalog):
+
+        conf_catalog = HatchDict(conf_catalog).get()
+
         default_dict = {}
         if "/" in conf_catalog:
             default_dict = conf_catalog.pop("/")
