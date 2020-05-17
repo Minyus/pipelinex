@@ -32,7 +32,16 @@ class FlexiblePipeline(kedro.pipeline.Pipeline):
                         node["inputs"] = inputs + ["parameters"]
 
                 node.setdefault("module", module)
-                node.setdefault("decorator", decorator)
+
+                node.setdefault("decorator", [])
+                if not isinstance(node["decorator"], list):
+                    node["decorator"] = [node["decorator"]]
+
+                if not isinstance(decorator, list):
+                    decorator = [decorator]
+
+                node["decorator"] = decorator + node["decorator"]
+
                 nodes[i] = SubPipeline(**node)
 
         super().__init__(nodes, **kwargs)
