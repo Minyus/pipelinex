@@ -1,3 +1,4 @@
+import kedro
 from .pipelines_in_parameters_context import PipelinesInParametersContext
 from .only_missing_string_runner_context import (
     OnlyMissingStringRunnerDefaultOptionContext,
@@ -12,7 +13,7 @@ class BaseFlexibleContext(
     OnlyMissingStringRunnerDefaultOptionContext,
 ):
     project_name = "KedroProject"
-    project_version = "0.15.9"  # Kedro version
+    project_version = kedro.__version__
 
 
 class FlexibleContext(MLflowContext, BaseFlexibleContext):
