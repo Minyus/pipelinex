@@ -73,15 +73,17 @@ class MLflowContext(KedroContext):
             conf_path = Path(self.config_loader.conf_paths[0]) / "parameters.yml"
             log_artifact(conf_path)
 
-            log_metric("__t0", get_timestamp_int(offset_hours=self.offset_hours))
-            log_param("time_begin", get_timestamp(offset_hours=self.offset_hours))
+            log_metric(
+                "__time_begin", get_timestamp_int(offset_hours=self.offset_hours)
+            )
+            log_param("__time_begin", get_timestamp(offset_hours=self.offset_hours))
             time_begin = time.time()
 
         nodes = super().run(*args, **kwargs)
 
         if mlflow_logging_params:
-            log_metric("__t1", get_timestamp_int(offset_hours=self.offset_hours))
-            log_param("time_end", get_timestamp(offset_hours=self.offset_hours))
+            log_metric("__time_end", get_timestamp_int(offset_hours=self.offset_hours))
+            log_param("__time_end", get_timestamp(offset_hours=self.offset_hours))
             log_metric("__time", (time.time() - time_begin))
 
             for d in self.logging_artifacts:
@@ -108,4 +110,4 @@ def get_timestamp(offset_hours=0, fmt="%Y-%m-%dT%H:%M:%S"):
 
 
 def get_timestamp_int(offset_hours=0):
-    return int(get_timestamp(offset_hours=offset_hours, fmt="%Y%m%d%H%M"))
+    return int(get_timestamp(offset_hours=offset_hours, fmt="%Y%m%d%H%M%S"))
