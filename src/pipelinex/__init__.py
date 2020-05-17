@@ -6,6 +6,7 @@ from .utils import *  # NOQA
 from .hatch_dict.hatch_dict import *  # NOQA
 
 from .extras.decorators.decorators import *  # NOQA
+from .extras.decorators.mlflow_logger import *  # NOQA
 from .extras.ops.argparse_ops import *  # NOQA
 
 if find_spec("kedro"):
