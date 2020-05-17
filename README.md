@@ -654,12 +654,14 @@ Kedro is a Python package to develop pipelines consisting of:
   - and [much more provided by Kedro](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.html#data-sets)
   - and [even more provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets)
 
-- tasks (called "Nodes") to run sequentially or in parallel such as:
+- tasks (called "Nodes") such as:
   - data transformation
   - training a model
   - run inference using a model
 
 - inter-task dependency
+
+Kedro pipelines can be run sequentially or in parallel.
 
 Regarding Kedro, please see:
 - [Kedro's document](https://kedro.readthedocs.io/en/latest/)
@@ -747,11 +749,32 @@ context.run(pipeline_name="__default__", runner=SequentialRunner())
 ## Kedro enhanced by PipelineX
 
 PipelineX enables you to use Kedro in more convenient ways.
+A major advantage is that you can define the inter-task dependency (DAG) for Kedro pipelines in YAML.
 
-- Optional syntactic sugar for `catalog.yml` with backward-compatibility with pure Kedro
+Here is the feature list:
+
+- `HatchDict` features available in `catalog.yml` and `parameters.yml`
+
+- More convenient `catalog.yml` with backward-compatibility with pure Kedro
   - Optionally specify the default `DataSet` and its parameters using `/` key so you can reduce copying. (Alternatively, you can also use YAML's anchor&alias feature.
-  - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
   - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
+  - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
+
+- Define Kedro pipeline in `parameters.yml` using `PIPELINES` key
+  - Optionally specify the default Python module (path of .py file) if you want to omit the module name
+  - Optionally specify the Python function decorator to apply to each node
+  - Specify `inputs`, `func`, and `outputs` for each node
+    - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
+- Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
+  - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
+  - Optionally run nodes in parallel
+- Configure MLflow logging in `parameters.yml` using `MLFLOW_LOGGING_CONFIG` key
+  - Optionally specify the MLflow tracking database URI
+    (For more details, see [SQLAlchemy database uri](https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls))
+  - Optionally specify the experiment name
+  - Optionally specify the location to save artifacts
+  - Optionally specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
+  - Optionally specify the artifacts (e.g. parameters, trained model, prediction) to save
 
 ```yaml
 #  catalog.yml
@@ -775,22 +798,6 @@ pred_df:
   mlflow_logging: True
 
 ```
-
-- Define Kedro pipeline in `parameters.yml` using `PIPELINES` key
-  - Optionally specify the default Python module (path of .py file) if you want to omit the module name
-  - Optionally specify the Python function decorator to apply to each node
-  - Specify `inputs`, `func`, and `outputs` for each node
-    - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
-- Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
-  - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
-  - Optionally run nodes in parallel
-- Integration with MLflow
-  - Optionally specify the MLflow tracking database URI
-    (For more details, see [SQLAlchemy database uri](https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls))
-  - Optionally specify the experiment name
-  - Optionally specify the location to save artifacts
-  - Optionally specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
-  - Optionally specify the artifacts (e.g. parameters, trained model, prediction) to save
 
 ```yaml
 # parameters.yml
@@ -828,7 +835,7 @@ MLFLOW_LOGGING_CONFIG:
   logging_artifacts: # Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
 ```
 
-The complete project is available [here](https://github.com/Minyus/pipelinex_sklearn).
+The complete example/demo project is available [here](https://github.com/Minyus/pipelinex_sklearn).
 
 ## Decorator-based benchmarking
 
