@@ -8,6 +8,8 @@ from .context import KedroContext, KedroContextError
 from kedro.runner import AbstractRunner
 import kedro.runner
 
+from .save_pipeline_json_context import SavePipelineJsonContext
+
 log = logging.getLogger(__name__)
 
 
@@ -90,6 +92,9 @@ class OnlyMissingOptionContext(KedroContext):
             from_inputs=from_inputs,
         )
 
+        if hasattr(self, "_save_pipeline_json"):
+            self._save_pipeline_json(filtered_pipeline)
+
         run_id = generate_timestamp()
 
         record_data = {
@@ -134,7 +139,7 @@ class StringRunnerOptionContext(KedroContext):
 
 
 class OnlyMissingStringRunnerDefaultOptionContext(
-    StringRunnerOptionContext, OnlyMissingOptionContext
+    SavePipelineJsonContext, StringRunnerOptionContext, OnlyMissingOptionContext
 ):
     """Overwrite the default runner and only_missing option for the run."""
 

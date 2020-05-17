@@ -42,6 +42,16 @@ class CatalogSyntacticSugarContext(KedroContext):
         if "/" in conf_catalog:
             default_dict = conf_catalog.pop("/")
 
+        if "PIPELINE_JSON_TEXT" in conf_catalog:
+            pipeline_json_text_dataset = conf_catalog.pop("PIPELINE_JSON_TEXT")
+            assert isinstance(pipeline_json_text_dataset, dict)
+            pipeline_json_text_dataset.setdefault(
+                "type", "kedro.extras.datasets.text.TextDataSet"
+            )
+            self._pipeline_json_text_dataset = HatchDict(
+                pipeline_json_text_dataset, obj_key="type"
+            ).get()
+
         conf_catalog_processed = {}
 
         for ds_name, ds_dict_ in conf_catalog.items():
