@@ -5,7 +5,8 @@ from warnings import warn
 from kedro.io.core import generate_timestamp
 from kedro.versioning import Journal
 from .context import KedroContext, KedroContextError
-from kedro.runner import AbstractRunner, ParallelRunner, SequentialRunner
+from kedro.runner import AbstractRunner
+import kedro.runner
 
 log = logging.getLogger(__name__)
 
@@ -111,7 +112,6 @@ class OnlyMissingOptionContext(KedroContext):
         )
 
         # Run the runner
-        runner = runner or SequentialRunner()
         if only_missing:
             return runner.run_only_missing(filtered_pipeline, catalog)
         return runner.run(filtered_pipeline, catalog)
@@ -127,11 +127,9 @@ class StringRunnerOptionContext(KedroContext):
         **kwargs,  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
+        runner = runner or "SequentialRunner"
         if isinstance(runner, str):
-            assert runner in {"ParallelRunner", "SequentialRunner"}
-            runner = (
-                ParallelRunner() if runner == "ParallelRunner" else SequentialRunner()
-            )
+            runner = getattr(kedro.runner, runner)()
         return super().run(*args, runner=runner, **kwargs)
 
 
