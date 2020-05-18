@@ -512,26 +512,30 @@ The proposed solution is the unified interface for data loading/saving.
 
 Objects with `_load`, and `_save` methods are the interface proposed by [Kedro](https://github.com/quantumblacklabs/kedro) and supported by PipelineX.
 
-Here is a simple demo example.
+Here is a simple demo example to predict survival on the [Titanic](https://www.kaggle.com/c/titanic/data).
 
-Common code to define tasks:
+
+<p align="center">
+<img src="https://github.com/Minyus/pipelinex_sklearn/raw/master/img/kedro_pipeline.png">
+Pipeline visualized by Kedro-viz
+</p>
+Common code for the tasks:
 
 ```python
 # Define tasks
 
-def train_model(model, df):
+def train_model(model, df, cols_features, col_target):
     # train a model here
     return model
 
-def run_inference(model, df):
+def run_inference(model, df, cols_features):
     # run inference here
     return df
 ```
 
-Disregarding the data interface framework:
+1. Plain code:
 
 ```python
-
 # Configure: can be written in a config file (YAML, JSON, etc.)
 
 train_data_filepath = "data/input/train.csv"
@@ -552,7 +556,6 @@ model_params_dict = {
 
 # Run tasks
 
-
 import pandas as pd
 
 if model_kind == "LogisticRegression":
@@ -568,7 +571,7 @@ pred_df.to_csv(pred_data_filepath, **pred_data_save_args)
 
 ```
 
-Following the data interface framework:
+2. Following the data interface framework:
 
 ```python
 
@@ -621,6 +624,12 @@ model_params_dict = {
   "max_iter": 987
   "random_state": 42
 }
+cols_features = [
+  "Pclass",  # The passenger's ticket class
+  "Parch",  # # of parents / children aboard the Titanic
+]
+col_target = "Survived"  # Column used as the target: whether the passenger survived or not
+
 
 # Run tasks: can be configured as a pipeline using Kedro
 # and can be written in parameters config file using PipelineX
@@ -630,10 +639,10 @@ if model_kind == "LogisticRegression":
     model = LogisticRegression(**model_params_dict)
 
 train_df = train_dataset._load()
-model = train_model(model, train_df)
+model = train_model(model, train_df, cols_features, col_target)
 
 test_df = test_dataset._load()
-pred_df = run_inference(model, test_df)
+pred_df = run_inference(model, test_df, cols_features)
 
 pred_dataset._save(pred_df)
 
@@ -708,7 +717,10 @@ model:
   C: 1.23456
   max_iter: 987
   random_state: 42
-
+cols_features: # Columns used as features in the Titanic data table
+  - Pclass # The passenger's ticket class
+  - Parch # # of parents / children aboard the Titanic
+col_target: Survived # Column used as the target: whether the passenger survived or not
 ```
 
 ```python
@@ -723,12 +735,12 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=train_model,
-                inputs=["params:model", "train_df"],
+                inputs=["params:model", "train_df", "params:cols_features", "params:col_target"],
                 outputs="model",
             ),
             node(
                 func=run_inference,
-                inputs=["model", "test_df"],
+                inputs=["model", "test_df", "params:cols_features"],
                 outputs="pred_df",
             ),
         ]
@@ -807,6 +819,10 @@ model:
   C: 1.23456
   max_iter: 987
   random_state: 42
+cols_features: # Columns used as features in the Titanic data table
+  - Pclass # The passenger's ticket class
+  - Parch # # of parents / children aboard the Titanic
+col_target: Survived # Column used as the target: whether the passenger survived or not
 
 PIPELINES:
   __default__:
@@ -814,11 +830,11 @@ PIPELINES:
     module: # Optionally specify the default Python module so you can omit the module name to which functions belongs
     decorator: # Optionally specify function decorator(s) to apply to each node
     nodes:
-      - inputs: ["params:model", train_df]
+      - inputs: ["params:model", train_df, "params:cols_features", "params:col_target"]
         func: sklearn_demo.train_model
         outputs: model
 
-      - inputs: [model, test_df]
+      - inputs: [model, test_df, "params:cols_features"]
         func: sklearn_demo.run_inference
         outputs: pred_df
 
@@ -835,7 +851,7 @@ MLFLOW_LOGGING_CONFIG:
   logging_artifacts: # Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
 ```
 
-The complete example/demo project is available [here](https://github.com/Minyus/pipelinex_sklearn).
+The complete example project is available [here](https://github.com/Minyus/pipelinex_sklearn).
 
 ## Decorator-based benchmarking
 
@@ -843,9 +859,11 @@ The complete example/demo project is available [here](https://github.com/Minyus/
 
 PipelineX provides Python decorators for benchmarking.
 
-- `log_time` logs the difference of timestamp before and after running the function.
+- `log_time` logs the duration time of a function (difference of timestamp before and after running the function).
 
-  - Slightly modified version of [Kedro's log_time](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/pipeline/decorators.py#L59)
+  - Slightly modified version of [Kedro's `log_time`](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/pipeline/decorators.py#L59)
+
+- `mlflow_log_time` logs and stores the duration time in a MLflow's database in local or remote machine if MLflow is installed.
 
 - `mem_profile` logs the peak memory usage during running the function.
 
