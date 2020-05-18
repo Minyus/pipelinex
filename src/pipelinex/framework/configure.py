@@ -7,7 +7,7 @@ from .context.context import KedroContext
 from .context.flexible_context import FlexibleContext
 
 
-def configure_paths(project_path: Union[str, Path], source_dir="src"):
+def configure_source(project_path: Union[str, Path], source_dir="src"):
 
     if isinstance(project_path, str):
         project_path = Path(project_path)
