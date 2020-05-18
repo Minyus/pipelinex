@@ -1,18 +1,28 @@
 import sys
 import os
 from pathlib import Path
+from typing import Union
+
+from .context.context import KedroContext
+from .context.flexible_context import FlexibleContext
 
 
-def configure_paths(main_mod_path, src_dir_name="src"):
-    project_path = Path(main_mod_path).resolve().parent
+def configure_paths(project_path: Union[str, Path], source_dir="src"):
 
-    src_path = project_path / "src"
-    src_path_str = str(src_path)
+    if isinstance(project_path, str):
+        project_path = Path(project_path)
 
-    if src_path_str not in sys.path:
-        sys.path.insert(0, src_path_str)
+    source_path = (project_path / source_dir).resolve()
+    source_path_str = str(source_path)
+
+    if source_path_str not in sys.path:
+        sys.path.insert(0, source_path_str)
 
     if "PYTHONPATH" not in os.environ:
-        os.environ["PYTHONPATH"] = src_path_str
+        os.environ["PYTHONPATH"] = source_path_str
 
-    return project_path, src_path
+    return source_path
+
+
+def load_context(project_path, **kwargs) -> KedroContext:
+    return FlexibleContext(project_path, **kwargs)
