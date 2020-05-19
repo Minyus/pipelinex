@@ -758,6 +758,12 @@ context = ProjectContext()
 context.run(pipeline_name="__default__", runner=SequentialRunner())
 ```
 
+Kedro pipelines can be visualized using [kedro-viz](https://github.com/quantumblacklabs/kedro-viz).
+
+Kedro pipelines can be productionized using:
+- [kedro-airflow](https://github.com/quantumblacklabs/kedro-airflow): converts a Kedro pipeline into Airflow Python operators.
+- [kedro-docker](https://github.com/quantumblacklabs/kedro-docker): builds a Docker image that can run a Kedro pipeline 
+
 ## Kedro enhanced by PipelineX
 
 PipelineX enables you to use Kedro in more convenient ways.
