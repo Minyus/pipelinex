@@ -686,27 +686,26 @@ Here is a simple example Kedro project.
 train_df:
   type: pandas.CSVDataSet # short for kedro.extras.datasets.pandas.CSVDataSet
   filepath: data/input/train.csv
-  load_args: 
+  load_args:
     float_precision: high
   # save_args: # You can set save_args for future use
-    # float_format": "%.16e" 
+  # float_format": "%.16e"
 
 test_df:
   type: pandas.CSVDataSet # short for kedro.extras.datasets.pandas.CSVDataSet
   filepath: data/input/test.csv
-  load_args: 
+  load_args:
     float_precision: high
   # save_args: # You can set save_args for future use
-    # float_format": "%.16e" 
+  # float_format": "%.16e"
 
 pred_df:
   type: pandas.CSVDataSet # short for kedro.extras.datasets.pandas.CSVDataSet
   filepath: data/load/pred.csv
   # load_args: # You can set load_args for future use
-    # float_precision: high
-  save_args: 
-    float_format": "%.16e" 
-
+  # float_precision: high
+  save_args:
+    float_format: "%.16e"
 ```
 
 ```yaml
@@ -769,24 +768,18 @@ Kedro pipelines can be productionized using:
 PipelineX enables you to use Kedro in more convenient ways.
 A major advantage is that you can define the inter-task dependency (DAG) for Kedro pipelines in YAML.
 
-Here is the feature list:
+Here are the options configurable in `parameters.yml`:
 
-- `HatchDict` features available in `catalog.yml` and `parameters.yml`
-
-- More convenient `catalog.yml` with backward-compatibility with pure Kedro
-  - Optionally specify the default `DataSet` and its parameters using `/` key so you can reduce copying. (Alternatively, you can also use YAML's anchor&alias feature.
-  - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
-  - Optionally specify the artifact (file) to log to MLflow's directory using `mlflow_logging` key (`mlflow.log_artifact` function is used under the hood.)
-
-- Define Kedro pipeline in `parameters.yml` using `PIPELINES` key
+- `HatchDict` features available
+- Define Kedro pipeline using `PIPELINES` key
   - Optionally specify the default Python module (path of .py file) if you want to omit the module name
   - Optionally specify the Python function decorator to apply to each node
   - Specify `inputs`, `func`, and `outputs` for each node
     - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
-- Configure Kedro run config in `parameters.yml` using `RUN_CONFIG` key
+- Configure Kedro run config using `RUN_CONFIG` key
   - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
   - Optionally run nodes in parallel
-- Configure MLflow logging in `parameters.yml` using `MLFLOW_LOGGING_CONFIG` key
+- Configure MLflow logging using `MLFLOW_LOGGING_CONFIG` key
   - Optionally specify the MLflow tracking database URI
     (For more details, see [SQLAlchemy database uri](https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls))
   - Optionally specify the experiment name
@@ -794,28 +787,6 @@ Here is the feature list:
   - Optionally specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
   - Optionally specify the artifacts (e.g. parameters, trained model, prediction) to save
 
-```yaml
-#  catalog.yml
-
-/: # Optionally specify the default DataSet 
-  type: pandas.CSVDataSet
-  load_args: 
-    float_precision: high
-  save_args:
-    float_format: "%.16e" 
-  cached: True
-
-train_df:
-  filepath: data/input/train.csv
-
-test_df:
-  filepath: data/input/test.csv
-
-pred_df:
-  filepath: data/load/pred.csv
-  mlflow_logging: True
-
-```
 
 ```yaml
 # parameters.yml
@@ -856,6 +827,10 @@ MLFLOW_LOGGING_CONFIG:
   offset_hours: 0 # Specify the offset hour (local time zone) to show in MLflow tracking
   logging_artifacts: # Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
 ```
+
+Here are the options configurable in `catalog.yml`:
+- `HatchDict` features available
+- Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
 
 The complete example project is available [here](https://github.com/Minyus/pipelinex_sklearn).
 
