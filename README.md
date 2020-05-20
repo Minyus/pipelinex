@@ -487,12 +487,12 @@ pprint(train_params_converted)
 
 Machine Learning projects involves with loading and saving various data in various ways such as:
 
-- files in local storage or cloud (Amazon S3, GCS) 
-  - e.g. CSV, JSON, YAML, pickle, images, videos, etc.
+- files in local/network file system, Hadoop File System (HDFS), Amazon S3, Google Cloud Storage
+  - e.g. CSV, JSON, YAML, pickle, images, models, etc.
 - databases 
   - Postgresql, MySQL etc.
 - Spark
-- REST API
+- REST API (HTTP(S) requests)
 
 It is often the case that many Machine Learning Engineers code both data loading/saving and data transformation mixed in the same Python module or Jupyter notebook during experimentation/prototyping phase and suffer later on because:
 
