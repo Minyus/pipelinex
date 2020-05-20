@@ -20,25 +20,18 @@ PipelineX is a Python package designed to make Machine Learning projects efficie
 
 Please refer [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow) to find out how PipelineX differs from other pipeline/workflow packages: Airflow, Luigi, Gokart, Metaflow, and Kedro.
 
-PipelineX provides [Pythonic enhanced YAML/JSON](https://github.com/Minyus/pipelinex#pythonic-enhanced-yamljson) support useful for parameter management summarized as follows.
+PipelineX provides [enhancements for YAML/JSON](https://github.com/Minyus/pipelinex#pythonic-enhanced-yamljson) useful for parameter management summarized as follows.
 
 - Import-less Python object: Include (nested) Python classes and functions in a YAML/JSON file
 - Anchor-less aliasing: Look up another key in the same YAML/JSON file
-- Python expression in YAML/JSON filess
+- Python expression in YAML/JSON files
 
-PipelineX provides [YAML-configurable enhanced Kedro](https://github.com/Minyus/pipelinex#yamlconfigurable-enhanced-kedro) support summarized as follows.
+PipelineX provides [enhancements for Kedro](https://github.com/Minyus/pipelinex#yamlconfigurable-enhanced-kedro) summarized as follows.
 
-- To enhance Kedro-style Pipeline/DAG definition:
-  - Option to resume pipeline execution using the intermediate files
-  - Pipeline/DAG definition in a YAML/JSON file
-  - Optional syntactic sugars (easier grammar) including Sequential API
-- In addition Kedro's file I/O and database access abstraction layers:
-  - `DataSet` for multiple images in a foldler for image processing applications
-- In addition to Kedro's performance benchmarking (time and memory profiling) decorators:
-  - GPU memory profiling using NVIDIA Management Library (NVML)
-- Integration with MLflow that enables to:
-  - Save metrics to a database supported by SQLAlchemy (SQLite, PostgreSQL, etc.)
-  - Analyze the experiments with a dashboard
+- Kedro pipeline/DAG definition in a YAML/JSON file with more options
+- Additional Kedro-compatible data interface sets ("DataSets") for Computer Vision applications
+- Additional decorators for benchmarking
+- Integration with MLflow that enables to save metrics to a database supported by SQLAlchemy (SQLite, PostgreSQL, etc.)
 
 PipelineX includes integration with the following Python packages.
 
@@ -508,9 +501,7 @@ It is often the case that many Machine Learning Engineers code both data loading
 - To benchmark the performance or troubleshoot, we often want to switch the data source.
   - e.g. read image files in local storage or download images through REST API
 
-The proposed solution is the unified interface for data loading/saving.
-
-Objects with `_load`, and `_save` methods are the interface proposed by [Kedro](https://github.com/quantumblacklabs/kedro) and supported by PipelineX.
+The proposed solution is the unified data interface.
 
 Here is a simple demo example to predict survival on the [Titanic](https://www.kaggle.com/c/titanic/data).
 
@@ -571,7 +562,7 @@ pred_df.to_csv(pred_data_filepath, **pred_data_save_args)
 
 ```
 
-2. Following the data interface framework:
+2. Following the data interface framework, objects with `_load`, and `_save` methods,  proposed by [Kedro](https://github.com/quantumblacklabs/kedro) and supported by PipelineX:
 
 ```python
 
@@ -657,18 +648,19 @@ Let's see what Kedro and PipelineX can do.
 
 Kedro is a Python package to develop pipelines consisting of:
 
-- data interface sets (data loading/saving wrappers, called "DataSets", that follows the unified data interface framework)such as:
+- data interface sets (data loading/saving wrappers, called "DataSets", that follows the unified data interface framework) such as:
   - [`pandas.CSVDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.CSVDataSet.html#kedro.extras.datasets.pandas.CSVDataSet): a CSV file in local or cloud (Amazon S3, Google Cloud Storage) utilizing [filesystem_spec (`fsspec`)](https://github.com/intake/filesystem_spec)
   - [`pickle.PickleDataSet`](https://kedro.readthedocs.io/en/latest/kedro.extras.datasets.pickle.PickleDataSet.html): a pickle file  in local or cloud (Amazon S3, Google Cloud Storage) utilizing [filesystem_spec (`fsspec`)](https://github.com/intake/filesystem_spec)
   - [`pandas.SQLTableDataSet`](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.pandas.SQLTableDataSet.html#kedro.extras.datasets.pandas.SQLTableDataSet): a table data in an SQL database supported by [SQLAlchemy](https://www.sqlalchemy.org/features.html)
   - [data interface sets for Spark, Google BigQuery, Feather, HDF, Parquet, Matplotlib, NetworkX, Excel, and more provided by Kedro](https://kedro.readthedocs.io/en/stable/kedro.extras.datasets.html#data-sets)
+  - Custom data interface sets provided by Kedro users
 
-- tasks (called "Nodes") such as:
-  - data transformation
+- tasks/operations/transformations (called "Nodes") provided by Kedro users such as:
+  - data pre-processing
   - training a model
   - inference using a model
 
-- inter-task dependency
+- inter-task dependency provided by Kedro users
 
 Kedro pipelines can be run sequentially or in parallel.
 
