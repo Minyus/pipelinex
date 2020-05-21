@@ -2,9 +2,10 @@ from typing import Dict  # NOQA
 from kedro.pipeline import Pipeline  # NOQA
 from importlib import import_module
 from .hatch_parameters_context import HatchParametersContext
+from .hooks_in_parameters_context import HooksInParametersContext
 
 
-class PipelinesInParametersContext(HatchParametersContext):
+class PipelinesInParametersContext(HatchParametersContext, HooksInParametersContext):
     def _get_pipelines(self) -> Dict[str, Pipeline]:
         parameters = self.catalog._data_sets["parameters"].load()
         import_modules(parameters.get("IMPORT"))
