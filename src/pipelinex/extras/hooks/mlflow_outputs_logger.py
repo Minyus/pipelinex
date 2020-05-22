@@ -1,5 +1,5 @@
 from importlib.util import find_spec
-from logging import getLogger
+
 
 try:
     from kedro.framework.hooks import hook_impl
@@ -9,13 +9,10 @@ except ModuleNotFoundError:
         return func
 
 
-log = getLogger(__name__)
-
-
 if find_spec("mlflow"):
     from mlflow import log_metric, log_param
 
-    class MLflowOutputsLogger:
+    class MLflowOutputsLoggerHook:
         @hook_impl
         def after_node_run(self, node, catalog, inputs, outputs):
             for name, value in outputs.items():
@@ -38,7 +35,6 @@ if find_spec("mlflow"):
 
 else:
 
-    class MLflowOutputsLogger:
-        @hook_impl
+    class MLflowOutputsLoggerHook:
         def after_node_run(self, node, catalog, inputs, outputs):
             pass
