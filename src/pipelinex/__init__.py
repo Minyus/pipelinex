@@ -19,6 +19,7 @@ if find_spec("kedro"):
     from .framework.context.pipelines_in_parameters_context import *  # NOQA
     from .framework.context.mlflow_context import *  # NOQA
     from .framework.context.hooks_in_parameters_context import *  # NOQA
+    from .extras.hooks.mlflow_basic_logger import *  # NOQA
     from .extras.hooks.mlflow_outputs_logger import *  # NOQA
 
 if find_spec("pandas"):
