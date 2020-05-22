@@ -34,6 +34,12 @@ class MLflowContext(KedroContext):
         *args,  # type: Any
         **kwargs  # type: Any
     ):
+        self.mlflow_logging_before_pipeline_run()
+        nodes = super().run(*args, **kwargs)
+        self.mlflow_logging_after_pipeline_run()
+        return nodes
+
+    def mlflow_logging_before_pipeline_run(self):
         parameters = self.catalog._data_sets["parameters"].load()
         mlflow_logging_params = parameters.get("MLFLOW_LOGGING_CONFIG")
         if mlflow_logging_params:
@@ -77,14 +83,28 @@ class MLflowContext(KedroContext):
                 "__time_begin", get_timestamp_int(offset_hours=self.offset_hours)
             )
             log_param("__time_begin", get_timestamp(offset_hours=self.offset_hours))
-            time_begin = time.time()
+            self.time_begin = time.time()
 
-        nodes = super().run(*args, **kwargs)
+        self.mlflow_logging_params = mlflow_logging_params
 
-        if mlflow_logging_params:
+    def mlflow_logging_after_pipeline_run(self):
+        if self.mlflow_logging_params:
+
+            from mlflow import (
+                create_experiment,
+                set_experiment,
+                start_run,
+                end_run,
+                set_tracking_uri,
+                log_artifact,
+                log_metric,
+                log_param,
+            )
+            from mlflow.exceptions import MlflowException
+
             log_metric("__time_end", get_timestamp_int(offset_hours=self.offset_hours))
             log_param("__time_end", get_timestamp(offset_hours=self.offset_hours))
-            log_metric("__time", (time.time() - time_begin))
+            log_metric("__time", (time.time() - self.time_begin))
 
             for d in self.logging_artifacts:
                 ds = getattr(self.catalog.datasets, d, None)
@@ -101,8 +121,6 @@ class MLflowContext(KedroContext):
                         log.warning("_filepath of '{}' could not be found.".format(d))
 
             end_run()
-
-        return nodes
 
 
 def get_timestamp(offset_hours=0, fmt="%Y-%m-%dT%H:%M:%S"):
