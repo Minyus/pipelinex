@@ -36,22 +36,14 @@ class MLflowContext(KedroContext):
         return ds_name, ds_dict
 
     def run(self, *args, **kwargs):
-        hooks = [MLflowBasicLoggerHook()]
-        hooks_to_run = [
-            hook for hook in hooks if not self._hook_manager.is_registered(hook)
-        ]
+        parameters = self.catalog._data_sets["parameters"].load()
+        hooks_key_missing = "HOOKS" not in parameters
+
+        hooks_to_run = [MLflowBasicLoggerHook()] if hooks_key_missing else []
         for hook in hooks_to_run:
             hook.before_pipeline_run(
                 run_params=None, pipeline=None, catalog=self.catalog
             )
-
-        try:
-            from mlflow import log_artifact
-
-            conf_path = Path(self.config_loader.conf_paths[0]) / "parameters.yml"
-            log_artifact(conf_path)
-        except Exception:
-            pass
 
         nodes = super().run(*args, **kwargs)
         for hook in hooks_to_run:

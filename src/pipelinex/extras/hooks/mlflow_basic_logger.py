@@ -31,7 +31,13 @@ if find_spec("mlflow"):
     from mlflow import log_metric, log_param
 
     class MLflowBasicLoggerHook:
-        mlflow_logging_config_key = "MLFLOW_LOGGING_CONFIG"
+        def __init__(
+            self,
+            mlflow_logging_config_key="MLFLOW_LOGGING_CONFIG",
+            initial_logging_artifact_paths=["conf/base/parameters.yml"],
+        ):
+            self.mlflow_logging_config_key = mlflow_logging_config_key
+            self.initial_logging_artifact_paths = initial_logging_artifact_paths
 
         @hook_impl
         def before_pipeline_run(
@@ -74,6 +80,9 @@ if find_spec("mlflow"):
                         start_run(experiment_id=experiment_id)
                     except MlflowException:
                         set_experiment(self.experiment_name)
+
+                for path in self.initial_logging_artifact_paths:
+                    log_artifact(path)
 
                 log_metric(
                     "__time_begin", get_timestamp_int(offset_hours=self.offset_hours)
