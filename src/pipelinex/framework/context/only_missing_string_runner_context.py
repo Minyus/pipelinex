@@ -2,10 +2,10 @@ import logging.config
 import logging
 from typing import Any, Dict, Iterable, Optional, Union  # NOQA
 from warnings import warn
-from kedro.io.core import generate_timestamp
+import kedro
 from kedro.versioning import Journal
 from .context import KedroContext, KedroContextError
-from kedro.runner import AbstractRunner
+from kedro.runner import AbstractRunner, SequentialRunner
 import kedro.runner
 
 from .save_pipeline_json_context import SavePipelineJsonContext
@@ -32,6 +32,7 @@ class OnlyMissingOptionContext(KedroContext):
         only_missing: bool = False,
     ) -> Dict[str, Any]:
         """Runs the pipeline with a specified runner.
+
         Args:
             tags: An optional list of node tags which should be used to
                 filter the nodes of the ``Pipeline``. If specified, only the nodes
@@ -55,6 +56,8 @@ class OnlyMissingOptionContext(KedroContext):
         Raises:
             KedroContextError: If the resulting ``Pipeline`` is empty
                 or incorrect tags are provided.
+            Exception: Any uncaught exception will be re-raised
+                after being passed to``on_pipeline_error``.
         Returns:
             Any node outputs that cannot be processed by the ``DataCatalog``.
             These are returned in a dictionary, where the keys are defined
@@ -95,7 +98,8 @@ class OnlyMissingOptionContext(KedroContext):
         if hasattr(self, "_save_pipeline_json"):
             self._save_pipeline_json(filtered_pipeline)
 
-        run_id = generate_timestamp()
+        save_version = self._get_save_version()
+        run_id = self.run_id or save_version
 
         record_data = {
             "run_id": run_id,
@@ -109,17 +113,45 @@ class OnlyMissingOptionContext(KedroContext):
             "from_inputs": from_inputs,
             "load_versions": load_versions,
             "pipeline_name": pipeline_name,
+            "extra_params": self._extra_params,
         }
         journal = Journal(record_data)
 
         catalog = self._get_catalog(
-            save_version=run_id, journal=journal, load_versions=load_versions
+            save_version=save_version, journal=journal, load_versions=load_versions
         )
 
         # Run the runner
-        if only_missing:
-            return runner.run_only_missing(filtered_pipeline, catalog)
-        return runner.run(filtered_pipeline, catalog)
+        runner = runner or SequentialRunner()
+        self._hook_manager.hook.before_pipeline_run(  # pylint: disable=no-member
+            run_params=record_data, pipeline=filtered_pipeline, catalog=catalog
+        )
+
+        try:
+            run_method = runner.run_only_missing if only_missing else runner.run
+            if run_method.__code__.co_argcount >= 4:
+                # if kedro.__version__ >= "0.16.0"
+                run_result = run_method(filtered_pipeline, catalog, run_id)
+            else:
+                # if kedro.__version__ <= "0.15.9"
+                run_result = run_method(filtered_pipeline, catalog)
+
+        except Exception as error:
+            self._hook_manager.hook.on_pipeline_error(  # pylint: disable=no-member
+                error=error,
+                run_params=record_data,
+                pipeline=filtered_pipeline,
+                catalog=catalog,
+            )
+            raise error
+
+        self._hook_manager.hook.after_pipeline_run(  # pylint: disable=no-member
+            run_params=record_data,
+            run_result=run_result,
+            pipeline=filtered_pipeline,
+            catalog=catalog,
+        )
+        return run_result
 
 
 class StringRunnerOptionContext(KedroContext):
