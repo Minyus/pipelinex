@@ -507,7 +507,7 @@ Here is a simple demo example to predict survival on the [Titanic](https://www.k
 
 
 <p align="center">
-<img src="https://github.com/Minyus/pipelinex_sklearn/raw/master/img/kedro_pipeline.png">
+<img src="img/example_kedro_pipeline.PNG">
 Pipeline visualized by Kedro-viz
 </p>
 Common code for the tasks:
