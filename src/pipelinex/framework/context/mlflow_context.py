@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 import time
-from typing import Any, Iterable  # NOQA
+from typing import Any, Dict  # NOQA
 import logging
+
+from kedro.io import DataCatalog
+from kedro.pipeline import Pipeline
 
 from .context import KedroContext
 
@@ -10,6 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class MLflowContext(KedroContext):
+    mlflow_logging_config_key = "MLFLOW_LOGGING_CONFIG"
     uri = ""  # type: str
     experiment_name = ""  # type: str
     artifact_location = ""  # type: str
@@ -29,19 +33,22 @@ class MLflowContext(KedroContext):
                 self.logging_artifacts.append(ds_name)
         return ds_name, ds_dict
 
-    def run(
-        self,
-        *args,  # type: Any
-        **kwargs  # type: Any
-    ):
-        self.mlflow_logging_before_pipeline_run()
+    def run(self, *args, **kwargs):
+        self.mlflow_logging_before_pipeline_run(
+            run_params=None, pipeline=None, catalog=self.catalog
+        )
         nodes = super().run(*args, **kwargs)
-        self.mlflow_logging_after_pipeline_run()
+        self.mlflow_logging_after_pipeline_run(
+            run_params=None, pipeline=None, catalog=None
+        )
         return nodes
 
-    def mlflow_logging_before_pipeline_run(self):
-        parameters = self.catalog._data_sets["parameters"].load()
-        mlflow_logging_params = parameters.get("MLFLOW_LOGGING_CONFIG")
+    def mlflow_logging_before_pipeline_run(
+        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
+    ):
+        parameters = catalog._data_sets["parameters"].load()
+        mlflow_logging_params = parameters.get(self.mlflow_logging_config_key)
+
         if mlflow_logging_params:
 
             self.uri = mlflow_logging_params.get("uri")
@@ -87,7 +94,9 @@ class MLflowContext(KedroContext):
 
         self.mlflow_logging_params = mlflow_logging_params
 
-    def mlflow_logging_after_pipeline_run(self):
+    def mlflow_logging_after_pipeline_run(
+        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
+    ):
         if self.mlflow_logging_params:
 
             from mlflow import (
