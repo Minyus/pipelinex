@@ -25,7 +25,7 @@ def dict_io(func: Callable) -> Callable:
             a = [e.get(key) for e in args]
             out = func(*a)
             out_dict[key] = out
-            log.info("{}: {}".format(key, out))
+            log.debug("{}: {}".format(key, out))
 
         if isinstance(out_dict[key], tuple):
             return tuple(dict_of_list_to_list_of_dict(out_dict))
