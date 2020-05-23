@@ -29,21 +29,21 @@ def get_timestamp_int(offset_hours=0):
 class MLflowBasicLoggerHook:
     def __init__(
         self,
+        enable_mlflow=True,
         uri=None,
         experiment_name=None,
         artifact_location=None,
         offset_hours=None,
         logging_artifacts=None,
-        enable=True,
         initial_logging_artifact_paths=["conf/base/parameters.yml"],
         mlflow_logging_config_key="MLFLOW_LOGGING_CONFIG",
     ):
+        self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.uri = uri
         self.experiment_name = experiment_name
         self.artifact_location = artifact_location
         self.offset_hours = offset_hours or 0
         self.logging_artifacts = logging_artifacts or []
-        self.enable = find_spec("mlflow") and enable
         self.initial_logging_artifact_paths = initial_logging_artifact_paths or []
         self.mlflow_logging_config_key = mlflow_logging_config_key
 
@@ -54,6 +54,9 @@ class MLflowBasicLoggerHook:
         parameters = catalog._data_sets["parameters"].load()
         mlflow_logging_params = parameters.get(self.mlflow_logging_config_key, {})
 
+        self.enable_mlflow = mlflow_logging_params.get(
+            "enable_mlflow", self.enable_mlflow
+        )
         self.uri = mlflow_logging_params.get("uri") or self.uri
         self.experiment_name = (
             mlflow_logging_params.get("experiment_name") or self.experiment_name
@@ -67,9 +70,8 @@ class MLflowBasicLoggerHook:
         self.logging_artifacts = (
             mlflow_logging_params.get("logging_artifacts") or self.logging_artifacts
         )
-        self.enable = mlflow_logging_params.get("enable", self.enable)
 
-        if self.enable:
+        if self.enable_mlflow:
 
             from mlflow import (
                 create_experiment,
@@ -108,7 +110,7 @@ class MLflowBasicLoggerHook:
     def after_pipeline_run(
         self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
     ):
-        if self.enable:
+        if self.enable_mlflow:
 
             from mlflow import (
                 create_experiment,
