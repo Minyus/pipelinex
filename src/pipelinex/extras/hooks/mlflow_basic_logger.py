@@ -28,33 +28,51 @@ def get_timestamp_int(offset_hours=0):
 
 
 if find_spec("mlflow"):
-    from mlflow import log_metric, log_param
 
     class MLflowBasicLoggerHook:
         def __init__(
             self,
-            mlflow_logging_config_key="MLFLOW_LOGGING_CONFIG",
+            uri=None,
+            experiment_name=None,
+            artifact_location=None,
+            offset_hours=None,
+            logging_artifacts=None,
+            enable=True,
             initial_logging_artifact_paths=["conf/base/parameters.yml"],
+            mlflow_logging_config_key="MLFLOW_LOGGING_CONFIG",
         ):
+            self.uri = uri
+            self.experiment_name = experiment_name
+            self.artifact_location = artifact_location
+            self.offset_hours = offset_hours or 0
+            self.logging_artifacts = logging_artifacts or []
+            self.enable = enable
+            self.initial_logging_artifact_paths = initial_logging_artifact_paths or []
             self.mlflow_logging_config_key = mlflow_logging_config_key
-            self.initial_logging_artifact_paths = initial_logging_artifact_paths
 
         @hook_impl
         def before_pipeline_run(
             self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
         ):
             parameters = catalog._data_sets["parameters"].load()
-            mlflow_logging_params = parameters.get(self.mlflow_logging_config_key)
+            mlflow_logging_params = parameters.get(self.mlflow_logging_config_key, {})
 
-            if mlflow_logging_params:
+            self.uri = mlflow_logging_params.get("uri") or self.uri
+            self.experiment_name = (
+                mlflow_logging_params.get("experiment_name") or self.experiment_name
+            )
+            self.artifact_location = (
+                mlflow_logging_params.get("artifact_location") or self.artifact_location
+            )
+            self.offset_hours = (
+                mlflow_logging_params.get("offset_hours") or self.offset_hours
+            )
+            self.logging_artifacts = (
+                mlflow_logging_params.get("logging_artifacts") or self.logging_artifacts
+            )
+            self.enable = mlflow_logging_params.get("enable", self.enable)
 
-                self.uri = mlflow_logging_params.get("uri")
-                self.experiment_name = mlflow_logging_params.get("experiment_name")
-                self.artifact_location = mlflow_logging_params.get("artifact_location")
-                self.offset_hours = mlflow_logging_params.get("offset_hours") or 0
-                self.logging_artifacts = (
-                    mlflow_logging_params.get("logging_artifacts") or []
-                )
+            if self.enable:
 
                 from mlflow import (
                     create_experiment,
@@ -90,13 +108,11 @@ if find_spec("mlflow"):
                 log_param("__time_begin", get_timestamp(offset_hours=self.offset_hours))
                 self.time_begin = time.time()
 
-            self.mlflow_logging_params = mlflow_logging_params
-
         @hook_impl
         def after_pipeline_run(
             self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
         ):
-            if self.mlflow_logging_params:
+            if self.enable:
 
                 from mlflow import (
                     create_experiment,
