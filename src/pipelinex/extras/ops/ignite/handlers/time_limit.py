@@ -20,5 +20,7 @@ class TimeLimit:
     def __call__(self, engine):
         elapsed_time = time.time() - self.start_time
         if elapsed_time > self.limit_sec:
-            log.warning("Reached the time limit: {} sec. Stop training".format(self.limit_sec))
+            log.warning(
+                "Reached the time limit: {} sec. Stop training".format(self.limit_sec)
+            )
             engine.terminate()
