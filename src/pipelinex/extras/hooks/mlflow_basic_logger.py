@@ -70,6 +70,10 @@ class MLflowBasicLoggerHook:
         self.logging_artifacts = (
             mlflow_logging_params.get("logging_artifacts") or self.logging_artifacts
         )
+        self.initial_logging_artifact_paths = (
+            mlflow_logging_params.get("initial_logging_artifact_paths")
+            or self.initial_logging_artifact_paths
+        )
 
         if self.enable_mlflow:
 
