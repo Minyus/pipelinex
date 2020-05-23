@@ -18,12 +18,20 @@ except ModuleNotFoundError:
         return func
 
 
-def get_timestamp(offset_hours=0, fmt="%Y-%m-%dT%H:%M:%S"):
-    return (datetime.now() + timedelta(hours=offset_hours)).strftime(fmt)
+def get_timestamp(dt=None, offset_hours=0, fmt="%Y-%m-%dT%H:%M:%S"):
+    dt = dt or datetime.now()
+    return (dt + timedelta(hours=offset_hours)).strftime(fmt)
 
 
-def get_timestamp_int(offset_hours=0):
-    return int(get_timestamp(offset_hours=offset_hours, fmt="%Y%m%d%H%M%S"))
+def get_timestamp_int(dt=None, offset_hours=0):
+    return int(get_timestamp(dt=dt, offset_hours=offset_hours, fmt="%Y%m%d%H%M%S"))
+
+
+def get_timestamps(dt=None, offset_hours=0):
+    dt = dt or datetime.now()
+    timestamp = get_timestamp(dt, offset_hours=offset_hours)
+    timestamp_int = get_timestamp_int(dt, offset_hours=offset_hours)
+    return timestamp, timestamp_int
 
 
 class MLflowBasicLoggerHook:
@@ -88,25 +96,34 @@ class MLflowBasicLoggerHook:
     def before_pipeline_run(
         self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
     ):
+        timestamp, timestamp_int = get_timestamps(offset_hours=self.offset_hours)
+        log.info("__time_begin: {}".format(timestamp))
+
+        self.time_begin = time.time()
+
         if self.enable_mlflow:
             from mlflow import log_metric, log_param
 
-            log_metric(
-                "__time_begin", get_timestamp_int(offset_hours=self.offset_hours)
-            )
-            log_param("__time_begin", get_timestamp(offset_hours=self.offset_hours))
-            self.time_begin = time.time()
+            log_metric("__time_begin", timestamp_int)
+            log_param("__time_begin", timestamp)
 
     @hook_impl
     def after_pipeline_run(
         self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
     ):
+        timestamp, timestamp_int = get_timestamps(offset_hours=self.offset_hours)
+        log.info("__time_end: {}".format(timestamp))
+
+        self.time_end = time.time()
+        self.time = self.time_end - self.time_begin
+        log.info("__time: {}".format(self.time))
+
         if self.enable_mlflow:
 
             from mlflow import end_run, log_metric, log_param
 
-            log_metric("__time_end", get_timestamp_int(offset_hours=self.offset_hours))
-            log_param("__time_end", get_timestamp(offset_hours=self.offset_hours))
-            log_metric("__time", (time.time() - self.time_begin))
+            log_metric("__time_end", timestamp_int)
+            log_param("__time_end", timestamp)
+            log_metric("__time", self.time)
 
             end_run()
