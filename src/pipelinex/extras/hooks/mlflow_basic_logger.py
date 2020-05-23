@@ -34,8 +34,6 @@ class MLflowBasicLoggerHook:
         experiment_name=None,
         artifact_location=None,
         offset_hours=None,
-        logging_artifacts=None,
-        initial_logging_artifact_paths=["conf/base/parameters.yml"],
         mlflow_logging_config_key="MLFLOW_LOGGING_CONFIG",
     ):
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
@@ -43,14 +41,10 @@ class MLflowBasicLoggerHook:
         self.experiment_name = experiment_name
         self.artifact_location = artifact_location
         self.offset_hours = offset_hours or 0
-        self.logging_artifacts = logging_artifacts or []
-        self.initial_logging_artifact_paths = initial_logging_artifact_paths or []
         self.mlflow_logging_config_key = mlflow_logging_config_key
 
     @hook_impl
-    def before_pipeline_run(
-        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
-    ):
+    def after_catalog_created(self, catalog: DataCatalog):
         parameters = catalog._data_sets["parameters"].load()
         mlflow_logging_params = parameters.get(self.mlflow_logging_config_key, {})
 
@@ -67,13 +61,6 @@ class MLflowBasicLoggerHook:
         self.offset_hours = (
             mlflow_logging_params.get("offset_hours") or self.offset_hours
         )
-        self.logging_artifacts = (
-            mlflow_logging_params.get("logging_artifacts") or self.logging_artifacts
-        )
-        self.initial_logging_artifact_paths = (
-            mlflow_logging_params.get("initial_logging_artifact_paths")
-            or self.initial_logging_artifact_paths
-        )
 
         if self.enable_mlflow:
 
@@ -81,11 +68,7 @@ class MLflowBasicLoggerHook:
                 create_experiment,
                 set_experiment,
                 start_run,
-                end_run,
                 set_tracking_uri,
-                log_artifact,
-                log_metric,
-                log_param,
             )
             from mlflow.exceptions import MlflowException
 
@@ -101,8 +84,12 @@ class MLflowBasicLoggerHook:
                 except MlflowException:
                     set_experiment(self.experiment_name)
 
-            for path in self.initial_logging_artifact_paths:
-                log_artifact(path)
+    @hook_impl
+    def before_pipeline_run(
+        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
+    ):
+        if self.enable_mlflow:
+            from mlflow import log_metric, log_param
 
             log_metric(
                 "__time_begin", get_timestamp_int(offset_hours=self.offset_hours)
@@ -116,34 +103,10 @@ class MLflowBasicLoggerHook:
     ):
         if self.enable_mlflow:
 
-            from mlflow import (
-                create_experiment,
-                set_experiment,
-                start_run,
-                end_run,
-                set_tracking_uri,
-                log_artifact,
-                log_metric,
-                log_param,
-            )
-            from mlflow.exceptions import MlflowException
+            from mlflow import end_run, log_metric, log_param
 
             log_metric("__time_end", get_timestamp_int(offset_hours=self.offset_hours))
             log_param("__time_end", get_timestamp(offset_hours=self.offset_hours))
             log_metric("__time", (time.time() - self.time_begin))
-
-            for d in self.logging_artifacts:
-                ds = getattr(catalog.datasets, d, None)
-                if ds:
-                    fp = getattr(ds, "_filepath", None)
-                    if not fp:
-                        low_ds = getattr(ds, "_dataset", None)
-                        if low_ds:
-                            fp = getattr(low_ds, "_filepath", None)
-                    if fp:
-                        log_artifact(fp)
-                        log.info("'{}' was logged by MLflow.".format(fp))
-                    else:
-                        log.warning("_filepath of '{}' could not be found.".format(d))
 
             end_run()
