@@ -15,7 +15,13 @@ except ModuleNotFoundError:
 
 
 def _get_node_name(node):
-    return "_time_ {} -- {}".format(node._func_name, " - ".join(node.outputs))
+    func_name = (
+        node._func_name.replace("<", "")
+        .replace(">", "")
+        .split(" ")[0]
+        .split(".")[-1][:250]
+    )
+    return "_time_ {} -- {}".format(func_name, " - ".join(node.outputs))
 
 
 class MLflowTimeLoggerHook:
