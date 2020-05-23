@@ -771,14 +771,11 @@ Here are the options configurable in `parameters.yml`:
 - Configure Kedro run config using `RUN_CONFIG` key
   - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
   - Optionally run nodes in parallel
-- Configure MLflow logging using `MLFLOW_LOGGING_CONFIG` key
-  - Optionally specify the MLflow tracking database URI
-    (For more details, see [SQLAlchemy database uri](https://docs.sqlalchemy.org/en/13/core/engines.html#database-urls))
-  - Optionally specify the experiment name
-  - Optionally specify the location to save artifacts
-  - Optionally specify the offset hour (local time zone) to show in MLflow log (e.g. 0 for UK, 8 for Singapore)
-  - Optionally specify the artifacts (e.g. parameters, trained model, prediction) to save
-
+- Define Kedro hooks (new feature of kedro 0.16)
+  - `MLflowBasicLoggerHook`: Configure and log duration time for the pipeline 
+  - `MLflowArtifactsLoggerHook`: Log artifacts of specified file paths and dataset names
+  - `MLflowOutputsLoggerHook`: Log outputs of (list of) float/int and str classes to MLflow
+  - `MLflowTimeLoggerHook`: Log duration time for each node (task)
 
 ```yaml
 # parameters.yml
@@ -811,13 +808,34 @@ RUN_CONFIG:
   pipeline_name: __default__
   runner: SequentialRunner # Set to "ParallelRunner" to run in parallel
   only_missing: False # Set True to run only missing nodes
+  tags: # None
+  node_names: # None
+  from_nodes: # None
+  to_nodes: # None
+  from_inputs: # None
+  load_versions: # None
 
-MLFLOW_LOGGING_CONFIG:
-  uri: sqlite:///mlruns/sqlite.db
-  experiment_name: experiment_001
-  artifact_location: ./mlruns/experiment_001
-  offset_hours: 0 # Specify the offset hour (local time zone) to show in MLflow tracking
-  logging_artifacts: # Optionally specify artifacts (e.g. parameters, trained model, prediction) to save
+HOOKS:
+  - =: pipelinex.MLflowBasicLoggerHook # Configure and log duration time for the pipeline 
+    enable_mlflow: True # Enable configuring and logging to MLflow
+    uri: sqlite:///mlruns/sqlite.db
+    experiment_name: experiment_001
+    artifact_location: ./mlruns/experiment_001
+    offset_hours: 0 # Specify the offset hour (e.g. 0 for UTC/GMT +00:00) to log in MLflow
+
+  - =: pipelinex.MLflowArtifactsLoggerHook # Log artifacts of specified file paths and dataset names
+    enable_mlflow: True # Enable logging to MLflow
+    filepaths_before_pipeline_run: # Optionally specify the file paths to log before pipeline is run
+      - conf/base/parameters.yml
+    datasets_after_node_run: # Optionally specify the dataset names to log after the node is run
+      - model
+    filepaths_after_pipeline_run: # None  # Optionally specify the file paths to log after pipeline is run
+
+  - =: pipelinex.MLflowOutputsLoggerHook # Log outputs of (list of) float/int and str classes to MLflow
+    enable_mlflow: True # Enable logging to MLflow
+
+  - =: pipelinex.MLflowTimeLoggerHook # Log duration time for each node (task)
+    enable_mlflow: True # Enable logging to MLflow
 ```
 
 Here are the options configurable in `catalog.yml`:
