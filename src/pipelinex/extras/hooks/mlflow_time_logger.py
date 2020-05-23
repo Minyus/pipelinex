@@ -1,3 +1,4 @@
+from importlib.util import find_spec
 import time
 from logging import getLogger
 from pprint import pformat
@@ -23,8 +24,9 @@ class MLflowTimeLoggerHook:
     _time_dict = {}
 
     def __init__(
-        self, node_name_func=_get_node_name,
+        self, enable_mlflow=True, node_name_func=_get_node_name,
     ):
+        self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self._node_name_func = node_name_func
 
     @hook_impl
@@ -48,12 +50,11 @@ class MLflowTimeLoggerHook:
 
         log.info("Time duration: {}".format(time_dict))
 
-        try:
+        if self.enable_mlflow:
+
             from mlflow import log_metrics
 
             log_metrics(time_dict)
-        except Exception:
-            pass
 
         self._time_dict.update(time_dict)
 
