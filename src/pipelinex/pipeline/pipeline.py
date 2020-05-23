@@ -37,6 +37,7 @@ class FlexiblePipeline(kedro.pipeline.Pipeline):
                 if not isinstance(node["decorator"], list):
                     node["decorator"] = [node["decorator"]]
 
+                decorator = decorator or []
                 if not isinstance(decorator, list):
                     decorator = [decorator]
 
