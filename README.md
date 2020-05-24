@@ -776,6 +776,8 @@ Here are the options configurable in `parameters.yml`:
   - `MLflowArtifactsLoggerHook`: Log artifacts of specified file paths and dataset names
   - `MLflowOutputsLoggerHook`: Log outputs of (list of) float/int and str classes to MLflow
   - `MLflowTimeLoggerHook`: Log duration time for each node (task)
+  - `AddTransformersHook`: Add Kedro transformers such as:
+    - `MLflowIOTimeLoggerTransformer`: Log duration time to load and save each dataset
 
 ```yaml
 # parameters.yml
@@ -831,11 +833,16 @@ HOOKS:
       - model
     filepaths_after_pipeline_run: # None  # Optionally specify the file paths to log after pipeline is run
 
-  - =: pipelinex.MLflowOutputsLoggerHook # Log outputs of (list of) float/int and str classes to MLflow
+  - =: pipelinex.MLflowOutputsLoggerHook # Log output datasets of (list of) float, int, and str classes
     enable_mlflow: True # Enable logging to MLflow
 
-  - =: pipelinex.MLflowTimeLoggerHook # Log duration time for each node (task)
+  - =: pipelinex.MLflowTimeLoggerHook # Log duration time to run each node (task)
     enable_mlflow: True # Enable logging to MLflow
+
+  - =: pipelinex.AddTransformersHook # Add transformers
+    transformers: 
+      =: pipelinex.MLflowIOTimeLoggerTransformer # Log duration time to load and save each dataset
+      enable_mlflow: True
 ```
 
 Here are the options configurable in `catalog.yml`:
