@@ -47,13 +47,19 @@ PipelineX includes integration with the following Python packages.
 
 These wrappers are all independent and optional. You do _not_ need to install all of these Python packages.
 
-PipelineX shares similar philosophy, concepts, or API styles with:
+PipelineX shares similar philosophy/concepts with:
 
-- [Allennlp](https://github.com/allenai/allennlp)
-- [Ludwig](https://uber.github.io/ludwig/)
-- [Detectron2](https://github.com/facebookresearch/detectron2)
-- [Hydra](https://github.com/facebookresearch/hydra)
-- [Jsonnet](https://github.com/google/jsonnet)
+- Pipeline/workflow packages: [Apache Beam](https://github.com/apache/beam), [Argo](https://github.com/argoproj/argo), [Kubeflow](https://github.com/kubeflow/kubeflow),  [Apache Airflow](https://github.com/apache/airflow), [Luigi](https://github.com/spotify/luigi), [Gokart](https://github.com/m3dev/gokart), [Metaflow](https://github.com/Netflix/metaflow) 
+
+- Parameter management packages: [Hydra](https://github.com/facebookresearch/hydra), [Jsonnet](https://github.com/google/jsonnet)
+
+
+PipelineX shares similar API styles with 
+
+- Pipeline/workflow package: [Kubeflow](https://github.com/kubeflow/kubeflow)
+
+- Domain-specific packages: [Allennlp](https://github.com/allenai/allennlp), [Ludwig](https://uber.github.io/ludwig/), [Detectron2](https://github.com/facebookresearch/detectron2)
+
 
 ## Installation
 
