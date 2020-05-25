@@ -85,7 +85,7 @@ class MLflowTimeLoggerHook:
     def after_pipeline_run(self, run_params, pipeline, catalog):
         log.info("Time duration: \n{}".format(pformat(self._time_dict)))
 
-        if self.enable_plotly:
+        if self.enable_plotly and self._time_begin_dict:
 
             from plotly.figure_factory import create_gantt
 
