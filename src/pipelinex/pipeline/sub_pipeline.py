@@ -40,12 +40,12 @@ class SubPipeline(Pipeline):
         super().__init__(nodes)
 
 
+def _pass_through(*args, **kwargs):
+    return args[0] if args else list(kwargs.values())[0] if kwargs else None
+
+
 def _load_callables(func, default_module):
-    func = func or (
-        lambda *args, **kwargs: (
-            args[0] if args else list(kwargs.values())[0] if kwargs else None
-        )
-    )
+    func = func or _pass_through
     funcs = func if isinstance(func, list) else [func]
 
     for f in funcs:
