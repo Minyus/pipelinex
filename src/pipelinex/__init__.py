@@ -13,11 +13,7 @@ if find_spec("kedro"):
     from .pipeline.pipeline import *  # NOQA
     from .pipeline.sub_pipeline import *  # NOQA
     from .framework.configure import *  # NOQA
-    from .framework.context.catalog_sugar_context import *  # NOQA
     from .framework.context.flexible_context import *  # NOQA
-    from .framework.context.flexible_run_context import *  # NOQA
-    from .framework.context.pipelines_in_parameters_context import *  # NOQA
-    from .framework.context.hooks_in_parameters_context import *  # NOQA
     from .extras.hooks.add_transformers import *  # NOQA
     from .extras.hooks.mlflow_basic_logger import *  # NOQA
     from .extras.hooks.mlflow_artifacts_logger import *  # NOQA
