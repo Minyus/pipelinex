@@ -170,35 +170,7 @@ class StringRunnerOptionContext(KedroContext):
         return super().run(*args, runner=runner, **kwargs)
 
 
-class OnlyMissingStringRunnerDefaultOptionContext(
+class FlexibleRunContext(
     SavePipelineJsonContext, StringRunnerOptionContext, OnlyMissingOptionContext
 ):
-    """Overwrite the default runner and only_missing option for the run."""
-
-    def __init__(
-        self,
-        *args,  # type: Any
-        runner="SequentialRunner",  # type: Optional[str]
-        only_missing=False,  # type: bool
-        **kwargs,  # type: Any
-    ):
-        # type: (...) -> None
-        super().__init__(*args, **kwargs)
-        self._runner = runner
-        self._only_missing = only_missing
-
-    def run(
-        self,
-        *args,  # type: Any
-        runner=None,  # type: Optional[AbstractRunner]
-        only_missing=None,  # type: bool
-        **kwargs,  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
-        runner = runner or self._runner
-        only_missing = only_missing or self._only_missing
-        kwargs["runner"] = runner
-        kwargs["only_missing"] = only_missing
-
-        log.info("Run pipeline ({})".format(kwargs))
-        return super().run(*args, **kwargs)
+    pass

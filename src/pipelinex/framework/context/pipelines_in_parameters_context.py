@@ -1,10 +1,14 @@
 from typing import Any, Dict  # NOQA
 from importlib import import_module
+from logging import getLogger
 
 from kedro.pipeline import Pipeline  # NOQA
 
 from pipelinex import HatchDict
 from .hooks_in_parameters_context import HooksInParametersContext
+
+
+log = getLogger(__name__)
 
 
 class PipelinesInParametersContext(HooksInParametersContext):
@@ -33,6 +37,7 @@ class PipelinesInParametersContext(HooksInParametersContext):
     def run(self, *args, **kwargs):
         run_dict = self._kedro_run_config
         run_dict.update(kwargs)
+        log.info("Run pipeline ({})".format(kwargs))
         return super().run(*args, **run_dict)
 
 
