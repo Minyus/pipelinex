@@ -2,7 +2,6 @@ from typing import Any, Dict  # NOQA
 from logging import getLogger
 
 from .context import KedroContext
-from ...hatch_dict import HatchDict
 
 log = getLogger(__name__)
 
@@ -50,19 +49,14 @@ class HooksInParametersContext(KedroContext):
 
             self._hook_manager = HookManager()
 
-    @property
-    def params(self) -> Dict[str, Any]:
-        params = super().params
+    def _register_kedro_hooks(self, hooks):
 
         if not self._hooks_in_params_read:
             self._hooks_in_params_read = True
 
-            hooks = HatchDict(params).get("HOOKS", [])
             if not isinstance(hooks, (list, tuple)):
                 hooks = [hooks]
 
             for hook in hooks:
                 if not self._hook_manager.is_registered(hook):
                     self._hook_manager.register(hook)
-
-        return params

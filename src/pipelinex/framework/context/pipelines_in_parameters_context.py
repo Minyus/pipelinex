@@ -1,21 +1,37 @@
-from typing import Dict  # NOQA
-from kedro.pipeline import Pipeline  # NOQA
+from typing import Any, Dict  # NOQA
 from importlib import import_module
-from .hatch_parameters_context import HatchParametersContext
+
+from kedro.pipeline import Pipeline  # NOQA
+
+from pipelinex import HatchDict
 from .hooks_in_parameters_context import HooksInParametersContext
 
 
-class PipelinesInParametersContext(HatchParametersContext, HooksInParametersContext):
+class PipelinesInParametersContext(HooksInParametersContext):
+    _params = None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        params = self.params
+        import_modules(params.pop("IMPORT", []))
+
+        params = HatchDict(params).get()
+        self._register_kedro_hooks(params.pop("HOOKS", []))
+        self._kedro_pipelines = params.pop("PIPELINES", None)
+        self._kedro_run_config = params.get("RUN_CONFIG") or {}
+        self._params = params
+
+    @property
+    def params(self) -> Dict[str, Any]:
+        if self._params is None:
+            return super().params
+        return self._params
+
     def _get_pipelines(self) -> Dict[str, Pipeline]:
-        parameters = self.catalog._data_sets["parameters"].load()
-        import_modules(parameters.get("IMPORT"))
-        pipelines = parameters.get("PIPELINES")
-        assert pipelines
-        return pipelines
+        return self._kedro_pipelines
 
     def run(self, *args, **kwargs):
-        parameters = self.catalog._data_sets["parameters"].load()
-        run_dict = parameters.get("RUN_CONFIG", dict())
+        run_dict = self._kedro_run_config
         run_dict.update(kwargs)
         return super().run(*args, **run_dict)
 
