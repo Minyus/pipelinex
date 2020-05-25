@@ -23,7 +23,7 @@ def _get_metric_name(node):
         .split(" ")[0]
         .split(".")[-1][:250]
     )
-    return "_time_to_call {} -- {}".format(func_name, " - ".join(node.outputs))
+    return "_time_to_run {} -- {}".format(func_name, " - ".join(node.outputs))
 
 
 class MLflowTimeLoggerHook:
