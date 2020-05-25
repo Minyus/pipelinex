@@ -11,7 +11,7 @@ from .hooks_in_parameters_context import HooksInParametersContext
 log = getLogger(__name__)
 
 
-class PipelinesInParametersContext(HooksInParametersContext):
+class FlexibleParametersContext(HooksInParametersContext):
     _params = None
 
     def __init__(self, *args, **kwargs):
