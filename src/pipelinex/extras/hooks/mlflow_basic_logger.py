@@ -42,37 +42,15 @@ class MLflowBasicLoggerHook:
         experiment_name=None,
         artifact_location=None,
         offset_hours=None,
-        mlflow_logging_config_key="MLFLOW_LOGGING_CONFIG",
     ):
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.uri = uri
         self.experiment_name = experiment_name
         self.artifact_location = artifact_location
         self.offset_hours = offset_hours or 0
-        self.mlflow_logging_config_key = mlflow_logging_config_key
-
-    def _update_params(self, catalog: DataCatalog):
-        if self.mlflow_logging_config_key:
-            parameters = catalog._data_sets["parameters"].load()
-            mlflow_logging_params = parameters.get(self.mlflow_logging_config_key, {})
-
-            self.enable_mlflow = mlflow_logging_params.get(
-                "enable_mlflow", self.enable_mlflow
-            )
-            self.uri = mlflow_logging_params.get("uri") or self.uri
-            self.experiment_name = (
-                mlflow_logging_params.get("experiment_name") or self.experiment_name
-            )
-            self.artifact_location = (
-                mlflow_logging_params.get("artifact_location") or self.artifact_location
-            )
-            self.offset_hours = (
-                mlflow_logging_params.get("offset_hours") or self.offset_hours
-            )
 
     @hook_impl
     def after_catalog_created(self, catalog: DataCatalog):
-        self._update_params(catalog)
 
         if self.enable_mlflow:
 
