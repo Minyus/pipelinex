@@ -37,7 +37,7 @@ class FlexibleParametersContext(HooksInParametersContext):
     def run(self, *args, **kwargs):
         run_dict = self._kedro_run_config
         run_dict.update(kwargs)
-        log.info("Run pipeline ({})".format(kwargs))
+        log.info("Run pipeline ({})".format(run_dict))
         return super().run(*args, **run_dict)
 
 
