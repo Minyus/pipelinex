@@ -22,7 +22,7 @@ class FlexibleParametersContext(HooksInParametersContext):
         params = HatchDict(params).get()
         self._register_kedro_hooks(params.pop("HOOKS", []))
         self._kedro_pipelines = params.pop("PIPELINES", None)
-        self._kedro_run_config = params.get("RUN_CONFIG") or {}
+        self._kedro_run_config = params.pop("RUN_CONFIG", None) or {}
         self._params = params
 
     @property
