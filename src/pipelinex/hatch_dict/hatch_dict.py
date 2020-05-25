@@ -225,7 +225,7 @@ def _hatch(
 def dot_flatten(d):
     try:
         from flatten_dict import flatten
-    except:
+    except Exception:
         return d
 
     def dot_reducer(k1, k2):
