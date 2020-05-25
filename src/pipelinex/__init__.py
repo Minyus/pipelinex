@@ -17,7 +17,6 @@ if find_spec("kedro"):
     from .framework.context.flexible_context import *  # NOQA
     from .framework.context.only_missing_string_runner_context import *  # NOQA
     from .framework.context.pipelines_in_parameters_context import *  # NOQA
-    from .framework.context.mlflow_context import *  # NOQA
     from .framework.context.hooks_in_parameters_context import *  # NOQA
     from .extras.hooks.add_transformers import *  # NOQA
     from .extras.hooks.mlflow_basic_logger import *  # NOQA
