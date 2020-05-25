@@ -4,6 +4,9 @@ from logging import getLogger
 from pprint import pformat
 from pathlib import Path
 import tempfile
+from typing import Any, Callable, Dict  # NOQA
+
+from kedro.pipeline.node import Node  # NOQA
 
 log = getLogger(__name__)
 
@@ -16,7 +19,7 @@ except ModuleNotFoundError:
         return func
 
 
-def _get_metric_name(node):
+def _get_metric_name(node: Node) -> str:
     func_name = (
         node._func_name.replace("<", "")
         .replace(">", "")
@@ -40,12 +43,22 @@ class MLflowTimeLoggerHook:
 
     def __init__(
         self,
-        enable_mlflow=True,
-        enable_plotly=True,
-        gantt_filepath=None,
-        gantt_params={},
-        metric_name_func=_get_metric_name,
+        enable_mlflow: bool = True,
+        enable_plotly: bool = True,
+        gantt_filepath: str = None,
+        gantt_params: Dict[str, Any] = {},
+        metric_name_func: Callable[[Node], str] = _get_metric_name,
     ):
+        """
+        Args:
+            enable_mlflow: Enable logging to MLflow.
+            enable_plotly: Enable visualization of logged time as a gantt chart.
+            gantt_filepath: File path to save the generated gantt chart.
+            gantt_params: Args fed to:
+                https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html
+            metric_name_func: Callable to return the metric name using ``kedro.pipeline.node.Node``
+                object.
+        """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.enable_plotly = find_spec("plotly") and enable_plotly
         self.gantt_filepath = gantt_filepath

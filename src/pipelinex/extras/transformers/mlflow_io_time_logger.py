@@ -1,7 +1,7 @@
 from importlib.util import find_spec
 from logging import getLogger
 import time
-from typing import Any, Callable
+from typing import Any, Callable  # NOQA
 
 from kedro.io import AbstractTransformer
 
@@ -9,7 +9,14 @@ log = getLogger(__name__)
 
 
 class MLflowIOTimeLoggerTransformer(AbstractTransformer):
-    def __init__(self, enable_mlflow=True):
+    """ Log duration time to load and save each dataset.
+    """
+
+    def __init__(self, enable_mlflow: bool = True):
+        """
+        Args:
+            enable_mlflow: Enable logging to MLflow.
+        """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
 
     def _log_time(self, time_begin, data_set_name, action):

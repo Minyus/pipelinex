@@ -10,7 +10,15 @@ except ModuleNotFoundError:
 
 
 class MLflowOutputsLoggerHook:
-    def __init__(self, enable_mlflow=True):
+    """ Log output datasets of (list of) float, int, and str classes.
+    """
+
+    def __init__(self, enable_mlflow: bool = True):
+
+        """
+        Args:
+            enable_mlflow: Enable logging to MLflow.
+        """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
 
     @hook_impl

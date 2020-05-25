@@ -12,12 +12,19 @@ except ModuleNotFoundError:
 
 
 class AddTransformersHook:
+    """ Hook to add transformers.
+    """
+
     def __init__(
         self,
         transformers: Union[
             AbstractTransformer, List[AbstractTransformer], Tuple[AbstractTransformer]
         ],
     ):
+        """
+        Args:
+            transformers: transformers to add.
+        """
         transformers = transformers or []
         if isinstance(transformers, AbstractTransformer):
             transformers = [transformers]

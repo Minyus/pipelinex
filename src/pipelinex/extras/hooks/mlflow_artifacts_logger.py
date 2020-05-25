@@ -1,6 +1,6 @@
 from importlib.util import find_spec
 from logging import getLogger
-from typing import Any, Dict  # NOQA
+from typing import Any, Dict, List  # NOQA
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
@@ -17,13 +17,25 @@ except ModuleNotFoundError:
 
 
 class MLflowArtifactsLoggerHook:
+    """ Log artifacts of specified file paths and dataset names.
+    """
+
     def __init__(
         self,
-        enable_mlflow=True,
-        filepaths_before_pipeline_run=None,
-        datasets_after_node_run=None,
-        filepaths_after_pipeline_run=None,
+        enable_mlflow: bool = True,
+        filepaths_before_pipeline_run: List[str] = None,
+        datasets_after_node_run: List[str] = None,
+        filepaths_after_pipeline_run: List[str] = None,
     ):
+        """
+        Args:
+            enable_mlflow: Enable logging to MLflow.
+            filepaths_before_pipeline_run: The file paths of artifacts to log
+                before the pipeline is run.
+            datasets_after_node_run: The dataset names to log after the node is run.
+            filepaths_after_pipeline_run: The file paths of artifacts to log
+                after the pipeline is run.
+        """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.filepaths_before_pipeline_run = filepaths_before_pipeline_run or []
         self.datasets_after_node_run = datasets_after_node_run or []
