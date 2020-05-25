@@ -10,7 +10,7 @@ from pipelinex import HatchDict
 log = logging.getLogger(__name__)
 
 
-class CatalogSyntacticSugarContext(KedroContext):
+class FlexibleCatalogContext(KedroContext):
     """ Convert Kedrex's Syntactic Sugar to pure Kedro Catalog. """
 
     def _create_catalog(  # pylint: disable=no-self-use,too-many-arguments
