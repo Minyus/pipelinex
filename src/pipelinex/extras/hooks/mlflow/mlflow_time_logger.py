@@ -8,15 +8,10 @@ from typing import Any, Callable, Dict  # NOQA
 
 from kedro.pipeline.node import Node  # NOQA
 
+from .mlflow_utils import hook_impl, mlflow_log_metrics, mlflow_log_artifacts
+
+
 log = getLogger(__name__)
-
-
-try:
-    from kedro.framework.hooks import hook_impl
-except ModuleNotFoundError:
-
-    def hook_impl(func):
-        return func
 
 
 def _get_metric_name(node: Node) -> str:
@@ -86,11 +81,7 @@ class MLflowTimeLoggerHook:
 
         log.info("Time duration: {}".format(time_dict))
 
-        if self.enable_mlflow:
-
-            from mlflow import log_metrics
-
-            log_metrics(time_dict)
+        mlflow_log_metrics(time_dict, enable_mlflow=self.enable_mlflow)
 
         self._time_dict.update(time_dict)
 
@@ -117,8 +108,4 @@ class MLflowTimeLoggerHook:
             Path(fp).parent.mkdir(parents=True, exist_ok=True)
             fig.write_html(fp)
 
-            if self.enable_mlflow:
-
-                from mlflow import log_artifact
-
-                log_artifact(fp)
+            mlflow_log_artifacts(fp, enable_mlflow=self.enable_mlflow)
