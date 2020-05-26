@@ -12,6 +12,11 @@ log = logging.getLogger(__name__)
 
 
 class IterableImagesDataSet(AbstractVersionedDataSet):
+    """ Loads a folder containing images as an iterable.
+    Wrapper of:
+    https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder
+    """
+
     def __init__(
         self,
         filepath: str,
@@ -19,6 +24,17 @@ class IterableImagesDataSet(AbstractVersionedDataSet):
         save_args: Dict[str, Any] = None,
         version: Version = None,
     ) -> None:
+        """
+        Args:
+            filepath: `root` fed to:
+                https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder
+            load_args: Args fed to:
+                https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder
+            save_args: Ignored as saving is not supported.
+            version: If specified, should be an instance of
+                ``kedro.io.core.Version``. If its ``load`` attribute is
+                None, the latest version will be loaded.
+        """
 
         super().__init__(
             filepath=Path(filepath), version=version, exists_function=self._exists
