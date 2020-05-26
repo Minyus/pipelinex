@@ -32,16 +32,16 @@ if find_spec("pandas_profiling"):
     from .extras.datasets.pandas_profiling.pandas_profiling import *  # NOQA
 
 if find_spec("PIL"):
-    from .extras.datasets.pillow.images import *  # NOQA
+    from .extras.datasets.pillow.images_dataset import *  # NOQA
 
 if find_spec("seaborn"):
     from .extras.datasets.seaborn.seaborn_pairplot import *  # NOQA
 
 if find_spec("torchvision"):
-    from .extras.datasets.torchvision.iterable_images import *  # NOQA
+    from .extras.datasets.torchvision.iterable_images_dataset import *  # NOQA
 
 if find_spec("cv2"):
-    from .extras.datasets.opencv.images import *  # NOQA
+    from .extras.datasets.opencv.images_dataset import *  # NOQA
 
 if find_spec("requests"):
     from .extras.datasets.requests.api_dataset import *  # NOQA
