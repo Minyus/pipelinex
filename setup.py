@@ -1,21 +1,39 @@
+import re
+from codecs import open
+from os import path
+
 from setuptools import find_packages, setup
 
-package_name = "pipelinex"
+name = "pipelinex"
+here = path.abspath(path.dirname(__file__))
+
+with open(path.join(here, "src", name, "__init__.py"), encoding="utf-8") as f:
+    result = re.search(r'__version__ = ["\']([^"\']+)', f.read())
+
+    if not result:
+        raise ValueError("Can't find the version")
+
+    version = result.group(1)
+
+with open(path.join(here, "README.md"), encoding="utf-8") as f:
+    readme = f.read()
 
 setup(
-    name=package_name,
+    name=name,
+    version=version,
+    description="Tool to build production-ready pipelines for experimentation with Kedro and MLflow",
+    license="Apache Software License (Apache 2.0)",
+    long_description=readme,
+    long_description_content_type="text/markdown",
+    url="https://github.com/Minyus/pipelinex",
     packages=find_packages(where="src", exclude=["tests"]),
     package_dir={"": "src"},
-    version="0.2.9",
-    license="Apache Software License (Apache 2.0)",
+    test_suite="tests",
+    install_requires=[],
     author="Yusuke Minami",
     author_email="me@minyus.github.com",
-    url="https://github.com/Minyus/pipelinex",
-    description="Pipeline for eXperimentation",
-    install_requires=[],
-    keywords="pipelines, machine learning, deep learning, data science, data engineering",
     zip_safe=False,
-    test_suite="tests",
+    keywords="pipelines, machine learning, deep learning, data science, data engineering",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Natural Language :: English",
