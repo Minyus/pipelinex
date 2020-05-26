@@ -4,7 +4,7 @@ from .mlflow_utils import hook_impl, mlflow_log_metrics, mlflow_log_params
 
 
 class MLflowOutputsLoggerHook:
-    """ Log output datasets of (list of) float, int, and str classes.
+    """ Logs output datasets of (list of) float/int and str classes to MLflow
     """
 
     def __init__(self, enable_mlflow: bool = True):

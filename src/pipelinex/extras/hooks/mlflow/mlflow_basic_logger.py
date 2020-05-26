@@ -36,7 +36,7 @@ def get_timestamps(dt=None, offset_hours=0):
 
 
 class MLflowBasicLoggerHook:
-    """ Configure and log duration time for the pipeline.
+    """ Configures and logs duration time for the pipeline to MLflow
     """
 
     def __init__(
