@@ -761,30 +761,14 @@ Kedro pipelines can be productionized using:
 - [kedro-airflow](https://github.com/quantumblacklabs/kedro-airflow): converts a Kedro pipeline into Airflow Python operators.
 - [kedro-docker](https://github.com/quantumblacklabs/kedro-docker): builds a Docker image that can run a Kedro pipeline 
 
-## Enhanced YAML interface for Kedro pipelines with optional MLflow integration
+## Enhanced YAML interface for Kedro pipelines
 
 PipelineX enables you to use Kedro in more convenient ways.
 A major advantage is that you can define the inter-task dependency (DAG) for Kedro pipelines in YAML.
 
-Here are the options configurable in `parameters.yml`:
+### Here are the options configurable in `parameters.yml`:
 
-- `HatchDict` features available
-- Define Kedro pipeline using `PIPELINES` key
-  - Optionally specify the default Python module (path of .py file) if you want to omit the module name
-  - Optionally specify the Python function decorator to apply to each node
-  - Specify `inputs`, `func`, and `outputs` for each node
-    - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
-- Configure Kedro run config using `RUN_CONFIG` key
-  - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
-  - Optionally run nodes in parallel
-- Define Kedro hooks (new feature of kedro 0.16)
-  - `MLflowBasicLoggerHook`: Configures and log duration time for the pipeline to MLflow
-  - `MLflowArtifactsLoggerHook`: Logs artifacts of specified file paths and dataset names to MLflow
-  - `MLflowOutputsLoggerHook`: Logs output datasets of (list of) float/int and str classes to MLflow
-  - `MLflowTimeLoggerHook`: Logs duration time for each node (task) to MLflow
-    - Optionally, the execution logs can be visualized as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed
-  - `AddTransformersHook`: Adds Kedro transformers such as:
-    - `MLflowIOTimeLoggerTransformer`: Logs duration time to load and save each dataset
+#### `HatchDict` features
 
 ```yaml
 # parameters.yml
@@ -798,6 +782,16 @@ cols_features: # Columns used as features in the Titanic data table
   - Pclass # The passenger's ticket class
   - Parch # # of parents / children aboard the Titanic
 col_target: Survived # Column used as the target: whether the passenger survived or not
+```
+
+#### Define Kedro pipelines using `PIPELINES` key
+  - Optionally specify the default Python module (path of .py file) if you want to omit the module name
+  - Optionally specify the Python function decorator to apply to each node
+  - Specify `inputs`, `func`, and `outputs` for each node
+    - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
+
+```yaml
+# parameters.yml
 
 PIPELINES:
   __default__:
@@ -812,6 +806,15 @@ PIPELINES:
       - inputs: [model, test_df, "params:cols_features"]
         func: sklearn_demo.run_inference
         outputs: pred_df
+```
+
+#### Configure Kedro run config using `RUN_CONFIG` key
+  - Optionally run nodes in parallel
+  - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
+  Note: You can use Kedro CLI to overwrite these run configs.
+
+```yaml
+# parameters.yml
 
 RUN_CONFIG:
   pipeline_name: __default__
@@ -823,6 +826,19 @@ RUN_CONFIG:
   to_nodes: # None
   from_inputs: # None
   load_versions: # None
+```
+
+#### Define Kedro hooks using `HOOKS` key
+  - [`MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and log duration time for the pipeline to MLflow
+  - [`MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow
+  - [`MLflowOutputsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs output datasets of (list of) float/int and str classes to MLflow
+  - [`MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow
+    - Optionally, the execution logs can be visualized as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed
+  - [`AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
+    - [`MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset
+
+```yaml
+# parameters.yml
 
 HOOKS:
   - =: pipelinex.MLflowBasicLoggerHook # Configure and log duration time for the pipeline 
@@ -857,7 +873,8 @@ HOOKS:
 Experiment logs in MLflow's UI
 </p>
 
-Here are the options configurable in `catalog.yml`:
+### Here are the options configurable in `catalog.yml`:
+
 - `HatchDict` features available
 - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
 
