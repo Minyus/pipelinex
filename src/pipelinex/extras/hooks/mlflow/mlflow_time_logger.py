@@ -14,14 +14,14 @@ from .mlflow_utils import hook_impl, mlflow_log_metrics, mlflow_log_artifacts
 log = getLogger(__name__)
 
 
-def _get_metric_name(node: Node) -> str:
+def _get_task_name(node: Node) -> str:
     func_name = (
         node._func_name.replace("<", "")
         .replace(">", "")
         .split(" ")[0]
         .split(".")[-1][:250]
     )
-    return "_time_to_run {} -- {}".format(func_name, " - ".join(node.outputs))
+    return "{} -- {}".format(func_name, " - ".join(node.outputs))
 
 
 class MLflowTimeLoggerHook:
@@ -42,7 +42,8 @@ class MLflowTimeLoggerHook:
         enable_plotly: bool = True,
         gantt_filepath: str = None,
         gantt_params: Dict[str, Any] = {},
-        metric_name_func: Callable[[Node], str] = _get_metric_name,
+        metric_name_prefix: str = "_time_to_run ",
+        task_name_func: Callable[[Node], str] = _get_task_name,
     ):
         """
         Args:
@@ -51,39 +52,46 @@ class MLflowTimeLoggerHook:
             gantt_filepath: File path to save the generated gantt chart.
             gantt_params: Args fed to:
                 https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html
-            metric_name_func: Callable to return the metric name using ``kedro.pipeline.node.Node``
+            metric_name_prefix: Prefix for the metric names. The metric names are
+                `metric_name_prefix` connected with the returned string by `task_name_func`.
+            task_name_func: Callable to return the task name using ``kedro.pipeline.node.Node``
                 object.
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.enable_plotly = find_spec("plotly") and enable_plotly
         self.gantt_filepath = gantt_filepath
         self.gantt_params = gantt_params
-        self._metric_name_func = metric_name_func
+        self.metric_name_prefix = metric_name_prefix
+        self.task_name_func = task_name_func
 
     @hook_impl
     def before_node_run(self, node, catalog, inputs):
-        node_name = self._metric_name_func(node)
-        time_begin_dict = {node_name: time.time()}
+        task_name = self.task_name_func(node)
+        time_begin_dict = {task_name: time.time()}
         self._time_begin_dict.update(time_begin_dict)
 
     @hook_impl
     def after_node_run(self, node, catalog, inputs, outputs):
-        node_name = self._metric_name_func(node)
-        time_end_dict = {node_name: time.time()}
+        task_name = self.task_name_func(node)
+
+        time_end_dict = {task_name: time.time()}
         self._time_end_dict.update(time_end_dict)
 
         time_dict = {
-            node_name: (
-                self._time_end_dict.get(node_name)
-                - self._time_begin_dict.get(node_name)
+            task_name: (
+                self._time_end_dict.get(task_name)
+                - self._time_begin_dict.get(task_name)
             )
         }
 
         log.info("Time duration: {}".format(time_dict))
 
-        mlflow_log_metrics(time_dict, enable_mlflow=self.enable_mlflow)
-
         self._time_dict.update(time_dict)
+
+        metric_time_dict = {
+            (self.metric_name_prefix + k): v for (k, v) in time_dict.items()
+        }
+        mlflow_log_metrics(metric_time_dict, enable_mlflow=self.enable_mlflow)
 
     @hook_impl
     def after_pipeline_run(self, run_params, pipeline, catalog):
