@@ -829,7 +829,7 @@ RUN_CONFIG:
 ```
 
 #### Define Kedro hooks using `HOOKS` key
-  - [`MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and log duration time for the pipeline to MLflow
+  - [`MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow
   - [`MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow
   - [`MLflowOutputsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs output datasets of (list of) float/int and str classes to MLflow
   - [`MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow
