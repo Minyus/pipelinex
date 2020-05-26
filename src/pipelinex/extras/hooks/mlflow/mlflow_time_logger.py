@@ -91,15 +91,17 @@ class MLflowTimeLoggerHook:
 
         if self.enable_plotly and self._time_begin_dict:
 
+            tasks_reversed = list(self._time_begin_dict.keys())[::-1]
+
             from plotly.figure_factory import create_gantt
 
             df = [
                 dict(
-                    Task=k,
-                    Start=self._time_begin_dict.get(k) * 1000,
-                    Finish=self._time_end_dict.get(k) * 1000,
+                    Task=t,
+                    Start=self._time_begin_dict.get(t) * 1000,
+                    Finish=self._time_end_dict.get(t) * 1000,
                 )
-                for k in self._time_begin_dict.keys()
+                for t in tasks_reversed
             ]
 
             fig = create_gantt(df, **self.gantt_params)
