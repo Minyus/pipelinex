@@ -778,12 +778,13 @@ Here are the options configurable in `parameters.yml`:
   - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
   - Optionally run nodes in parallel
 - Define Kedro hooks (new feature of kedro 0.16)
-  - `MLflowBasicLoggerHook`: Configure and log duration time for the pipeline 
-  - `MLflowArtifactsLoggerHook`: Log artifacts of specified file paths and dataset names
-  - `MLflowOutputsLoggerHook`: Log outputs of (list of) float/int and str classes to MLflow
-  - `MLflowTimeLoggerHook`: Log duration time for each node (task)
-  - `AddTransformersHook`: Add Kedro transformers such as:
-    - `MLflowIOTimeLoggerTransformer`: Log duration time to load and save each dataset
+  - `MLflowBasicLoggerHook`: Configures and log duration time for the pipeline to MLflow
+  - `MLflowArtifactsLoggerHook`: Logs artifacts of specified file paths and dataset names to MLflow
+  - `MLflowOutputsLoggerHook`: Logs output datasets of (list of) float/int and str classes to MLflow
+  - `MLflowTimeLoggerHook`: Logs duration time for each node (task) to MLflow
+    - Optionally, the execution logs can be visualized as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed
+  - `AddTransformersHook`: Adds Kedro transformers such as:
+    - `MLflowIOTimeLoggerTransformer`: Logs duration time to load and save each dataset
 
 ```yaml
 # parameters.yml
@@ -850,6 +851,11 @@ HOOKS:
       =: pipelinex.MLflowIOTimeLoggerTransformer # Log duration time to load and save each dataset
       enable_mlflow: True
 ```
+
+<p align="center">
+<img src="img/mlflow_ui.png">
+Experiment logs in MLflow's UI
+</p>
 
 Here are the options configurable in `catalog.yml`:
 - `HatchDict` features available
