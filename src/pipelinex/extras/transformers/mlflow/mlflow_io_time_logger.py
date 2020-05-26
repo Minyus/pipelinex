@@ -12,17 +12,25 @@ class MLflowIOTimeLoggerTransformer(AbstractTransformer):
     """ Log duration time to load and save each dataset.
     """
 
-    def __init__(self, enable_mlflow: bool = True):
+    def __init__(
+        self, enable_mlflow: bool = True, metric_name_prefix: str = "_time_to_",
+    ):
         """
         Args:
             enable_mlflow: Enable logging to MLflow.
+            metric_name_prefix: Prefix for the metric names. The metric names are
+                `metric_name_prefix` concatenated with 'load <data_set_name>' or
+                'save <data_set_name>' 
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
+        self.metric_name_prefix = metric_name_prefix
 
     def _log_time(self, time_begin, data_set_name, action):
         time_ = time.time() - time_begin
         data_set_name = data_set_name.replace(":", "..")
-        time_dict = {"_time_to_{} {}".format(action, data_set_name): time_}
+        time_dict = {
+            "{}{} {}".format(self.metric_name_prefix, action, data_set_name): time_
+        }
 
         log.info("Time duration: {}".format(time_dict))
         if self.enable_mlflow:
