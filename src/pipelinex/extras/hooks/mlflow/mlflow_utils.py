@@ -30,8 +30,11 @@ def mlflow_log_artifacts(paths, artifact_path=None, enable_mlflow=True):
 
 def mlflow_log_metrics(metrics, step=None, enable_mlflow=True):
     log.info("{}".format(metrics))
+
     if enable_mlflow:
         try:
+            metrics = {k: float(v) for (k, v) in metrics.items()}
+
             from mlflow import log_metrics
 
             log_metrics(metrics, step)
