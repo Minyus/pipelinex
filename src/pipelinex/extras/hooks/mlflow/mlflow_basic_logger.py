@@ -82,8 +82,8 @@ class MLflowBasicLoggerHook:
         time_dict = {"__time_begin": timestamp}
         time_int_dict = {"__time_begin": timestamp_int}
 
-        mlflow_log_metrics(time_dict, enable_mlflow=self.enable_mlflow)
-        mlflow_log_params(time_int_dict, enable_mlflow=self.enable_mlflow)
+        mlflow_log_params(time_dict, enable_mlflow=self.enable_mlflow)
+        mlflow_log_metrics(time_int_dict, enable_mlflow=self.enable_mlflow)
 
         self._time_begin = time.time()
 
