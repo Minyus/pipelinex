@@ -15,11 +15,11 @@ if find_spec("kedro"):
     from .framework.configure import *  # NOQA
     from .framework.context.flexible_context import *  # NOQA
     from .extras.hooks.add_transformers import *  # NOQA
-    from .extras.hooks.mlflow_basic_logger import *  # NOQA
-    from .extras.hooks.mlflow_artifacts_logger import *  # NOQA
-    from .extras.hooks.mlflow_time_logger import *  # NOQA
-    from .extras.hooks.mlflow_outputs_logger import *  # NOQA
-    from .extras.transformers.mlflow_io_time_logger import *  # NOQA
+    from .extras.hooks.mlflow.mlflow_basic_logger import *  # NOQA
+    from .extras.hooks.mlflow.mlflow_artifacts_logger import *  # NOQA
+    from .extras.hooks.mlflow.mlflow_time_logger import *  # NOQA
+    from .extras.hooks.mlflow.mlflow_outputs_logger import *  # NOQA
+    from .extras.transformers.mlflow.mlflow_io_time_logger import *  # NOQA
 
 if find_spec("pandas"):
     from .extras.datasets.pandas.csv_local import *  # NOQA
