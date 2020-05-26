@@ -1,3 +1,4 @@
+from pathlib import Path
 from logging import getLogger
 
 log = getLogger(__name__)
@@ -17,11 +18,17 @@ def mlflow_log_artifacts(paths, artifact_path=None, enable_mlflow=True):
             paths = [paths]
 
         try:
-            from mlflow import log_artifact
+            from mlflow import log_artifact, log_artifacts
 
             for path in paths:
-                log_artifact(path, artifact_path)
-                log.info("'{}' logged by MLflow.".format(path))
+                if Path(path).is_file():
+                    log_artifact(path, artifact_path)
+                    log.info("File at '{}' was logged by MLflow.".format(path))
+                elif Path(path).is_dir():
+                    log_artifacts(path, artifact_path)
+                    log.info("Directory at '{}' was logged by MLflow.".format(path))
+                else:
+                    log.warning("'{}' was not found.".format(path))
         except Exception:
             log.warning(
                 "{} failed to be logged by MLflow.".format(paths), exc_info=True
