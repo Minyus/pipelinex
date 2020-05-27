@@ -516,7 +516,8 @@ Here is a simple demo example to predict survival on the [Titanic](https://www.k
 <img src="img/example_kedro_pipeline.PNG">
 Pipeline visualized by Kedro-viz
 </p>
-Common code for the tasks:
+
+Common code to define the tasks/operations/transformations:
 
 ```python
 # Define tasks
@@ -529,6 +530,13 @@ def run_inference(model, df, cols_features):
     # run inference here
     return df
 ```
+
+It is notable that you do _not_ need to add any Kedro-related code here to use Kedro later on.
+
+Furthermore, you do _not_ need to add any MLflow-related code here to use MLflow later on as Kedro hooks provided by PipelineX can handle behind the scenes.
+
+This advantage enables you to keep your pipelines for experimentation/prototyping/benchmarking production-ready.
+
 
 1. Plain code:
 
