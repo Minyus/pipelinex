@@ -45,6 +45,7 @@ class MLflowBasicLoggerHook:
         uri: str = None,
         experiment_name: str = None,
         artifact_location: str = None,
+        run_name: str = None,
         offset_hours: float = None,
     ):
         """
@@ -56,9 +57,9 @@ class MLflowBasicLoggerHook:
             experiment_name: The experiment name.
                 `name` arg fed to:
                 https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
-            artifact_location:
-                `artifact_location` arg fed to:
+            artifact_location: `artifact_location` arg fed to:
                 https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
+            run_name: Shown as 'Run Name' in MLflow UI. If `None`, Kedro's `run_id` is used.
             offset_hours: The offset hour (e.g. 0 for UTC+00:00) to log in MLflow. 
 
         """
@@ -66,18 +67,21 @@ class MLflowBasicLoggerHook:
         self.uri = uri
         self.experiment_name = experiment_name
         self.artifact_location = artifact_location
+        self.run_name = run_name
         self.offset_hours = offset_hours or 0
-
-    @hook_impl
-    def after_catalog_created(self, catalog: DataCatalog):
-        mlflow_start_run(
-            self.uri, self.experiment_name, self.artifact_location, self.enable_mlflow
-        )
 
     @hook_impl
     def before_pipeline_run(
         self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
     ):
+        mlflow_start_run(
+            uri=self.uri,
+            experiment_name=self.experiment_name,
+            artifact_location=self.artifact_location,
+            run_name=self.run_name or run_params.get("run_id", ""),
+            enable_mlflow=self.enable_mlflow,
+        )
+
         run_params_renamed = {("___" + k): v for (k, v) in run_params.items()}
         mlflow_log_params(run_params_renamed, enable_mlflow=self.enable_mlflow)
 
