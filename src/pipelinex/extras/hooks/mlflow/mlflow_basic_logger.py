@@ -78,6 +78,9 @@ class MLflowBasicLoggerHook:
     def before_pipeline_run(
         self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
     ):
+        run_params_renamed = {("___" + k): v for (k, v) in run_params.items()}
+        mlflow_log_params(run_params_renamed, enable_mlflow=self.enable_mlflow)
+
         timestamp, timestamp_int = get_timestamps(offset_hours=self.offset_hours)
         time_dict = {"__time_begin": timestamp}
         time_int_dict = {"__time_begin": timestamp_int}
