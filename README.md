@@ -829,13 +829,13 @@ RUN_CONFIG:
 ```
 
 #### Define Kedro hooks using `HOOKS` key
-  - [`MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow
-  - [`MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow
-  - [`MLflowOutputsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs output datasets of (list of) float/int and str classes to MLflow
-  - [`MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow
+  - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow
+  - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow
+  - [`pipelinex.MLflowOutputsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs output datasets of (list of) float/int and str classes to MLflow
+  - [`pipelinex.MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow
     - Optionally, the execution logs can be visualized as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed
-  - [`AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
-    - [`MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset
+  - [`pipelinex.AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
+    - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset
 
 ```yaml
 # parameters.yml
