@@ -10,20 +10,20 @@ except ModuleNotFoundError:
         return func
 
 
-class AddDataSetsHook:
+class AddCatalogDictHook:
     """ Hook to add data sets.
     """
 
     def __init__(
-        self, dataset_dict: Dict[str, AbstractDataSet],
+        self, catalog_dict: Dict[str, AbstractDataSet],
     ):
         """
         Args:
-            dataset_dict: datasets to add.
+            catalog_dict: catalog_dict to add.
         """
-        assert isinstance(dataset_dict, dict), "{} is not a dict.".format(dataset_dict)
-        self._dataset_dict = dataset_dict
+        assert isinstance(catalog_dict, dict), "{} is not a dict.".format(catalog_dict)
+        self._catalog_dict = catalog_dict
 
     @hook_impl
     def after_catalog_created(self, catalog: DataCatalog) -> None:
-        catalog.add_feed_dict(self._dataset_dict)
+        catalog.add_feed_dict(self._catalog_dict)
