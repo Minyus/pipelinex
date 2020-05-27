@@ -56,7 +56,9 @@ def mlflow_log_params(params, enable_mlflow=True):
 
     if enable_mlflow:
         try:
-            params = {k: v[:250] for (k, v) in params.items()}
+            params = {
+                k: ("{}".format(v)[:250] if v else "") for (k, v) in params.items()
+            }
 
             from mlflow import log_params
 
