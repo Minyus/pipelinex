@@ -15,15 +15,12 @@ with open(path.join(here, "src", name, "__init__.py"), encoding="utf-8") as f:
 
     version = result.group(1)
 
-with open(path.join(here, "README.md"), encoding="utf-8") as f:
-    readme = f.read()
-
 setup(
     name=name,
     version=version,
     description="Tool to build production-ready pipelines for experimentation with Kedro and MLflow",
     license="Apache Software License (Apache 2.0)",
-    long_description=readme,
+    long_description="Please see: https://github.com/Minyus/pipelinex",
     long_description_content_type="text/markdown",
     url="https://github.com/Minyus/pipelinex",
     packages=find_packages(where="src", exclude=["tests"]),
