@@ -51,7 +51,7 @@ PipelineX shares similar philosophy/concepts with:
 
 - Pipeline/workflow packages: [Apache Beam](https://github.com/apache/beam), [Argo](https://github.com/argoproj/argo), [Kubeflow](https://github.com/kubeflow/kubeflow),  [Apache Airflow](https://github.com/apache/airflow), [Luigi](https://github.com/spotify/luigi), [Gokart](https://github.com/m3dev/gokart), [Metaflow](https://github.com/Netflix/metaflow) 
 
-- Parameter management packages: [Hydra](https://github.com/facebookresearch/hydra), [Jsonnet](https://github.com/google/jsonnet)
+- Parameter/Config management packages: [Hydra](https://github.com/facebookresearch/hydra), [Jsonnet](https://github.com/google/jsonnet), [Helm](https://github.com/helm/helm), [ytt](https://github.com/k14s/ytt)
 
 
 PipelineX shares similar API styles with 
@@ -768,6 +768,7 @@ Kedro pipelines can be visualized using [kedro-viz](https://github.com/quantumbl
 Kedro pipelines can be productionized using:
 - [kedro-airflow](https://github.com/quantumblacklabs/kedro-airflow): converts a Kedro pipeline into Airflow Python operators.
 - [kedro-docker](https://github.com/quantumblacklabs/kedro-docker): builds a Docker image that can run a Kedro pipeline 
+- [kedro-argo](https://github.com/nraw/kedro-argo): converts a Kedro pipeline into an Argo (backend of Kubeflow) pipeline
 
 ## Enhanced YAML interface for Kedro pipelines
 
