@@ -69,12 +69,14 @@ def mlflow_log_params(params, enable_mlflow=True):
             )
 
 
-def mlflow_start_run(uri, experiment_name, artifact_location, enable_mlflow=True):
+def mlflow_start_run(
+    uri, experiment_name, artifact_location, run_name=None, enable_mlflow=True
+):
     if enable_mlflow:
 
         from mlflow import (
             create_experiment,
-            set_experiment,
+            get_experiment_by_name,
             start_run,
             set_tracking_uri,
         )
@@ -88,9 +90,9 @@ def mlflow_start_run(uri, experiment_name, artifact_location, enable_mlflow=True
                 experiment_id = create_experiment(
                     experiment_name, artifact_location=artifact_location,
                 )
-                start_run(experiment_id=experiment_id)
             except MlflowException:
-                set_experiment(experiment_name)
+                experiment_id = get_experiment_by_name(experiment_name).experiment_id
+            start_run(experiment_id=experiment_id, run_name=run_name)
 
 
 def mlflow_end_run(enable_mlflow=True):
