@@ -838,13 +838,46 @@ RUN_CONFIG:
 ```
 
 #### Define Kedro hooks using `HOOKS` key
-  - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow
-  - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow
-  - [`pipelinex.MLflowOutputsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs output datasets of (list of) float/int and str classes to MLflow
-  - [`pipelinex.MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow
-    - Optionally, the execution logs can be visualized as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed
+  - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow with args:
+  
+    - enable_mlflow: Enable configuring and logging to MLflow.
+    uri: The MLflow tracking server URI. 
+        `uri` arg fed to:
+        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_tracking_uri
+    - experiment_name: The experiment name.
+        `name` arg fed to:
+        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
+    - artifact_location: `artifact_location` arg fed to:
+        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
+    - run_name: Shown as 'Run Name' in MLflow UI.
+    offset_hours: The offset hour (e.g. 0 for UTC+00:00) to log in MLflow. 
+
+  - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow with args:
+
+    - enable_mlflow: Enable logging to MLflow.
+    - filepaths_before_pipeline_run: The file paths of artifacts to log before the pipeline is run.
+    - datasets_after_node_run: The dataset names to log after the node is run.
+    - filepaths_after_pipeline_run: The file paths of artifacts to log after the pipeline is run.
+  
+  - [`pipelinex.MLflowOutputsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs output datasets of (list of) float/int and str classes to MLflow with arg:
+
+    - enable_mlflow: Enable logging to MLflow.
+  
+  - [`pipelinex.MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow and optionally visualizes the execution logs as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed, with args:
+    - enable_mlflow: Enable logging to MLflow.
+    - enable_plotly: Enable visualization of logged time as a gantt chart.
+    - gantt_filepath: File path to save the generated gantt chart.
+    - gantt_params: Args fed to:
+        https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html
+    - metric_name_prefix: Prefix for the metric names. The metric names are
+        - `metric_name_prefix` concatenated with the string returned by `task_name_func`.
+    - task_name_func: Callable to return the task name using ``kedro.pipeline.node.Node``
+        - object.
+  
   - [`pipelinex.AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
-    - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset
+    - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset with args:
+      - enable_mlflow: Enable logging to MLflow.
+      - metric_name_prefix: Prefix for the metric names. The metric names are `metric_name_prefix` concatenated with 'load <data_set_name>' or 'save <data_set_name>' 
 
 ```yaml
 # parameters.yml
