@@ -29,7 +29,9 @@ class MLflowIOTimeLoggerTransformer(AbstractTransformer):
         time_ = time.time() - time_begin
         data_set_name = data_set_name.replace(":", "..")
         time_dict = {
-            "{}{} {}".format(self.metric_name_prefix, action, data_set_name): time_
+            "{}{} {}".format(self.metric_name_prefix, action, data_set_name)[
+                :250
+            ]: time_
         }
 
         log.info("Time duration: {}".format(time_dict))
