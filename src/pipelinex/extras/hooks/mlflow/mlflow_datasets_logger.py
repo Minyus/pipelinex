@@ -33,13 +33,6 @@ class MLflowDataSetsLoggerHook:
             mlflow_log_params({name: value}, enable_mlflow=self.enable_mlflow)
         elif isinstance(value, (float, int)):
             mlflow_log_metrics({name: value}, enable_mlflow=self.enable_mlflow)
-        elif (
-            isinstance(value, (list, tuple))
-            and value
-            and all([isinstance(e, (float, int)) for e in value])
-        ):
-            for i, e in enumerate(value):
-                mlflow_log_metrics({name: e}, step=i, enable_mlflow=self.enable_mlflow)
         elif isinstance(value, (list, tuple, set, dict)):
             mlflow_log_params(
                 {name: "{}".format(value)[:100]}, enable_mlflow=self.enable_mlflow
