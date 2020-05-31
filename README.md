@@ -874,7 +874,7 @@ RUN_CONFIG:
     - datasets_after_node_run: The dataset names to log after the node is run.
     - filepaths_after_pipeline_run: The file paths of artifacts to log after the pipeline is run.
   
-  - [`pipelinex.MLflowDataSetsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs output datasets of (list of) float/int and str classes to MLflow with arg:
+  - [`pipelinex.MLflowDataSetsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs datasets of (list of) float/int and str classes to MLflow with arg:
 
     - enable_mlflow: Enable logging to MLflow.
   
