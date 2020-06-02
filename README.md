@@ -762,10 +762,138 @@ Kedro pipelines can be productionized using:
 - [kedro-docker](https://github.com/quantumblacklabs/kedro-docker): builds a Docker image that can run a Kedro pipeline 
 - [kedro-argo](https://github.com/nraw/kedro-argo): converts a Kedro pipeline into an Argo (backend of Kubeflow) pipeline
 
-## Enhanced YAML interface for Kedro pipelines
+
+## Supplements for Kedro
+
+[pipelinex.extras](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras) provides Kedro hooks, data interface sets, and decorators to supplement [kedro.extras](https://github.com/quantumblacklabs/kedro/tree/develop/kedro/extras) as follows.
+
+
+### Integration with MLflow by Kedro hooks (callbacks)
+
+  [pipelinex.extras.hooks](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/hooks) provides Kedro hooks (callbacks) to use MLflow without adding any MLflow-related code in the node (task) functions.
+
+  - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow with args:
+  
+    - enable_mlflow: Enable configuring and logging to MLflow.
+    uri: The MLflow tracking server URI. 
+        `uri` arg fed to:
+        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_tracking_uri
+    - experiment_name: The experiment name.
+        `name` arg fed to:
+        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
+    - artifact_location: `artifact_location` arg fed to:
+        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
+    - run_name: Shown as 'Run Name' in MLflow UI.
+    offset_hours: The offset hour (e.g. 0 for UTC+00:00) to log in MLflow. 
+
+  - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow with args:
+
+    - enable_mlflow: Enable logging to MLflow.
+    - filepaths_before_pipeline_run: The file paths of artifacts to log before the pipeline is run.
+    - datasets_after_node_run: The dataset names to log after the node is run.
+    - filepaths_after_pipeline_run: The file paths of artifacts to log after the pipeline is run.
+  
+  - [`pipelinex.MLflowDataSetsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs datasets of (list of) float/int and str classes to MLflow with arg:
+
+    - enable_mlflow: Enable logging to MLflow.
+  
+  - [`pipelinex.MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow and optionally visualizes the execution logs as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed, with args:
+    - enable_mlflow: Enable logging to MLflow.
+    - enable_plotly: Enable visualization of logged time as a gantt chart.
+    - gantt_filepath: File path to save the generated gantt chart.
+    - gantt_params: Args fed to:
+        https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html
+    - metric_name_prefix: Prefix for the metric names. The metric names are
+        - `metric_name_prefix` concatenated with the string returned by `task_name_func`.
+    - task_name_func: Callable to return the task name using ``kedro.pipeline.node.Node``
+        - object.
+  
+  - [`pipelinex.AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
+    - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset with args:
+      - enable_mlflow: Enable logging to MLflow.
+      - metric_name_prefix: Prefix for the metric names. The metric names are `metric_name_prefix` concatenated with 'load <data_set_name>' or 'save <data_set_name>'
+
+  To use these hooks, please see example projects at [kedro_mlflow](https://github.com/Minyus/kedro_mlflow) or [pipelinex_sklearn](https://github.com/Minyus/pipelinex_sklearn)
+
+<p align="center">
+<img src="img/mlflow_ui.png">
+Experiment logs in MLflow's UI
+</p>
+
+
+### Additional Kedro data interface sets
+  
+[pipelinex.extras.datasets](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets) provides the following data interface sets mainly for Computer Vision applications using OpenCV, Scikit-image, PyTorch/torchvision, and TensorFlow/Keras.
+
+- [pipelinex.ImagesLocalDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pillow/images.py)
+  - loads/saves multiple numpy arrays (RGB, BGR, or monochrome image) from/to a folder in local storage using `pillow` package, working like ``kedro.extras.datasets.pillow.ImageDataSet`` and
+  ``kedro.io.PartitionedDataSet`` with conversion between numpy arrays and Pillow images.
+  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
+- [pipelinex.APIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/requests/api_dataset.py)
+  - downloads multiple contents (such as images and json) by HTTP requests using `requests` package
+  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
+- [pipelinex.AsyncAPIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/httpx/async_api_dataset.py)
+  - downloads multiple contents (such as images and json) by asynchronous HTTP requests using `httpx` package
+  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
+
+- [pipelinex.IterableImagesDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/torchvision/iterable_images.py)
+  - wrapper of [`torchvision.datasets.ImageFolder`](https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder) that loads images in a folder as an iterable data loader to use with PyTorch.
+
+- [pipelinex.PandasProfilingDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pandas_profiling/pandas_profiling.py)
+  - generates a pandas dataframe summary report using [pandas-profiling](https://github.com/pandas-profiling/pandas-profiling)
+
+- [more data interface sets for pandas dataframe summarization/visualization provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets)
+
+
+### Additional function decorators for benchmarking
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/decorators_demo.ipynb)
+
+[pipelinex.extras.decorators](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/decorators) provides Python decorators for benchmarking.
+
+- [log_time](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/decorators.py)
+  - logs the duration time of a function (difference of timestamp before and after running the function).
+  - Slightly modified version of Kedro's [log_time](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/pipeline/decorators.py#L59)
+
+- [mem_profile](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/memory_profiler.py)
+  - logs the peak memory usage during running the function.
+  - `memory_profiler` needs to be installed.
+  - Slightly modified version of Kedro's [mem_profile](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/extras/decorators/memory_profiler.py#L48)
+
+- [nvml_profile](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/nvml_profiler.py)
+  - logs the difference of NVIDIA GPU usage before and after running the function.
+  - `pynvml` or `py3nvml` needs to be installed.
+
+```python
+from pipelinex import log_time
+from pipelinex import mem_profile  # Need to install memory_profiler for memory profiling
+from pipelinex import nvml_profile  # Need to install pynvml for NVIDIA GPU profiling
+from time import sleep
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+@nvml_profile
+@mem_profile
+@log_time
+def foo_func(i=1):
+    sleep(0.5)  # Needed to avoid the bug reported at https://github.com/pythonprofilers/memory_profiler/issues/216
+    return "a" * i
+
+output = foo_func(100_000_000)
+```
+
+```
+INFO:pipelinex.decorators.decorators:Running 'foo_func' took 549ms [0.549s]
+INFO:pipelinex.decorators.memory_profiler:Running 'foo_func' consumed 579.02MiB memory at peak time
+INFO:pipelinex.decorators.nvml_profiler:Ran: 'foo_func', NVML returned: {'_Driver_Version': '418.67', '_NVML_Version': '10.418.67', 'Device_Count': 1, 'Devices': [{'_Name': 'Tesla P100-PCIE-16GB', 'Total_Memory': 17071734784, 'Free_Memory': 17071669248, 'Used_Memory': 65536, 'GPU_Utilization_Rate': 0, 'Memory_Utilization_Rate': 0}]}, Used memory diff: [0]
+```
+
+
+## Enhanced Kedro context: YAML interface for Kedro pipelines
 
 PipelineX enables you to use Kedro in more convenient ways.
-A major advantage is that you can define the inter-task dependency (DAG) for Kedro pipelines in YAML.
+Using [pipelinex.FlexibleContext](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/framework/context/flexible_context.py), you can define the inter-task dependency (DAG) for Kedro pipelines in YAML.
 
 ### Here are the options configurable in `parameters.yml`:
 
@@ -830,48 +958,6 @@ RUN_CONFIG:
 ```
 
 #### Define Kedro hooks using `HOOKS` key
-  - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow with args:
-  
-    - enable_mlflow: Enable configuring and logging to MLflow.
-    uri: The MLflow tracking server URI. 
-        `uri` arg fed to:
-        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_tracking_uri
-    - experiment_name: The experiment name.
-        `name` arg fed to:
-        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
-    - artifact_location: `artifact_location` arg fed to:
-        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
-    - run_name: Shown as 'Run Name' in MLflow UI.
-    offset_hours: The offset hour (e.g. 0 for UTC+00:00) to log in MLflow. 
-
-  - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow with args:
-
-    - enable_mlflow: Enable logging to MLflow.
-    - filepaths_before_pipeline_run: The file paths of artifacts to log before the pipeline is run.
-    - datasets_after_node_run: The dataset names to log after the node is run.
-    - filepaths_after_pipeline_run: The file paths of artifacts to log after the pipeline is run.
-  
-  - [`pipelinex.MLflowDataSetsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs datasets of (list of) float/int and str classes to MLflow with arg:
-
-    - enable_mlflow: Enable logging to MLflow.
-  
-  - [`pipelinex.MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow and optionally visualizes the execution logs as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed, with args:
-    - enable_mlflow: Enable logging to MLflow.
-    - enable_plotly: Enable visualization of logged time as a gantt chart.
-    - gantt_filepath: File path to save the generated gantt chart.
-    - gantt_params: Args fed to:
-        https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html
-    - metric_name_prefix: Prefix for the metric names. The metric names are
-        - `metric_name_prefix` concatenated with the string returned by `task_name_func`.
-    - task_name_func: Callable to return the task name using ``kedro.pipeline.node.Node``
-        - object.
-  
-  - [`pipelinex.AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
-    - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset with args:
-      - enable_mlflow: Enable logging to MLflow.
-      - metric_name_prefix: Prefix for the metric names. The metric names are `metric_name_prefix` concatenated with 'load <data_set_name>' or 'save <data_set_name>'
-
-  To use these hooks, please see example projects at [kedro_mlflow](https://github.com/Minyus/kedro_mlflow) or [pipelinex_sklearn](https://github.com/Minyus/pipelinex_sklearn)
 
 ```yaml
 # parameters.yml
@@ -904,10 +990,6 @@ HOOKS:
       enable_mlflow: True
 ```
 
-<p align="center">
-<img src="img/mlflow_ui.png">
-Experiment logs in MLflow's UI
-</p>
 
 ### Here are the options configurable in `catalog.yml`:
 
@@ -916,76 +998,6 @@ Experiment logs in MLflow's UI
 
 The complete example project is available [here](https://github.com/Minyus/pipelinex_sklearn).
 
-
-## Additional data interface sets
-  
- PipelineX provides the following data interface sets mainly for Computer Vision applications using OpenCV, Scikit-image, PyTorch/torchvision, and TensorFlow/Keras.
-
-- [pipelinex.ImagesLocalDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pillow/images.py)
-  - loads/saves multiple numpy arrays (RGB, BGR, or monochrome image) from/to a folder in local storage using `pillow` package, working like ``kedro.extras.datasets.pillow.ImageDataSet`` and
-  ``kedro.io.PartitionedDataSet`` with conversion between numpy arrays and Pillow images.
-  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
-- [pipelinex.APIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/requests/api_dataset.py)
-  - downloads multiple contents (such as images and json) by HTTP requests using `requests` package
-  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
-- [pipelinex.AsyncAPIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/httpx/async_api_dataset.py)
-  - downloads multiple contents (such as images and json) by asynchronous HTTP requests using `httpx` package
-  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
-
-- [pipelinex.IterableImagesDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/torchvision/iterable_images.py)
-  - wrapper of [`torchvision.datasets.ImageFolder`](https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder) that loads images in a folder as an iterable data loader to use with PyTorch.
-
-- [pipelinex.PandasProfilingDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pandas_profiling/pandas_profiling.py)
-  - generates a pandas dataframe summary report using [pandas-profiling](https://github.com/pandas-profiling/pandas-profiling)
-
-- [more data interface sets for pandas dataframe summarization/visualization provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets)
-
-
-## Additional function decorators for benchmarking
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/decorators_demo.ipynb)
-
-PipelineX provides Python decorators for benchmarking.
-
-- [log_time](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/decorators.py)
-  - logs the duration time of a function (difference of timestamp before and after running the function).
-  - Slightly modified version of Kedro's [log_time](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/pipeline/decorators.py#L59)
-
-- [mem_profile](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/memory_profiler.py)
-  - logs the peak memory usage during running the function.
-  - `memory_profiler` needs to be installed.
-  - Slightly modified version of Kedro's [mem_profile](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/extras/decorators/memory_profiler.py#L48)
-
-- [nvml_profile](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/nvml_profiler.py)
-  - logs the difference of NVIDIA GPU usage before and after running the function.
-  - `pynvml` or `py3nvml` needs to be installed.
-
-```python
-from pipelinex import log_time
-from pipelinex import mem_profile  # Need to install memory_profiler for memory profiling
-from pipelinex import nvml_profile  # Need to install pynvml for NVIDIA GPU profiling
-from time import sleep
-import logging
-
-logging.basicConfig(level=logging.INFO)
-
-@nvml_profile
-@mem_profile
-@log_time
-def foo_func(i=1):
-    sleep(0.5)  # Needed to avoid the bug reported at https://github.com/pythonprofilers/memory_profiler/issues/216
-    return "a" * i
-
-output = foo_func(100_000_000)
-```
-
-```
-INFO:pipelinex.decorators.decorators:Running 'foo_func' took 549ms [0.549s]
-INFO:pipelinex.decorators.memory_profiler:Running 'foo_func' consumed 579.02MiB memory at peak time
-INFO:pipelinex.decorators.nvml_profiler:Ran: 'foo_func', NVML returned: {'_Driver_Version': '418.67', '_NVML_Version': '10.418.67', 'Device_Count': 1, 'Devices': [{'_Name': 'Tesla P100-PCIE-16GB', 'Total_Memory': 17071734784, 'Free_Memory': 17071669248, 'Used_Memory': 65536, 'GPU_Utilization_Rate': 0, 'Memory_Utilization_Rate': 0}]}, Used memory diff: [0]
-```
-
-These decorators can be set up for each or every task in the Kedro pipeline in `parameters.yml` taking advantage of the import-less Python object feature.
 
 ## Use with PyTorch
 
