@@ -892,7 +892,9 @@ RUN_CONFIG:
   - [`pipelinex.AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
     - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset with args:
       - enable_mlflow: Enable logging to MLflow.
-      - metric_name_prefix: Prefix for the metric names. The metric names are `metric_name_prefix` concatenated with 'load <data_set_name>' or 'save <data_set_name>' 
+      - metric_name_prefix: Prefix for the metric names. The metric names are `metric_name_prefix` concatenated with 'load <data_set_name>' or 'save <data_set_name>'
+
+  To use these hooks, please see example projects at [kedro_mlflow](https://github.com/Minyus/kedro_mlflow) or [pipelinex_sklearn](https://github.com/Minyus/pipelinex_sklearn)
 
 ```yaml
 # parameters.yml
@@ -940,14 +942,26 @@ The complete example project is available [here](https://github.com/Minyus/pipel
 
 ## Additional data interface sets
   
-  PipelineX provides the following data interface sets mainly for Computer Vision applications using OpenCV, Scikit-image, PyTorch/torchvision, and TensorFlow/Keras.
-  - [pipelinex.ImagesLocalDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pillow/images.py): loads/saves multiple numpy arrays (RGB, BGR, or monochrome image) from/to a folder in local storage using `pillow` package, working like ``kedro.extras.datasets.pillow.ImageDataSet`` and
-    ``kedro.io.PartitionedDataSet`` with conversion between numpy arrays and Pillow images.
-  - [pipelinex.APIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/requests/api_dataset.py): downloads multiple contents (such as images and json) by HTTP requests using `requests` package
-  - [pipelinex.AsyncAPIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/httpx/async_api_dataset.py): downloads multiple contents (such as images and json) by asynchronous HTTP requests using `httpx` package
-  - [pipelinex.IterableImagesDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/torchvision/iterable_images.py): wrapper of [`torchvision.datasets.ImageFolder`](https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder) that loads images in a folder as an iterable data loader to use with PyTorch.
-  - [pipelinex.PandasProfilingDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pandas_profiling/pandas_profiling.py): generates a pandas dataframe summary report using [pandas-profiling](https://github.com/pandas-profiling/pandas-profiling)
-  - [more data interface sets for pandas dataframe summarization/visualization provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets)
+ PipelineX provides the following data interface sets mainly for Computer Vision applications using OpenCV, Scikit-image, PyTorch/torchvision, and TensorFlow/Keras.
+
+- [pipelinex.ImagesLocalDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pillow/images.py)
+  - loads/saves multiple numpy arrays (RGB, BGR, or monochrome image) from/to a folder in local storage using `pillow` package, working like ``kedro.extras.datasets.pillow.ImageDataSet`` and
+  ``kedro.io.PartitionedDataSet`` with conversion between numpy arrays and Pillow images.
+  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
+- [pipelinex.APIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/requests/api_dataset.py)
+  - downloads multiple contents (such as images and json) by HTTP requests using `requests` package
+  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
+- [pipelinex.AsyncAPIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/httpx/async_api_dataset.py)
+  - downloads multiple contents (such as images and json) by asynchronous HTTP requests using `httpx` package
+  - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
+
+- [pipelinex.IterableImagesDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/torchvision/iterable_images.py)
+  - wrapper of [`torchvision.datasets.ImageFolder`](https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder) that loads images in a folder as an iterable data loader to use with PyTorch.
+
+- [pipelinex.PandasProfilingDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pandas_profiling/pandas_profiling.py)
+  - generates a pandas dataframe summary report using [pandas-profiling](https://github.com/pandas-profiling/pandas-profiling)
+
+- [more data interface sets for pandas dataframe summarization/visualization provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets)
 
 
 ## Additional function decorators for benchmarking
@@ -956,18 +970,17 @@ The complete example project is available [here](https://github.com/Minyus/pipel
 
 PipelineX provides Python decorators for benchmarking.
 
-- `log_time` logs the duration time of a function (difference of timestamp before and after running the function).
+- [log_time](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/decorators.py)
+  - logs the duration time of a function (difference of timestamp before and after running the function).
+  - Slightly modified version of Kedro's [log_time](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/pipeline/decorators.py#L59)
 
-  - Slightly modified version of [Kedro's `log_time`](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/pipeline/decorators.py#L59)
-
-- `mlflow_log_time` logs and stores the duration time in a MLflow's database in local or remote machine if MLflow is installed.
-
-- `mem_profile` logs the peak memory usage during running the function.
-
+- [mem_profile](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/memory_profiler.py)
+  - logs the peak memory usage during running the function.
   - `memory_profiler` needs to be installed.
-  - Slightly modified version of [Kedro's mem_profile](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/extras/decorators/memory_profiler.py#L48)
+  - Slightly modified version of Kedro's [mem_profile](https://github.com/quantumblacklabs/kedro/blob/develop/kedro/extras/decorators/memory_profiler.py#L48)
 
-- `nvml_profile` logs the difference of NVIDIA GPU usage before and after running the function.
+- [nvml_profile](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/decorators/nvml_profiler.py)
+  - logs the difference of NVIDIA GPU usage before and after running the function.
   - `pynvml` or `py3nvml` needs to be installed.
 
 ```python
