@@ -775,16 +775,25 @@ Kedro pipelines can be productionized using:
   - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow with args:
   
     - enable_mlflow: Enable configuring and logging to MLflow.
-    uri: The MLflow tracking server URI. 
-        `uri` arg fed to:
+    - uri: `uri` arg fed to:
         https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_tracking_uri
-    - experiment_name: The experiment name.
-        `name` arg fed to:
+        as the MLflow tracking server URI.
+        Local file path, databases supported by SQLAlchemy (sqlite, mysql, mssql, and 
+        postgresql), HTTP server, Databricks workspace are supported. 
+        See MLflow's document at:
+        https://mlflow.org/docs/latest/tracking.html#where-runs-are-recorded
+    - experiment_name: `name` arg fed to:
         https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
+        as the MLflow experiment name.
     - artifact_location: `artifact_location` arg fed to:
         https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
-    - run_name: Shown as 'Run Name' in MLflow UI.
-    offset_hours: The offset hour (e.g. 0 for UTC+00:00) to log in MLflow. 
+        as the URI to store the artifacts.
+        Local file paths, Amazon S3, Azure Blob Storage, Google Cloud Storage, SFTP server, 
+        NFS, and HDFS are supported. 
+        See MLflow's document at:
+        https://mlflow.org/docs/latest/tracking.html#id10
+    - run_name: Shown as 'Run Name' in the MLflow UI.
+    - offset_hours: The offset hour (e.g. 0 for UTC+00:00) used for `__time_begin` and `__time_end` parameters. 
 
   - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow with args:
 
