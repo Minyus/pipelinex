@@ -26,7 +26,7 @@ setup(
     packages=find_packages(where="src", exclude=["tests"]),
     package_dir={"": "src"},
     test_suite="tests",
-    install_requires=[],
+    install_requires=["numpy"],
     author="Yusuke Minami",
     author_email="me@minyus.github.com",
     zip_safe=False,
