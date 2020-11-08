@@ -4,8 +4,7 @@ from .mlflow_utils import hook_impl, mlflow_log_metrics, mlflow_log_params
 
 
 class MLflowDataSetsLoggerHook:
-    """ Logs datasets of (list of) float/int and str classes to MLflow
-    """
+    """Logs datasets of (list of) float/int and str classes to MLflow"""
 
     _logged_set = set()
 
@@ -40,5 +39,4 @@ class MLflowDataSetsLoggerHook:
 
 
 class MLflowOutputsLoggerHook(MLflowDataSetsLoggerHook):
-    """ Deprecated alias for `MLflowOutputsLoggerHook`
-    """
+    """Deprecated alias for `MLflowOutputsLoggerHook`"""

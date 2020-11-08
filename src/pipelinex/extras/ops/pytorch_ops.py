@@ -23,9 +23,10 @@ class ModuleConcat(ModuleListMerge):
 
 
 def _check_size_match(self, tt_list):
-    assert len(set([tuple(list(tt.size())) for tt in tt_list])) == 1, (
-        "Sizes of tensors must match. "
-        "\n{}\n got tensor sizes: \n{}\n".format(self, [tt.size() for tt in tt_list])
+    assert (
+        len(set([tuple(list(tt.size())) for tt in tt_list])) == 1
+    ), "Sizes of tensors must match. " "\n{}\n got tensor sizes: \n{}\n".format(
+        self, [tt.size() for tt in tt_list]
     )
 
 
@@ -539,7 +540,7 @@ def nl_loss(input, *args, **kwargs):
 
 
 class NLLoss(torch.nn.NLLLoss):
-    """ The negative likelihood loss.
+    """The negative likelihood loss.
     To compute Cross Entropy Loss, there are 3 options.
         NLLoss with torch.nn.Softmax
         torch.nn.NLLLoss with torch.nn.LogSoftmax

@@ -8,8 +8,7 @@ log = logging.getLogger(__name__)
 
 
 class EfficientCSVLocalDataSet(CSVLocalDataSet):
-    """
-    """
+    """"""
 
     DEFAULT_LOAD_ARGS = dict(
         engine="c", keep_default_na=False, na_values=[""], skiprows=0

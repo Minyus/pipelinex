@@ -12,8 +12,7 @@ log = getLogger(__name__)
 
 
 class MLflowArtifactsLoggerHook:
-    """ Logs artifacts of specified file paths and dataset names to MLflow
-    """
+    """Logs artifacts of specified file paths and dataset names to MLflow"""
 
     def __init__(
         self,

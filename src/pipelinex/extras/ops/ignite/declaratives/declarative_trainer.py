@@ -124,7 +124,7 @@ class NetworkTrain:
         self.mlflow_logging = mlflow_logging
 
     def __call__(self, model, train_dataset, val_dataset=None, **_):
-        """ Train a PyTorch model.
+        """Train a PyTorch model.
 
         Args:
             model (torch.nn.Module): PyTorch model to train.
@@ -484,9 +484,9 @@ def _loggable_dict(d, prefix=None):
 
 
 class ParamSchedulerSavingAsMetricMixIn:
-    """ Base code:
-     https://github.com/pytorch/ignite/blob/v0.2.1/ignite/contrib/handlers/param_scheduler.py#L49
-     https://github.com/pytorch/ignite/blob/v0.2.1/ignite/contrib/handlers/param_scheduler.py#L163
+    """Base code:
+    https://github.com/pytorch/ignite/blob/v0.2.1/ignite/contrib/handlers/param_scheduler.py#L49
+    https://github.com/pytorch/ignite/blob/v0.2.1/ignite/contrib/handlers/param_scheduler.py#L163
     """
 
     def __call__(self, engine, name=None):

@@ -4,8 +4,7 @@ from .csv_local import CSVLocalDataSet
 
 
 class PandasDescribeDataSet(CSVLocalDataSet):
-    """``PandasDescribeDataSet`` saves output of ``df.describe``.
-    """
+    """``PandasDescribeDataSet`` saves output of ``df.describe``."""
 
     def __init__(self, *args, describe_args: Dict[str, Any] = {}, **kwargs) -> None:
         """Creates a new instance of ``PandasDescribeDataSet`` pointing to a concrete

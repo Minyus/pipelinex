@@ -6,7 +6,9 @@ from .flexible_run_context import FlexibleRunContext
 
 
 class FlexibleContext(
-    FlexibleParametersContext, FlexibleCatalogContext, FlexibleRunContext,
+    FlexibleParametersContext,
+    FlexibleCatalogContext,
+    FlexibleRunContext,
 ):
     project_name = "KedroProject"
     project_version = kedro.__version__

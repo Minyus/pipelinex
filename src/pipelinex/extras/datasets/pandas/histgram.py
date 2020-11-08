@@ -19,7 +19,10 @@ class HistgramDataSet(AbstractDataSet):
         self._save_args = save_args
 
     def _describe(self) -> Dict[str, Any]:
-        return dict(filepath=self._filepath, save_args=self._save_args,)
+        return dict(
+            filepath=self._filepath,
+            save_args=self._save_args,
+        )
 
     def _load(self) -> Any:
         """ loading is not supported. """

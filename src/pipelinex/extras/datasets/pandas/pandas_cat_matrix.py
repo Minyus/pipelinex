@@ -7,8 +7,7 @@ log = logging.getLogger(__name__)
 
 
 class PandasCatMatrixDataSet(CSVLocalDataSet):
-    """``PandasDescribeDataSet`` saves output of ``df.describe``.
-    """
+    """``PandasDescribeDataSet`` saves output of ``df.describe``."""
 
     def __init__(self, *args, describe_args: Dict[str, Any] = {}, **kwargs) -> None:
         """Creates a new instance of ``PandasCatMatrixDataSet`` pointing to a concrete

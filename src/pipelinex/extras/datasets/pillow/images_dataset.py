@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class ImagesLocalDataSet(AbstractVersionedDataSet):
-    """ Loads/saves a dict of numpy 3-D or 2-D arrays from/to a folder containing images.
+    """Loads/saves a dict of numpy 3-D or 2-D arrays from/to a folder containing images.
     Works like ``kedro.extras.datasets.pillow.ImageDataSet`` and
     ``kedro.io.PartitionedDataSet`` with conversion between numpy arrays and Pillow images.
     """
@@ -58,7 +58,9 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
         """
 
         super().__init__(
-            filepath=Path(path), version=version, exists_function=self._exists,
+            filepath=Path(path),
+            version=version,
+            exists_function=self._exists,
         )
         self._load_args = load_args
         self._save_args = save_args

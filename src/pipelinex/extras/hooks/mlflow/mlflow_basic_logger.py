@@ -36,8 +36,7 @@ def get_timestamps(dt=None, offset_hours=0):
 
 
 class MLflowBasicLoggerHook:
-    """ Configures and logs duration time for the pipeline to MLflow
-    """
+    """Configures and logs duration time for the pipeline to MLflow"""
 
     def __init__(
         self,
@@ -51,7 +50,7 @@ class MLflowBasicLoggerHook:
         """
         Args:
             enable_mlflow: Enable configuring and logging to MLflow.
-            uri: The MLflow tracking server URI. 
+            uri: The MLflow tracking server URI.
                 `uri` arg fed to:
                 https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_tracking_uri
             experiment_name: The experiment name.
@@ -60,7 +59,7 @@ class MLflowBasicLoggerHook:
             artifact_location: `artifact_location` arg fed to:
                 https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
             run_name: Shown as 'Run Name' in MLflow UI.
-            offset_hours: The offset hour (e.g. 0 for UTC+00:00) to log in MLflow. 
+            offset_hours: The offset hour (e.g. 0 for UTC+00:00) to log in MLflow.
 
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow

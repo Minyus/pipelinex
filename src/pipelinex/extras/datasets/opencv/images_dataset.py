@@ -20,7 +20,9 @@ class OpenCVImagesLocalDataSet(AbstractVersionedDataSet):
     ) -> None:
 
         super().__init__(
-            filepath=Path(filepath), version=version, exists_function=self._exists,
+            filepath=Path(filepath),
+            version=version,
+            exists_function=self._exists,
         )
         self._load_args = load_args
         self._save_args = save_args

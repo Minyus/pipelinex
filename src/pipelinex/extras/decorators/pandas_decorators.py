@@ -42,7 +42,9 @@ def log_df_summary(func: Callable) -> Callable:
     return wrapper
 
 
-def df_set_index(cols: Union[List[str], str],) -> Callable:
+def df_set_index(
+    cols: Union[List[str], str],
+) -> Callable:
     """ decorator with arguments """
     if not isinstance(cols, list):
         cols = [cols]

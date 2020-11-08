@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 
 
 class IterableImagesDataSet(AbstractVersionedDataSet):
-    """ Loads a folder containing images as an iterable.
+    """Loads a folder containing images as an iterable.
     Wrapper of:
     https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder
     """

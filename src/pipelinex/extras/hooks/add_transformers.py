@@ -12,8 +12,7 @@ except ModuleNotFoundError:
 
 
 class AddTransformersHook:
-    """ Hook to add transformers.
-    """
+    """Hook to add transformers."""
 
     def __init__(
         self,

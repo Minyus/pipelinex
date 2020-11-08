@@ -129,7 +129,9 @@ def test_successfully_load_from_url_list_with_content_response_by_call():
         },
     )
     content_list = api_data_set(
-        url=[foo_image_url, bar_image_url], method="GET", attribute="content",
+        url=[foo_image_url, bar_image_url],
+        method="GET",
+        attribute="content",
     )
     assert isinstance(content_list, list)
     for content in content_list:
@@ -148,14 +150,18 @@ def test_successfully_load_from_url_list_with_content_response_by_call_twice():
         },
     )
     content_list = api_data_set(
-        url=[foo_image_url, bar_image_url], method="GET", attribute="content",
+        url=[foo_image_url, bar_image_url],
+        method="GET",
+        attribute="content",
     )
     assert isinstance(content_list, list)
     for content in content_list:
         assert content[1:4] == b"PNG"  # part of PNG file signature
 
     content_list = api_data_set(
-        url=[foo_image_url, bar_image_url], method="GET", attribute="content",
+        url=[foo_image_url, bar_image_url],
+        method="GET",
+        attribute="content",
     )
     assert isinstance(content_list, list)
     for content in content_list:
@@ -175,7 +181,9 @@ def test_successfully_load_from_url_list_with_transforms_by_call():
         transforms=[io.BytesIO, PIL.Image.open],
     )
     image_list = api_data_set(
-        url=[foo_image_url, bar_image_url], method="GET", attribute="content",
+        url=[foo_image_url, bar_image_url],
+        method="GET",
+        attribute="content",
     )
     for image in image_list:
         assert isinstance(image, PIL.Image.Image)

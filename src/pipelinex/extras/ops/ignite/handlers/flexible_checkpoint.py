@@ -17,7 +17,7 @@ due to the change in ignite v0.3.0
 
 
 class ModelCheckpoint(object):
-    """ ModelCheckpoint handler can be used to periodically save objects to disk.
+    """ModelCheckpoint handler can be used to periodically save objects to disk.
     This handler expects two arguments:
         - an :class:`~ignite.engine.Engine` object
         - a `dict` mapping names (`str`) to objects that should be saved to disk.

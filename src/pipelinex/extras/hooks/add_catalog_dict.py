@@ -11,11 +11,11 @@ except ModuleNotFoundError:
 
 
 class AddCatalogDictHook:
-    """ Hook to add data sets.
-    """
+    """Hook to add data sets."""
 
     def __init__(
-        self, catalog_dict: Dict[str, AbstractDataSet],
+        self,
+        catalog_dict: Dict[str, AbstractDataSet],
     ):
         """
         Args:
