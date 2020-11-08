@@ -16,7 +16,7 @@
 
 ## Testing environment (appreceated)
 
-- Python 3.6 (3.6.8 or later if possible)
+- Python 3.7
 - Linux (Ubuntu 18.04.3 LTS or later if possible), Docker recommended
 
 ## Coding Style (appreceated, but optional)
@@ -24,5 +24,5 @@
 - Formatting by [Black](https://github.com/psf/black)
 - [PEP 484 type hints](https://www.python.org/dev/peps/pep-0484/)
 - [Google docstrings](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
-- Compatibility with Python 3.5 and 3.7 while Python 3.6 is the recommended version.
+- Compatibility with Python 3.5, 3.6, 3.7, and 3.8 while Python 3.7 is the recommended version.
 - For string formatting, use [str.format()](https://docs.python.org/3/library/stdtypes.html#str.format) method rather than [f-strings](https://www.python.org/dev/peps/pep-0498/#id13) to keep compatibility with Python 3.5
