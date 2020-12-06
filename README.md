@@ -829,23 +829,27 @@ Kedro pipelines can be productionized using:
 Experiment logs in MLflow's UI
 </p>
 
+### Supplements to kedro.extras
+[pipelinex.extras](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras) provides features not available in [kedro.extras](https://github.com/quantumblacklabs/kedro/tree/master/kedro/extras).
+Contributors who are willing to help preparing the test code and send pull request to Kedro following Kedro's [CONTRIBUTING.md](https://github.com/quantumblacklabs/kedro/blob/master/CONTRIBUTING.md#contribute-a-new-feature) are welcomed.
 
-### Additional Kedro data interface sets
+#### Additional Kedro datasets (data interface sets)
   
-[pipelinex.extras.datasets](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets) provides the following data interface sets mainly for Computer Vision applications using OpenCV, Scikit-image, PyTorch/torchvision, and TensorFlow/Keras.
+[pipelinex.extras.datasets](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets) provides the following Kedro Datasets (data interface sets) mainly for Computer Vision applications using PyTorch/torchvision, OpenCV, and Scikit-image.
 
-- [pipelinex.ImagesLocalDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pillow/images.py)
+- [pipelinex.ImagesLocalDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pillow/images_dataset.py
+)
   - loads/saves multiple numpy arrays (RGB, BGR, or monochrome image) from/to a folder in local storage using `pillow` package, working like ``kedro.extras.datasets.pillow.ImageDataSet`` and
   ``kedro.io.PartitionedDataSet`` with conversion between numpy arrays and Pillow images.
   - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
 - [pipelinex.APIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/requests/api_dataset.py)
-  - downloads multiple contents (such as images and json) by HTTP requests using `requests` package
+  - modified version of [kedro.extras.APIDataSet](https://github.com/quantumblacklabs/kedro/blob/master/kedro/extras/datasets/api/api_dataset.py) with more flexible options including downloading multiple contents (such as images and json) by HTTP requests to multiple URLs using `requests` package
   - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
 - [pipelinex.AsyncAPIDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/httpx/async_api_dataset.py)
-  - downloads multiple contents (such as images and json) by asynchronous HTTP requests using `httpx` package
+  - downloads multiple contents (such as images and json) by asynchronous HTTP requests to multiple URLs using `httpx` package
   - an example project is at [pipelinex_image_processing](https://github.com/Minyus/pipelinex_image_processing)
 
-- [pipelinex.IterableImagesDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/torchvision/iterable_images.py)
+- [pipelinex.IterableImagesDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/torchvision/iterable_images_dataset.py)
   - wrapper of [`torchvision.datasets.ImageFolder`](https://pytorch.org/docs/stable/torchvision/datasets.html#imagefolder) that loads images in a folder as an iterable data loader to use with PyTorch.
 
 - [pipelinex.PandasProfilingDataSet](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/pandas_profiling/pandas_profiling.py)
@@ -853,8 +857,7 @@ Experiment logs in MLflow's UI
 
 - [more data interface sets for pandas dataframe summarization/visualization provided by PipelineX](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/datasets)
 
-
-### Additional function decorators for benchmarking
+#### Additional function decorators for benchmarking
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/decorators_demo.ipynb)
 
