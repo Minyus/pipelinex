@@ -1,7 +1,3 @@
-<p align="center">
-<img src="img/PipelineX_Logo.png">
-</p>
-
 # PipelineX
 
 Pipeline for eXperimentation
@@ -10,13 +6,26 @@ Pipeline for eXperimentation
 ![Python Version](https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7-blue.svg)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-black.svg)](https://github.com/ambv/black)
 
+
+## Installation
+
+- [Option 1] from the PyPI:
+
+```bash
+$ pip install pipelinex
+```
+
+- [Option 2] development install (will be updated as you modify the source code):
+
+```bash
+$ git clone https://github.com/Minyus/pipelinex.git
+$ cd pipelinex
+$ python setup.py develop
+```
+
 ## Overview
 
 PipelineX is a Python package designed to make Machine Learning projects efficient with modular, reusable, and easy-to-use features for experimentation.
-
-<p align="center">
-<img src="img/ML_project_from_experimentation_to_production.png">
-</p>
 
 Please refer [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow) to find out how PipelineX differs from other pipeline/workflow packages: Airflow, Luigi, Gokart, Metaflow, and Kedro.
 
@@ -26,77 +35,44 @@ PipelineX provides [enhancements for YAML/JSON](https://github.com/Minyus/pipeli
 - Anchor-less aliasing: Look up another key in the same YAML/JSON file
 - Python expression in YAML/JSON files
 
-PipelineX provides [enhancements for Kedro](https://github.com/Minyus/pipelinex#yamlconfigurable-enhanced-kedro) summarized as follows.
+PipelineX provides [enhancements](https://github.com/Minyus/pipelinex#yamlconfigurable-enhanced-kedro) for [Kedro](https://github.com/quantumblacklabs/kedro) summarized as follows.
 
+- Integration with [MLflow](https://github.com/mlflow/mlflow)
 - Kedro pipeline/DAG definition in a YAML/JSON file with more options
 - Additional Kedro-compatible data interface sets ("DataSets") for Computer Vision applications
 - Additional decorators for benchmarking
-- Integration with MLflow that enables to save metrics to a database supported by SQLAlchemy (SQLite, PostgreSQL, etc.)
 
 PipelineX includes integration with the following Python packages.
 
-- [Kedro](https://github.com/quantumblacklabs/kedro)
-- [MLflow](https://github.com/mlflow/mlflow)
 - [PyTorch](https://github.com/pytorch/pytorch)
 - [Ignite](https://github.com/pytorch/ignite)
 - [Pandas](https://github.com/pandas-dev/pandas)
 - [OpenCV](https://github.com/skvark/opencv-python)
 - [Memory Profiler](https://github.com/pythonprofilers/memory_profiler)
-- [Python bindings to the NVIDIA Management Library](https://github.com/gpuopenanalytics/pynvml)
-- [Shap](https://github.com/slundberg/shap)
+- [NVIDIA Management Library](https://github.com/gpuopenanalytics/pynvml)
 
 These wrappers are all independent and optional. You do _not_ need to install all of these Python packages.
 
 PipelineX shares similar philosophy/concepts with:
 
-- Pipeline/workflow packages: [Apache Beam](https://github.com/apache/beam), [Argo](https://github.com/argoproj/argo), [Kubeflow](https://github.com/kubeflow/kubeflow),  [Apache Airflow](https://github.com/apache/airflow), [Luigi](https://github.com/spotify/luigi), [Gokart](https://github.com/m3dev/gokart), [Metaflow](https://github.com/Netflix/metaflow) 
-
-- Parameter/Config management packages: [Hydra](https://github.com/facebookresearch/hydra), [Jsonnet](https://github.com/google/jsonnet), [Helm](https://github.com/helm/helm), [ytt](https://github.com/k14s/ytt)
+- Parameter/Config management packages: [OmegaConf](https://github.com/omry/omegaconf), 
+[Hydra](https://github.com/facebookresearch/hydra), [Jsonnet](https://github.com/google/jsonnet), [ytt](https://github.com/k14s/ytt)
 
 
 PipelineX shares similar API styles with 
 
-- Pipeline/workflow package: [Kubeflow](https://github.com/kubeflow/kubeflow)
-
 - Domain-specific packages: [Allennlp](https://github.com/allenai/allennlp), [Ludwig](https://uber.github.io/ludwig/), [Detectron2](https://github.com/facebookresearch/detectron2)
 
 
-## Installation
+## Getting Started with Kedro 0.17.x
 
-- [Option 1] To install the latest release from the PyPI:
+Kedro starters (Cookiecutter templates) to use Kedro, Scikit-learn, MLflow, and PipelineX are available at:
 
-```bash
-$ pip install pipelinex
-```
+https://github.com/Minyus/kedro-starters-sklearn
 
-- [Option 2] To install the latest pre-release:
+Iris dataset is included and used, but you can easily change to Kaggle Titanic dataset.
 
-```bash
-$ pip install git+https://github.com/Minyus/pipelinex.git
-```
-
-- [Option 3] To install the latest pre-release without need to reinstall even after modifying the source code:
-
-```bash
-$ git clone https://github.com/Minyus/pipelinex.git
-$ cd pipelinex
-$ python setup.py develop
-```
-
-## Example/Demo Projects
-
-- [Entry example using Scikit-learn to demonstrate PipelineX's Kedro-MLflow integration](https://github.com/Minyus/kedro_mlflow)
-
-  - `parameters.yml` at [conf/base/parameters.yml](https://github.com/Minyus/pipelinex_sklearn/blob/master/conf/base/parameters.yml)
-
-  - Essential packages: Scikit-learn, pandas, Kedro, MLflow
-  - Application: Kaggle's exercise competition to predict which Titanic's passengers survived
-  - Data: [Kaggle's Titanic](https://www.kaggle.com/c/titanic/data)
-  - Model: Logistic Regression
-
-- [Entry example using Scikit-learn to demonstrate more PipelineX's options](https://github.com/Minyus/pipelinex_sklearn)
-
-  - Adds more PipelineX's options, such as declaring Python objects in YAML, to the previous example.
+## Example/Demo Projects tested with Kedro 0.16.x
 
 - [Computer Vision using PyTorch](https://github.com/Minyus/pipelinex_pytorch)
 
@@ -131,22 +107,6 @@ $ python setup.py develop
   - Essential packages: CausalLift, Scikit-learn, XGBoost, pandas, Kedro
   - Application: Uplift Modeling to find which customers should be targeted and which customers should not for a marketing campaign (treatment)
   - Data: generated by simulation
-
-## Template repositories
-
-The following 2 template repositories for PipelineX are available.
-
-- [Template repository to use YAML less than Kedro](https://github.com/Minyus/kedro_template): likely preferable for first-time users.
-
-- [Template repository to use YAML more than Kedro](https://github.com/Minyus/pipelinex_template): potentially preferable for users who are not satisfied with Kedro as is.
-
-These were simplified versions of the template project created by `kedro new` command which uses Cookiecutter.
-
-To use for a new project, fork the template repository and hit `Use this template` button next to `Clone or download`.
-
-<p align="center">
-<img src="https://help.github.com/assets/images/help/repository/use-this-template-button.png">
-</p>
 
 ## Pythonic enhanced YAML/JSON (`HatchDict`)
 
@@ -822,11 +782,52 @@ Kedro pipelines can be productionized using:
       - enable_mlflow: Enable logging to MLflow.
       - metric_name_prefix: Prefix for the metric names. The metric names are `metric_name_prefix` concatenated with 'load <data_set_name>' or 'save <data_set_name>'
 
-  To use these hooks, please see example projects at [kedro_mlflow](https://github.com/Minyus/kedro_mlflow) or [pipelinex_sklearn](https://github.com/Minyus/pipelinex_sklearn)
+  To use these hooks for MLFlow, please use the [Kedro starters](https://github.com/Minyus/kedro-starters-sklearn) which includes the following example:
+
+  ```python
+import pipelinex
+
+mlflow_hooks = (
+    pipelinex.MLflowBasicLoggerHook(
+        enable_mlflow=True,  # Enable configuring and logging to MLflow
+        uri="sqlite:///mlruns/sqlite.db",
+        experiment_name="experiment_001",
+        artifact_location="./mlruns/experiment_001",
+        offset_hours=0,  # Specify the offset hour (e.g. 0 for UTC/GMT +00:00) to log in MLflow
+    ),  # Configure and log duration time for the pipeline
+    pipelinex.MLflowArtifactsLoggerHook(
+        enable_mlflow=True,  # Enable logging to MLflow
+        filepaths_before_pipeline_run=[
+            "conf/base/parameters.yml"
+        ],  # Optionally specify the file paths to log before pipeline is run
+        filepaths_after_pipeline_run=[
+            "data/06_models/model.pkl"
+        ],  # Optionally specify the file paths to log after pipeline is run
+    ),  # Log artifacts of specified file paths and dataset names
+    pipelinex.MLflowDataSetsLoggerHook(
+        enable_mlflow=True,  # Enable logging to MLflow
+    ),  # Log output datasets of (list of) float, int, and str classes
+    pipelinex.MLflowTimeLoggerHook(
+        enable_mlflow=True,  # Enable logging to MLflow
+    ),  # Log duration time to run each node (task)
+    pipelinex.AddTransformersHook(
+        transformers=[
+            pipelinex.MLflowIOTimeLoggerTransformer(
+                enable_mlflow=True
+            )  # Log duration time to load and save each dataset
+        ],
+    ),  # Add transformers
+)
+  ``` 
 
 <p align="center">
-<img src="img/mlflow_ui.png">
-Experiment logs in MLflow's UI
+<img src="_doc_images/mlflow_ui_metrics.png">
+Logged metrics shown in MLflow's UI
+</p>
+
+<p align="center">
+<img src="_doc_images/mlflow_ui_gantt.png">
+Gantt chart for execution time, generated using Plotly, shown in MLflow's UI
 </p>
 
 ### Supplements to kedro.extras
@@ -969,7 +970,7 @@ RUN_CONFIG:
   load_versions: # None
 ```
 
-#### Define Kedro hooks using `HOOKS` key
+#### Define Kedro hooks using `HOOKS` key (Note: This option works with Kedro 0.16.x only and will be deprecated)
 
 ```yaml
 # parameters.yml
@@ -1003,12 +1004,11 @@ HOOKS:
 ```
 
 
-### Here are the options configurable in `catalog.yml`:
+### Options available in `catalog.yml`
 
 - `HatchDict` features available
 - Optionally enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
 
-The complete example project is available [here](https://github.com/Minyus/pipelinex_sklearn).
 
 
 ## Use with PyTorch
@@ -1245,24 +1245,16 @@ If you are devepping an image processing pipeline consisting of 5 steps and you 
 
 ## Use with PyTorch Lightning
 
-(To-do)
+(To-do: contributions are welcome.)
 
 ## Use with TensorFlow/Keras
 
-(To Do.)
+(To-do: contributions are welcome.)
 
-## Use with Docker container
-
-### Build Docker image
+## Use with Docker
 
 ```bash
-# docker build -t pipelinex:3.7.7-slim -f dockerfiles/dockerfile .
-```
-
-### Use with Docker container
-
-```bash
-# docker run -it --name pipelinex pipelinex:3.7.7-slim /bin/bash
+docker build --tag pipelinex .
 ```
 
 ## Why and how PipelineX was born
@@ -1288,7 +1280,7 @@ Furthermore, I added integration with MLflow, PyTorch, Ignite, pandas, OpenCV, e
 
 After I confirmed my package worked well with the Kaggle competition, I released it as PipelineX.
 
-## Contributors wanted!
+## Contributors are welcome!
 
 Please see [CONTRIBUTING.md](https://github.com/Minyus/pipelinex/blob/master/CONTRIBUTING.md) for details.
 
