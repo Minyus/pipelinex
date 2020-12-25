@@ -1,4 +1,4 @@
-__version__ = "0.4.0"
+__version__ = "0.4.1"
 
 from importlib.util import find_spec
 
@@ -20,6 +20,7 @@ if find_spec("kedro"):
     from .extras.hooks.mlflow.mlflow_artifacts_logger import *  # NOQA
     from .extras.hooks.mlflow.mlflow_time_logger import *  # NOQA
     from .extras.hooks.mlflow.mlflow_datasets_logger import *  # NOQA
+    from .extras.hooks.mlflow.mlflow_env_vars_logger import *  # NOQA
     from .extras.transformers.mlflow.mlflow_io_time_logger import *  # NOQA
 
 if find_spec("pandas"):
