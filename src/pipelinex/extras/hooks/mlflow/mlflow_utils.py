@@ -40,7 +40,11 @@ def mlflow_log_metrics(metrics, step=None, enable_mlflow=True):
 
     if enable_mlflow:
         try:
-            metrics = {k.replace(":", ".."): float(v) for (k, v) in metrics.items()}
+            metrics = {
+                k.replace(":", ".."): float(v)
+                for (k, v) in metrics.items()
+                if isinstance(v, (float, int))
+            }
 
             from mlflow import log_metrics
 
@@ -57,8 +61,9 @@ def mlflow_log_params(params, enable_mlflow=True):
     if enable_mlflow:
         try:
             params = {
-                k.replace(":", ".."): ("{}".format(v)[:250] if v else "")
+                k.replace(":", ".."): ("{}".format(v)[:250])
                 for (k, v) in params.items()
+                if isinstance(v, str) or v
             }
 
             from mlflow import log_params
