@@ -1,4 +1,5 @@
 from importlib.util import find_spec
+import json
 import time
 from logging import getLogger
 from pprint import pformat
@@ -24,6 +25,17 @@ def _get_task_name(node: Node) -> str:
     return "{} -- {}".format(func_name, " - ".join(node.outputs))
 
 
+def dump_dict(filepath: str, d: dict):
+    with open(filepath, "w") as outfile:
+        json.dump(d, outfile)
+
+
+def load_dict(filepath: str):
+    with open(filepath, "r") as outfile:
+        d = json.load(outfile)
+    return d
+
+
 class MLflowTimeLoggerHook:
     """
     Logs duration time to run each node (task) to MLflow.
@@ -33,10 +45,6 @@ class MLflowTimeLoggerHook:
     if `plotly` is installed.
     """
 
-    _time_begin_dict = {}
-    _time_end_dict = {}
-    _time_dict = {}
-
     def __init__(
         self,
         enable_mlflow: bool = True,
@@ -45,6 +53,7 @@ class MLflowTimeLoggerHook:
         gantt_params: Dict[str, Any] = {},
         metric_name_prefix: str = "_time_to_run ",
         task_name_func: Callable[[Node], str] = _get_task_name,
+        time_log_filepath: str = None,
     ):
         """
         Args:
@@ -57,6 +66,7 @@ class MLflowTimeLoggerHook:
                 `metric_name_prefix` concatenated with the string returned by `task_name_func`.
             task_name_func: Callable to return the task name using ``kedro.pipeline.node.Node``
                 object.
+            time_log_filepath: File path to save the time log in JSON format.
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.enable_plotly = find_spec("plotly") and enable_plotly
@@ -64,12 +74,32 @@ class MLflowTimeLoggerHook:
         self.gantt_params = gantt_params
         self.metric_name_prefix = metric_name_prefix
         self.task_name_func = task_name_func
+        self.time_log_filepath = time_log_filepath or (
+            tempfile.gettempdir() + "/_time_log.json"
+        )
+        Path(self.time_log_filepath).parent.mkdir(parents=True, exist_ok=True)
+        dump_dict(
+            self.time_log_filepath, {"time_begin": {}, "time_end": {}, "time": {}}
+        )
+
+        self._time_begin_dict = {}
+        self._time_end_dict = {}
+        self._time_dict = {}
+
+    def update_time_dict(self, key: str, d: dict):
+        dumping_dict = load_dict(self.time_log_filepath)
+        dumping_dict[key].update(d)
+        dump_dict(self.time_log_filepath, dumping_dict)
+
+    def load_time_dict(self, key: str):
+        return load_dict(self.time_log_filepath).get(key)
 
     @hook_impl
     def before_node_run(self, node, catalog, inputs):
         task_name = self.task_name_func(node)
         time_begin_dict = {task_name: time.time()}
         self._time_begin_dict.update(time_begin_dict)
+        self.update_time_dict("time_begin", time_begin_dict)
 
     @hook_impl
     def after_node_run(self, node, catalog, inputs, outputs):
@@ -77,6 +107,7 @@ class MLflowTimeLoggerHook:
 
         time_end_dict = {task_name: time.time()}
         self._time_end_dict.update(time_end_dict)
+        self.update_time_dict("time_end", time_end_dict)
 
         time_dict = {
             task_name: (
@@ -89,6 +120,8 @@ class MLflowTimeLoggerHook:
 
         self._time_dict.update(time_dict)
 
+        self.update_time_dict("time", time_dict)
+
         metric_time_dict = {
             (self.metric_name_prefix + k): v for (k, v) in time_dict.items()
         }
@@ -96,9 +129,21 @@ class MLflowTimeLoggerHook:
 
     @hook_impl
     def after_pipeline_run(self, run_params, pipeline, catalog):
+
+        self._time_begin_dict = self._time_begin_dict or self.load_time_dict(
+            "time_begin"
+        )
+        self._time_end_dict = self._time_end_dict or self.load_time_dict("time_end")
+        self._time_dict = self._time_dict or self.load_time_dict("time")
+
         log.info("Time duration: \n{}".format(pformat(self._time_dict)))
 
-        if self.enable_plotly and self._time_begin_dict:
+        if self.enable_plotly:
+            if not (self._time_begin_dict and self._time_end_dict):
+                log.warning(
+                    "Time log dicts are not found. Skipping generating the Gantt Chart."
+                )
+                return
 
             tasks_reversed = list(self._time_begin_dict.keys())[::-1]
 
