@@ -4,6 +4,7 @@ from typing import Any, Dict, List  # NOQA
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
+from kedro.pipeline.node import Node
 
 from .mlflow_utils import hook_impl, mlflow_log_artifacts
 
@@ -53,18 +54,26 @@ class MLflowArtifactsLoggerHook:
     def _log_datasets(self, catalog, datasets):
         for d in datasets:
             ds = getattr(catalog.datasets, d, None)
-            if ds:
-                fp = getattr(ds, "_filepath", None)
-                if not fp:
-                    low_ds = getattr(ds, "_dataset", None)
-                    if low_ds:
-                        fp = getattr(low_ds, "_filepath", None)
-                if fp:
-                    mlflow_log_artifacts(fp, enable_mlflow=self.enable_mlflow)
-                else:
-                    log.warning("_filepath of '{}' was not found.".format(d))
+            if not ds:
+                log.warning("{} was not found in catalog.datasets.".format(d))
+                return
+            fp = getattr(ds, "_filepath", None)
+            if not fp:
+                low_ds = getattr(ds, "_dataset", None)
+                if low_ds:
+                    fp = getattr(low_ds, "_filepath", None)
+            if not fp:
+                log.warning("_filepath of '{}' was not found.".format(d))
+                return
+            mlflow_log_artifacts(fp, enable_mlflow=self.enable_mlflow)
 
     @hook_impl
-    def after_node_run(self, node, catalog, inputs, outputs):
+    def after_node_run(
+        self,
+        node: Node,
+        catalog: DataCatalog,
+        inputs: Dict[str, Any],
+        outputs: Dict[str, Any],
+    ):
         datasets = [d for d in outputs.keys() if d in self.datasets_after_node_run]
         self._log_datasets(catalog, datasets)
