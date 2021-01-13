@@ -17,6 +17,7 @@ if find_spec("kedro"):
     from .extras.hooks.add_catalog_dict import *  # NOQA
     from .extras.hooks.add_transformers import *  # NOQA
     from .extras.hooks.mlflow.mlflow_basic_logger import *  # NOQA
+    from .extras.hooks.mlflow.mlflow_catalog_logger import *  # NOQA
     from .extras.hooks.mlflow.mlflow_artifacts_logger import *  # NOQA
     from .extras.hooks.mlflow.mlflow_time_logger import *  # NOQA
     from .extras.hooks.mlflow.mlflow_datasets_logger import *  # NOQA
