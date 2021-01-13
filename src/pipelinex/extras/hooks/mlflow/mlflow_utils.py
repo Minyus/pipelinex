@@ -21,14 +21,17 @@ def mlflow_log_artifacts(paths, artifact_path=None, enable_mlflow=True):
             from mlflow import log_artifact, log_artifacts
 
             for path in paths:
+                resolved_path = Path(path).resolve()
                 if Path(path).is_file():
                     log_artifact(path, artifact_path)
-                    log.info("File at '{}' was logged by MLflow.".format(path))
+                    log.info("File at '{}' was logged by MLflow.".format(resolved_path))
                 elif Path(path).is_dir():
                     log_artifacts(path, artifact_path)
-                    log.info("Directory at '{}' was logged by MLflow.".format(path))
+                    log.info(
+                        "Directory at '{}' was logged by MLflow.".format(resolved_path)
+                    )
                 else:
-                    log.warning("'{}' was not found.".format(path))
+                    log.warning("Path '{}' does not exist.".format(resolved_path))
         except Exception:
             log.warning(
                 "{} failed to be logged by MLflow.".format(paths), exc_info=True
