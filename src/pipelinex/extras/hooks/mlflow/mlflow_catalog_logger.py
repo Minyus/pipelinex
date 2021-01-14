@@ -85,13 +85,22 @@ class MLflowCatalogLoggerHook:
         self,
         enable_mlflow: bool = True,
         mlflow_catalog: Dict[str, Union[str, AbstractDataSet]] = {},
+        auto: bool = True,
     ):
         """
         Args:
             enable_mlflow: Enable logging to MLflow.
+            mlflow_catalog: Specify how to log each dataset (Python func input/output) in dict format.
+                Specify "p" to log as a parameter, "m" to log as a metric, either a file extension,
+                "json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img", "pkl", "txt", "yml",
+                or "yaml", or Kedro DataSet instance to log as a corresponding file artifact.
+            auto: If True, for each dataset (Python func input/output) not listed in mlflow_catalog,
+                log as a metric for float and int types, and log as a param for str, list, tuple, dict,
+                and set types.
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.mlflow_catalog = mlflow_catalog
+        self.auto = auto
 
     @hook_impl
     def after_node_run(
@@ -114,17 +123,19 @@ class MLflowCatalogLoggerHook:
 
     def _log_dataset(self, name: str, value: Any):
         if name not in self.mlflow_catalog:
-            return
-        catalog_instance = self.mlflow_catalog.get(name)
-        if catalog_instance is None:
-            log.warning(
-                "'{}' is not supported as mlflow_catalog entry and ignored.".format(
-                    catalog_instance
-                )
-            )
+            if not self.auto:
+                return
+            if isinstance(value, (float, int)):
+                mlflow_log_metrics({name: value}, enable_mlflow=self.enable_mlflow)
+                return
+            elif isinstance(value, (str, list, tuple, dict, set)):
+                mlflow_log_params({name: value}, enable_mlflow=self.enable_mlflow)
+                return
+        catalog_instance = self.mlflow_catalog.get(name, None)
+        if not catalog_instance:
             return
         elif isinstance(catalog_instance, str):
-            if catalog_instance in {"param", "p", "$", ""}:
+            if catalog_instance in {"param", "p", "$"}:
                 mlflow_log_params({name: value}, enable_mlflow=self.enable_mlflow)
             elif catalog_instance in {"metric", "m", "#"}:
                 mlflow_log_metrics({name: value}, enable_mlflow=self.enable_mlflow)
@@ -133,7 +144,7 @@ class MLflowCatalogLoggerHook:
                 fp = tempfile.gettempdir() + "/" + name + "." + catalog_instance
                 ds(filepath=fp).save(value)
                 mlflow_log_artifacts([fp], enable_mlflow=self.enable_mlflow)
-            elif isinstance(catalog_instance, str):
+            else:
                 log.warning(
                     "'{}' is not supported as mlflow_catalog entry and ignored.".format(
                         catalog_instance
