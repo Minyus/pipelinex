@@ -22,6 +22,7 @@ if find_spec("kedro"):
     from .extras.hooks.mlflow.mlflow_time_logger import *  # NOQA
     from .extras.hooks.mlflow.mlflow_datasets_logger import *  # NOQA
     from .extras.hooks.mlflow.mlflow_env_vars_logger import *  # NOQA
+    from .extras.datasets.mlflow.mlflow_dataset import *  # NOQA
     from .extras.transformers.mlflow.mlflow_io_time_logger import *  # NOQA
 
 if find_spec("pandas"):

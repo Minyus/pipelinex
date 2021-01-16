@@ -3,9 +3,9 @@ from logging import getLogger
 import tempfile
 from typing import Any, Dict, Union  # NOQA
 
-from kedro.io import DataCatalog
+from kedro.io import AbstractDataSet, DataCatalog
 from kedro.pipeline.node import Node
-from kedro.io import AbstractDataSet
+from kedro.pipeline import Pipeline
 
 from .mlflow_utils import (
     hook_impl,
@@ -101,6 +101,14 @@ class MLflowCatalogLoggerHook:
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.mlflow_catalog = mlflow_catalog
         self.auto = auto
+
+    @hook_impl
+    def before_pipeline_run(
+        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
+    ) -> None:
+        for dataset_name in catalog._data_sets:
+            if catalog._data_sets[dataset_name].__class__.__name__ == "MLflowDataSet":
+                setattr(catalog._data_sets[dataset_name], "_dataset_name", dataset_name)
 
     @hook_impl
     def after_node_run(
