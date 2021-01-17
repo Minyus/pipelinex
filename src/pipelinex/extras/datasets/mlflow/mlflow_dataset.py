@@ -43,6 +43,7 @@ class MLflowDataSet(CachedDataSet):
         self,
         dataset: Union[AbstractDataSet, Dict, str] = None,
         filepath: str = None,
+        dataset_name: str = None,
         saving_tracking_uri: str = None,
         saving_experiment_name: str = None,
         saving_run_id: str = None,
@@ -55,10 +56,14 @@ class MLflowDataSet(CachedDataSet):
         dataset: A Kedro DataSet object or a dictionary used to save/load.
             If set to either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img",
             "pkl", "txt", "yml", "yaml"}, dataset instance will be created accordingly with
-            filepath set to the dataset name with the file extension in the temp directory.
+            filepath arg.
             If None (default), MemoryDataSet instance is used.
         filepath: File path, usually in local file system, to save to and load from.
-            If None (default), filepath of the dataset instance is used.
+            Used only if the dataset arg is a string.
+            If None (default), `<temp directory>/<dataset_name arg>.<dataset arg>` is used.
+        dataset_name: Used only if the dataset arg is a string and filepath arg is None.
+            If None (default), Python object ID is used, but recommended to overwrite by
+            a Kedro hook.
         saving_tracking_uri: MLflow Tracking URI to save to.
             If None (default), MLFLOW_TRACKING_URI environment variable is used.
         saving_experiment_name: MLflow experiment name to save to.
@@ -80,6 +85,7 @@ class MLflowDataSet(CachedDataSet):
         """
         self.dataset = dataset or MemoryDataSet()
         self.filepath = filepath
+        self.dataset_name = dataset_name
         self.saving_tracking_uri = saving_tracking_uri
         self.saving_experiment_name = saving_experiment_name
         self.saving_run_id = saving_run_id
@@ -100,27 +106,27 @@ class MLflowDataSet(CachedDataSet):
 
     def _init_dataset(self):
         if not hasattr(self, "_dataset"):
+            self.dataset_name = self.dataset_name or self._dataset_name
             _dataset = self.dataset
             if isinstance(self.dataset, str):
-                if self.dataset in dataset_dicts:
-                    self.filepath = (
-                        self.filepath
-                        or tempfile.gettempdir()
-                        + "/"
-                        + self._dataset_name
-                        + "."
-                        + self.dataset
-                    )
-                    dataset_dict = dataset_dicts.get(self.dataset)
-                    dataset_dict["filepath"] = self.filepath
-                    _dataset = dataset_dict
+                dataset_dict = dataset_dicts.get(self.dataset)
+                dataset_dict["filepath"] = (
+                    self.filepath
+                    or tempfile.gettempdir()
+                    + "/"
+                    + self.dataset_name
+                    + "."
+                    + self.dataset
+                )
+                _dataset = dataset_dict
 
             super().__init__(
                 dataset=_dataset,
                 version=self.version,
                 copy_mode=self.copy_mode,
             )
-            self.filepath = self.filepath or self._dataset._filepath
+
+            self.filepath = self._dataset._filepath
 
     def _describe(self) -> Dict[str, Any]:
         self._init_dataset()
