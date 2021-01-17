@@ -153,7 +153,7 @@ class MLflowDataSet(CachedDataSet):
 
     def _load(self):
         self._init_dataset()
-        if not self._exists():
+        if not self._cache.exists():
             if find_spec("mlflow"):
                 import mlflow
 
