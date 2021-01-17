@@ -83,20 +83,20 @@ class MLflowCatalogLoggerHook:
 
     def __init__(
         self,
-        enable_mlflow: bool = True,
-        mlflow_catalog: Dict[str, Union[str, AbstractDataSet]] = {},
         auto: bool = True,
+        mlflow_catalog: Dict[str, Union[str, AbstractDataSet]] = {},
+        enable_mlflow: bool = True,
     ):
         """
         Args:
-            enable_mlflow: Enable logging to MLflow.
+            auto: If True, for each dataset (Python func input/output) not listed in mlflow_catalog,
+                log as a metric for float and int types, and log as a param for str, list, tuple, dict,
+                and set types.
             mlflow_catalog: Specify how to log each dataset (Python func input/output) in dict format.
                 Specify "p" to log as a parameter, "m" to log as a metric, either a file extension,
                 "json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img", "pkl", "txt", "yml",
                 or "yaml", or Kedro DataSet instance to log as a corresponding file artifact.
-            auto: If True, for each dataset (Python func input/output) not listed in mlflow_catalog,
-                log as a metric for float and int types, and log as a param for str, list, tuple, dict,
-                and set types.
+            enable_mlflow: Enable logging to MLflow.
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.mlflow_catalog = mlflow_catalog

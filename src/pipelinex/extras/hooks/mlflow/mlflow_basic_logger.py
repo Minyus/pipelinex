@@ -40,7 +40,6 @@ class MLflowBasicLoggerHook:
 
     def __init__(
         self,
-        enable_mlflow: bool = True,
         uri: str = None,
         experiment_name: str = None,
         artifact_location: str = None,
@@ -50,10 +49,10 @@ class MLflowBasicLoggerHook:
         enable_logging_time_end: bool = True,
         enable_logging_time: bool = True,
         logging_kedro_run_params: Union[List[str], str] = [],
+        enable_mlflow: bool = True,
     ):
         """
         Args:
-            enable_mlflow: Enable configuring and logging to MLflow.
             uri: The MLflow tracking server URI.
                 `uri` arg fed to:
                 https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_tracking_uri
@@ -69,7 +68,7 @@ class MLflowBasicLoggerHook:
             enable_logging_time: Enable logging the time duration the Kedro pipeline ran. True in default.
             logging_kedro_run_params: List of Kedro Run Params to log to MLflow or "__ALL__" to log all.
                 [] (Empty) in default.
-
+            enable_mlflow: Enable configuring and logging to MLflow.
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.uri = uri

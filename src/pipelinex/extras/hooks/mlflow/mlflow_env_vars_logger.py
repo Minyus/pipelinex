@@ -36,17 +36,17 @@ class MLflowEnvVarsLoggerHook:
 
     def __init__(
         self,
-        enable_mlflow: bool = True,
         param_env_vars: List[str] = None,
         metric_env_vars: List[str] = None,
         prefix: str = None,
+        enable_mlflow: bool = True,
     ):
         """
         Args:
-            enable_mlflow: Enable logging to MLflow.
             param_env_vars: Environment variables to log to MLflow as parameters
             metric_env_vars: Environment variables to log to MLflow as metrics
             prefix: Prefix to add to each name of MLflow parameters and metrics ("env.." in default)
+            enable_mlflow: Enable logging to MLflow.
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.param_env_vars = param_env_vars or []

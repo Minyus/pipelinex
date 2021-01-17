@@ -47,18 +47,16 @@ class MLflowTimeLoggerHook:
 
     def __init__(
         self,
-        enable_mlflow: bool = True,
-        enable_plotly: bool = True,
         gantt_filepath: str = None,
         gantt_params: Dict[str, Any] = {},
         metric_name_prefix: str = "_time_to_run ",
         task_name_func: Callable[[Node], str] = _get_task_name,
         time_log_filepath: str = None,
+        enable_plotly: bool = True,
+        enable_mlflow: bool = True,
     ):
         """
         Args:
-            enable_mlflow: Enable logging to MLflow.
-            enable_plotly: Enable visualization of logged time as a gantt chart.
             gantt_filepath: File path to save the generated gantt chart.
             gantt_params: Args fed to:
                 https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html
@@ -67,6 +65,8 @@ class MLflowTimeLoggerHook:
             task_name_func: Callable to return the task name using ``kedro.pipeline.node.Node``
                 object.
             time_log_filepath: File path to save the time log in JSON format.
+            enable_plotly: Enable visualization of logged time as a gantt chart.
+            enable_mlflow: Enable logging to MLflow.
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.enable_plotly = find_spec("plotly") and enable_plotly

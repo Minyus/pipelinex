@@ -17,19 +17,19 @@ class MLflowArtifactsLoggerHook:
 
     def __init__(
         self,
-        enable_mlflow: bool = True,
         filepaths_before_pipeline_run: List[str] = None,
-        datasets_after_node_run: List[str] = None,
         filepaths_after_pipeline_run: List[str] = None,
+        datasets_after_node_run: List[str] = None,
+        enable_mlflow: bool = True,
     ):
         """
         Args:
-            enable_mlflow: Enable logging to MLflow.
             filepaths_before_pipeline_run: The file paths of artifacts to log
                 before the pipeline is run.
-            datasets_after_node_run: The dataset names to log after the node is run.
             filepaths_after_pipeline_run: The file paths of artifacts to log
                 after the pipeline is run.
+            datasets_after_node_run: The dataset names to log after the node is run.
+            enable_mlflow: Enable logging to MLflow.
         """
         self.enable_mlflow = find_spec("mlflow") and enable_mlflow
         self.filepaths_before_pipeline_run = filepaths_before_pipeline_run or []
