@@ -6,9 +6,12 @@ from typing import Any, Dict, Union
 
 from kedro.io.core import AbstractDataSet, Version
 from kedro.io import CachedDataSet, MemoryDataSet
+from kedro.extras.datasets.pickle import PickleDataSet
 
 from pipelinex.extras.hooks.mlflow.mlflow_utils import (
     mlflow_log_artifacts,
+    mlflow_log_metrics,
+    mlflow_log_params,
 )
 
 log = logging.getLogger(__name__)
@@ -57,7 +60,9 @@ class MLflowDataSet(CachedDataSet):
             If set to either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img",
             "pkl", "txt", "yml", "yaml"}, dataset instance will be created accordingly with
             filepath arg.
-            If None (default), MemoryDataSet instance is used.
+            If set to "p", the value will be saved/loaded as a parameter (string).
+            If set to "m", the value will be saved/loaded as a metric (numeric).
+            If None (default), MLflow will not be used.
         filepath: File path, usually in local file system, to save to and load from.
             Used only if the dataset arg is a string.
             If None (default), `<temp directory>/<dataset_name arg>.<dataset arg>` is used.
@@ -83,7 +88,7 @@ class MLflowDataSet(CachedDataSet):
             values are: "deepcopy", "copy" and "assign". If not
             provided, it is inferred based on the data type.
         """
-        self.dataset = dataset or MemoryDataSet()
+        self.dataset = dataset or MemoryDataSet(copy_mode=copy_mode)
         self.filepath = filepath
         self.dataset_name = dataset_name
         self.saving_tracking_uri = saving_tracking_uri
@@ -96,21 +101,22 @@ class MLflowDataSet(CachedDataSet):
         self._dataset_name = str(id(self))
 
         if isinstance(dataset, str):
-            if dataset in dataset_dicts:
-                return
-            raise ValueError(
-                "`dataset`: {} not supported. Specify one of {}.".format(
-                    dataset, list(dataset_dicts.keys())
+            if (dataset not in {"p", "m"}) and (dataset not in dataset_dicts):
+                raise ValueError(
+                    "`dataset`: {} not supported. Specify one of {}.".format(
+                        dataset, list(dataset_dicts.keys())
+                    )
                 )
-            )
 
     def _init_dataset(self):
         if not hasattr(self, "_dataset"):
             self.dataset_name = self.dataset_name or self._dataset_name
             _dataset = self.dataset
             if isinstance(self.dataset, str):
-                dataset_dict = dataset_dicts.get(self.dataset)
-                dataset_dict["filepath"] = (
+                dataset_dict = dataset_dicts.get(
+                    self.dataset, {"type": "pickle.PickleDataSet"}
+                )
+                dataset_dict["filepath"] = self.filepath = (
                     self.filepath
                     or tempfile.gettempdir()
                     + "/"
@@ -126,7 +132,7 @@ class MLflowDataSet(CachedDataSet):
                 copy_mode=self.copy_mode,
             )
 
-            self.filepath = self._dataset._filepath
+            self.filepath = getattr(self._dataset, "_filepath", None) or self.filepath
 
     def _describe(self) -> Dict[str, Any]:
         self._init_dataset()
@@ -154,12 +160,34 @@ class MLflowDataSet(CachedDataSet):
                 client = mlflow.tracking.MLflowClient(
                     tracking_uri=self.loading_tracking_uri
                 )
-                downloaded_path = client.download_artifacts(
-                    run_id=self.loading_run_id,
-                    path=self.path,
-                    dst_path=tempfile.gettempdir(),
-                )
-                Path(downloaded_path).rename(self.filepath)
+                if self.dataset in {"P"}:
+                    run = client.get_run(self.loading_run_id)
+                    value = run.data.params.get(self.dataset_name, None)
+                    if value is None:
+                        raise KeyError(
+                            "param '{}' not found in run_id '{}'.".format(
+                                self.dataset_name, self.loading_run_id
+                            )
+                        )
+
+                    PickleDataSet(filepath=self.filepath).save(value)
+                elif self.dataset in {"m"}:
+                    run = client.get_run(self.loading_run_id)
+                    value = run.data.metrics.get(self.dataset_name, None)
+                    if value is None:
+                        raise KeyError(
+                            "metric '{}' not found in run_id '{}'.".format(
+                                self.dataset_name, self.loading_run_id
+                            )
+                        )
+                    PickleDataSet(filepath=self.filepath).save(value)
+                else:
+                    downloaded_path = client.download_artifacts(
+                        run_id=self.loading_run_id,
+                        path=self.path,
+                        dst_path=tempfile.gettempdir(),
+                    )
+                    Path(downloaded_path).rename(self.filepath)
         return super()._load()
 
     def _save(self, data: Any) -> None:
@@ -181,7 +209,12 @@ class MLflowDataSet(CachedDataSet):
                 ).experiment_id
                 mlflow.start_run(run_id=self.saving_run_id, experiment_id=experiment_id)
 
-            mlflow_log_artifacts([self.filepath])
+            if self.dataset in {"p"}:
+                mlflow_log_params({self.dataset_name: data})
+            elif self.dataset in {"m"}:
+                mlflow_log_metrics({self.dataset_name: data})
+            else:
+                mlflow_log_artifacts([self.filepath])
 
             if self.saving_run_id or self.saving_experiment_name:
                 mlflow.end_run()
