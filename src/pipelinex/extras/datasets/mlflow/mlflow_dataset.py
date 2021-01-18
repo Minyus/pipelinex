@@ -54,6 +54,7 @@ class MLflowDataSet(AbstractDataSet):
         version: Version = None,
         caching: bool = True,
         copy_mode: str = None,
+        file_caching: bool = False,
     ):
         """
         dataset: A Kedro DataSet object or a dictionary used to save/load.
@@ -90,6 +91,8 @@ class MLflowDataSet(AbstractDataSet):
             values are: "deepcopy", "copy" and "assign". If not
             provided, it is inferred based on the data type.
             Ignored if caching arg is False.
+        file_caching: Attempt to use the file at filepath when loading if no cache found
+            in memory. False in default.
         """
         self.dataset = dataset or MemoryDataSet()
         self.filepath = filepath
@@ -101,6 +104,7 @@ class MLflowDataSet(AbstractDataSet):
         self.loading_run_id = loading_run_id
         self.version = version
         self.caching = caching
+        self.file_caching = file_caching
         self.copy_mode = copy_mode
         self._dataset_name = str(id(self))
 
@@ -179,7 +183,7 @@ class MLflowDataSet(AbstractDataSet):
         if self._cache and self._cache.exists():
             return self._cache.load()
 
-        if self._dataset.exists():
+        if self.file_caching and self._dataset.exists():
             return self._dataset.load()
 
         else:
@@ -219,8 +223,6 @@ class MLflowDataSet(AbstractDataSet):
 
                 else:
                     p = Path(self.filepath)
-                    if p.exists:
-                        p.rename(p.parent / (str(id(self)) + p.name))
 
                     dst_path = tempfile.gettempdir()
                     downloaded_path = client.download_artifacts(
