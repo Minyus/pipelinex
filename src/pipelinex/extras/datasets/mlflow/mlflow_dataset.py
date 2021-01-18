@@ -186,54 +186,48 @@ class MLflowDataSet(AbstractDataSet):
         if self.file_caching and self._dataset.exists():
             return self._dataset.load()
 
-        else:
-            if True:
-                import mlflow
+        import mlflow
 
-                client = mlflow.tracking.MlflowClient(
-                    tracking_uri=self.loading_tracking_uri
-                )
+        client = mlflow.tracking.MlflowClient(tracking_uri=self.loading_tracking_uri)
 
-                self.loading_run_id = (
-                    self.loading_run_id or mlflow.active_run().info.run_id
-                )
+        self.loading_run_id = self.loading_run_id or mlflow.active_run().info.run_id
 
-                if self.dataset in {"p"}:
-                    run = client.get_run(self.loading_run_id)
-                    value = run.data.params.get(self.dataset_name, None)
-                    if value is None:
-                        raise KeyError(
-                            "param '{}' not found in run_id '{}'.".format(
-                                self.dataset_name, self.loading_run_id
-                            )
-                        )
-
-                    PickleDataSet(filepath=self.filepath).save(value)
-
-                elif self.dataset in {"m"}:
-                    run = client.get_run(self.loading_run_id)
-                    value = run.data.metrics.get(self.dataset_name, None)
-                    if value is None:
-                        raise KeyError(
-                            "metric '{}' not found in run_id '{}'.".format(
-                                self.dataset_name, self.loading_run_id
-                            )
-                        )
-                    PickleDataSet(filepath=self.filepath).save(value)
-
-                else:
-                    p = Path(self.filepath)
-
-                    dst_path = tempfile.gettempdir()
-                    downloaded_path = client.download_artifacts(
-                        run_id=self.loading_run_id,
-                        path=p.name,
-                        dst_path=dst_path,
+        if self.dataset in {"p"}:
+            run = client.get_run(self.loading_run_id)
+            value = run.data.params.get(self.dataset_name, None)
+            if value is None:
+                raise KeyError(
+                    "param '{}' not found in run_id '{}'.".format(
+                        self.dataset_name, self.loading_run_id
                     )
-                    if Path(downloaded_path) != p:
-                        Path(downloaded_path).rename(p)
+                )
 
-                return self._dataset.load()
+            PickleDataSet(filepath=self.filepath).save(value)
+
+        elif self.dataset in {"m"}:
+            run = client.get_run(self.loading_run_id)
+            value = run.data.metrics.get(self.dataset_name, None)
+            if value is None:
+                raise KeyError(
+                    "metric '{}' not found in run_id '{}'.".format(
+                        self.dataset_name, self.loading_run_id
+                    )
+                )
+            PickleDataSet(filepath=self.filepath).save(value)
+
+        else:
+            p = Path(self.filepath)
+
+            dst_path = tempfile.gettempdir()
+            downloaded_path = client.download_artifacts(
+                run_id=self.loading_run_id,
+                path=p.name,
+                dst_path=dst_path,
+            )
+            if Path(downloaded_path) != p:
+                Path(downloaded_path).rename(p)
+
+        return self._dataset.load()
 
     def _save(self, data: Any) -> None:
         self._init_dataset()
