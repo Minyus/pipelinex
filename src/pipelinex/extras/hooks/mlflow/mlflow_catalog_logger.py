@@ -17,6 +17,24 @@ from .mlflow_utils import (
 
 log = getLogger(__name__)
 
+
+def get_kedro_runner():
+    import inspect
+    from kedro.runner import AbstractRunner
+
+    return next(
+        caller[0].f_locals.get("runner")
+        for caller in inspect.stack()
+        if isinstance(caller[0].f_locals.get("runner"), AbstractRunner)
+    )
+
+
+def running_parallel():
+    from kedro.runner import ParallelRunner
+
+    return isinstance(get_kedro_runner(), ParallelRunner)
+
+
 datasets_dict = {}
 try:
     from kedro.extras.datasets.json import JSONDataSet
@@ -109,6 +127,12 @@ class MLflowCatalogLoggerHook:
         for dataset_name in catalog._data_sets:
             if catalog._data_sets[dataset_name].__class__.__name__ == "MLflowDataSet":
                 setattr(catalog._data_sets[dataset_name], "_dataset_name", dataset_name)
+                setattr(
+                    catalog._data_sets[dataset_name],
+                    "_running_parallel",
+                    running_parallel(),
+                )
+                catalog._data_sets[dataset_name]._init_dataset()
 
     @hook_impl
     def after_node_run(
