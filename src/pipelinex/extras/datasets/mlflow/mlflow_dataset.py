@@ -53,7 +53,7 @@ class MLflowDataSet(AbstractDataSet):
         loading_run_id: str = None,
         caching: bool = True,
         copy_mode: str = None,
-        file_caching: bool = False,
+        file_caching: bool = True,
     ):
         """
         dataset: A Kedro DataSet object or a dictionary used to save/load.
@@ -86,7 +86,7 @@ class MLflowDataSet(AbstractDataSet):
             provided, it is inferred based on the data type.
             Ignored if caching arg is False.
         file_caching: Attempt to use the file at filepath when loading if no cache found
-            in memory. False in default.
+            in memory. True in default.
         """
         self.dataset = dataset or MemoryDataSet()
         self.filepath = filepath
