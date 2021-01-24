@@ -50,7 +50,7 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
                 treated as channel (color) as in TensorFlow, Pillow, and OpenCV.
             reverse_color: If true, the order of channel (color) is reversed
                 (RGB to BGR when loading, BGR to RGB when saving).
-                Set true to use packages wuch as OpenCV which uses BGR order natively.
+                Set true to use packages such as OpenCV which uses BGR order natively.
             version: If specified, should be an instance of
                 ``kedro.io.core.Version``. If its ``load`` attribute is
                 None, the latest version will be loaded. If its ``save``
