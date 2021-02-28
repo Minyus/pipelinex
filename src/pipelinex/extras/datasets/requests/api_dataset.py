@@ -114,10 +114,11 @@ class APIDataSet(AbstractDataSet):
                 instead of the expected responses by _load method. Defaults to False.
             transforms: List of callables to transform the output.
             session_config: Dict of arguments fed to the session.
-            pool_config: Dict of mounting prefix key to Dict of requests.apdapters.HTTPAdapter
+            pool_config: Dict of mounting prefix key to Dict of requests.adapters.HTTPAdapter
                 param key to value.
                 https://requests.readthedocs.io/en/master/user/advanced/#transport-adapters
                 https://urllib3.readthedocs.io/en/latest/advanced-usage.html
+
         """
         super().__init__()
         self._request_args: Dict[str, Any] = {
