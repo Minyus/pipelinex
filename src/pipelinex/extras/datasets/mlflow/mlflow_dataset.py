@@ -34,8 +34,11 @@ dataset_dicts = {
 
 class MLflowDataSet(AbstractDataSet):
     """``MLflowDataSet`` saves data to, and loads data from MLflow.
-    You can also specify a ``MLflowDataSet`` in catalog.yml:
+    You can also specify a ``MLflowDataSet`` in catalog.yml
+
+    Example:
     ::
+
         >>> test_ds:
         >>>    type: MLflowDataSet
         >>>    dataset: pkl
@@ -56,37 +59,40 @@ class MLflowDataSet(AbstractDataSet):
         file_caching: bool = True,
     ):
         """
-        dataset: A Kedro DataSet object or a dictionary used to save/load.
-            If set to either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img",
-            "pkl", "txt", "yml", "yaml"}, dataset instance will be created accordingly with
-            filepath arg.
-            If set to "p", the value will be saved/loaded as a parameter (string).
-            If set to "m", the value will be saved/loaded as a metric (numeric).
-            If None (default), MLflow will not be used.
-        filepath: File path, usually in local file system, to save to and load from.
-            Used only if the dataset arg is a string.
-            If None (default), `<temp directory>/<dataset_name arg>.<dataset arg>` is used.
-        dataset_name: Used only if the dataset arg is a string and filepath arg is None.
-            If None (default), Python object ID is used, but recommended to overwrite by
-            a Kedro hook.
-        saving_tracking_uri: MLflow Tracking URI to save to.
-            If None (default), MLFLOW_TRACKING_URI environment variable is used.
-        saving_experiment_name: MLflow experiment name to save to.
-            If None (default), new experiment will not be created or started.
-            Ignored if saving_run_id is set.
-        saving_run_id: An existing MLflow experiment run ID to save to.
-            If None (default), no existing experiment run will be resumed.
-        loading_tracking_uri: MLflow Tracking URI to load from.
-            If None (default), MLFLOW_TRACKING_URI environment variable is used.
-        loading_run_id: MLflow experiment run ID to load from.
-            If None (default), current active run ID will be used if available.
-        caching: Enable caching if parallel runner is not used. True in default.
-        copy_mode: The copy mode used to copy the data. Possible
-            values are: "deepcopy", "copy" and "assign". If not
-            provided, it is inferred based on the data type.
-            Ignored if caching arg is False.
-        file_caching: Attempt to use the file at filepath when loading if no cache found
-            in memory. True in default.
+
+        Args:
+            dataset: A Kedro DataSet object or a dictionary used to save/load.
+                If set to either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img",
+                "pkl", "txt", "yml", "yaml"}, dataset instance will be created accordingly with
+                filepath arg.
+                If set to "p", the value will be saved/loaded as a parameter (string).
+                If set to "m", the value will be saved/loaded as a metric (numeric).
+                If None (default), MLflow will not be used.
+            filepath: File path, usually in local file system, to save to and load from.
+                Used only if the dataset arg is a string.
+                If None (default), `<temp directory>/<dataset_name arg>.<dataset arg>` is used.
+            dataset_name: Used only if the dataset arg is a string and filepath arg is None.
+                If None (default), Python object ID is used, but recommended to overwrite by
+                a Kedro hook.
+            saving_tracking_uri: MLflow Tracking URI to save to.
+                If None (default), MLFLOW_TRACKING_URI environment variable is used.
+            saving_experiment_name: MLflow experiment name to save to.
+                If None (default), new experiment will not be created or started.
+                Ignored if saving_run_id is set.
+            saving_run_id: An existing MLflow experiment run ID to save to.
+                If None (default), no existing experiment run will be resumed.
+            loading_tracking_uri: MLflow Tracking URI to load from.
+                If None (default), MLFLOW_TRACKING_URI environment variable is used.
+            loading_run_id: MLflow experiment run ID to load from.
+                If None (default), current active run ID will be used if available.
+            caching: Enable caching if parallel runner is not used. True in default.
+            copy_mode: The copy mode used to copy the data. Possible
+                values are: "deepcopy", "copy" and "assign". If not
+                provided, it is inferred based on the data type.
+                Ignored if caching arg is False.
+            file_caching: Attempt to use the file at filepath when loading if no cache found
+                in memory. True in default.
+
         """
         self.dataset = dataset or MemoryDataSet()
         self.filepath = filepath
