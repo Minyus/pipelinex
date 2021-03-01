@@ -21,12 +21,15 @@ with open("requirements.txt", "r") as f:
 
 with open("requirements_optional.txt", "r") as f:
     requires_optional = [x.strip() for x in f if x.strip()]
+requires_optional += requires
 
 with open("requirements_docs.txt", "r") as f:
     requires_docs = [x.strip() for x in f if x.strip()]
+requires_docs += requires_optional
 
 with open("requirements_dev.txt", "r") as f:
     requires_dev = [x.strip() for x in f if x.strip()]
+requires_dev += requires_docs
 
 setup(
     name=name,
