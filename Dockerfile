@@ -138,118 +138,16 @@ RUN apt-get update \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Light-weight Packages
-RUN pip --no-cache-dir install \
-    pandas \
-    scikit-learn \
-    lightgbm \
-    statsmodels \
-    torchsummary \
-    pytorch-ignite \
-    # pytorch-lightning \
-    mlflow \
-    tensorboard \
-    memory_profiler \
-    pynvml \
-    kedro \
-    kedro-viz \
-    pipelinex \
-    joblib \
-    numba \
-    category_encoders \
-    imbalanced-learn \
-    h5py \
-    scikit-optimize \
-    hyperopt \
-    optuna \
-    matplotlib \
-    pandas-profiling \
-    plotly \
-    seaborn \
-    bokeh \
-    lime \
-    dtreeviz \
-    xonsh \
-    click \
-    hydra \
-    pipdeptree \
-    jupyter \
-    isort \
-    black \
-    flake8 \
-    twine \
-    featuretools \
-    pytest \
-    pytest-cov \
-    pytest-mock \
-    sphinx \
-    easydict \
-    flatten-dict \
-    nested-lookup \
-    geopy \
-    geopandas \
-    networkx \
-    dgl \
-    gunicorn \
-    Flask \
-    Django \
-    falcon \
-    msgpack \
-    httpx \
-    grpcio \
-    grpcio-tools \
-    kubernetes \
-    prometheus-client \
-    && true
+# For PipelineX Users
+RUN pip --no-cache-dir install -r requirements_optional.txt
+RUN pip --no-cache-dir install pipelinex
 
-# Optional: Tensorflow
-# RUN /opt/conda/bin/conda install -c anaconda -y tensorflow-gpu && \
-#     /opt/conda/bin/conda config --add channels conda-forge && \
-#     /opt/conda/bin/conda install -c conda-forge -y keras && \ 
-#     /opt/conda/bin/conda clean -ya \
-#     && true
-
-# Optional: Data processing
-# RUN pip --no-cache-dir install \
-#     pyspark \
-#     pyarrow \
-#     hdfs \
-#     && true
-
-# Optional: Gradient boosting
-# RUN pip --no-cache-dir install \
-#     xgboost \
-#     catboost \
-#     && true
-
-# Optional: Computer Vision
-RUN pip --no-cache-dir install \
-    opencv-python \
-    opencv-contrib-python \
-    scikit-image \
-    imgaug \
-    # mahotas \
-    # PyWavelets \
-    # pycocotools \
-    && true
-
-# Optional: NLP
-# RUN pip --no-cache-dir install \
-#     gensim \
-#     spacy \
-#     nltk \
-#     sacremoses \
-#     pyonmttok \
-#     pyLDAvis \
-#     vaderSentiment \
-#     fuzzywuzzy \
-#     sentencepiece \
-#     && true
-
-# Optional: Airflow without dependencies for DAG coding
-# RUN pip --no-cache-dir install --no-deps \
-#     apache-airflow \
-#     && true
+# For PipelineX Contributors
+# ARG LOCAL_ROOT_DIR=/workspace
+# COPY ./ ${LOCAL_ROOT_DIR}
+# WORKDIR ${LOCAL_ROOT_DIR}
+# RUN pip --no-cache-dir install -r requirements_dev.txt
+# RUN python setup.py develop
 
 EXPOSE 22 4141 5000 5555 6006 8000 8080 8793 8888 8889
 ENTRYPOINT ["/bin/bash", "-c"]
