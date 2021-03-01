@@ -14,6 +14,8 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+from recommonmark.transform import AutoStructify
+
 from pipelinex import __version__ as release
 
 # -- Project information -----------------------------------------------------
@@ -32,6 +34,7 @@ version = release
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
     "sphinx.ext.doctest",
@@ -48,7 +51,6 @@ extensions = [
 # enable autosummary plugin (table of contents for modules/classes/class
 # methods)
 autosummary_generate = True
-autosummary_generate_overwrite = False
 
 source_suffix = {
     ".rst": "restructuredtext",
@@ -95,3 +97,26 @@ htmlhelp_basename = "pipelinexdoc"
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [(master_doc, "pipelinex", "PipelineX Documentation", [author], 1)]
+
+
+def remove_arrows_in_examples(lines):
+    for i, line in enumerate(lines):
+        lines[i] = line.replace(">>>", "")
+
+
+def autodoc_process_docstring(app, what, name, obj, options, lines):
+    remove_arrows_in_examples(lines)
+
+
+def skip(app, what, name, obj, skip, options):
+    if name == "__init__":
+        return False
+    return skip
+
+
+def setup(app):
+    app.connect("autodoc-process-docstring", autodoc_process_docstring)
+    app.connect("autodoc-skip-member", skip)
+    # enable rendering RST tables in Markdown
+    app.add_config_value("recommonmark_config", {"enable_eval_rst": True}, True)
+    app.add_transform(AutoStructify)
