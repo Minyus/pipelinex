@@ -1,0 +1,24 @@
+-r requirements.txt
+kedro
+pandas
+matplotlib
+seaborn
+pandas-profiling
+Pillow
+torch
+torch-vision 
+pytorch-ignite
+opencv-python
+opencv-contrib-python
+requests
+httpx
+mlflow
+plotly
+scikit-learn
+scikit-image
+shap
+allennlp
+memory_profiler
+pynvml
+flatten-dict
+nested-lookup

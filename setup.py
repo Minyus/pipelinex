@@ -15,6 +15,19 @@ with open(path.join(here, "src", name, "__init__.py"), encoding="utf-8") as f:
 
     version = result.group(1)
 
+# get the dependencies and installs
+with open("requirements.txt", "r") as f:
+    requires = [x.strip() for x in f if x.strip()]
+
+with open("requirements_optional.txt", "r") as f:
+    requires_optional = [x.strip() for x in f if x.strip()]
+
+with open("requirements_docs.txt", "r") as f:
+    requires_docs = [x.strip() for x in f if x.strip()]
+
+with open("requirements_dev.txt", "r") as f:
+    requires_dev = [x.strip() for x in f if x.strip()]
+
 setup(
     name=name,
     version=version,
@@ -26,7 +39,10 @@ setup(
     packages=find_packages(where="src", exclude=["tests"]),
     package_dir={"": "src"},
     test_suite="tests",
-    install_requires=["numpy"],
+    install_requires=requires,
+    extras_require=dict(
+        optional=requires_optional, docs=requires_docs, dev=requires_dev
+    ),
     author="Yusuke Minami",
     author_email="me@minyus.github.com",
     zip_safe=False,

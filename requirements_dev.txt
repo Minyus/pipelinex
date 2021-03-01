@@ -1,0 +1,10 @@
+-r requirements_docs.txt
+isort
+black
+flake8
+twine
+keyrings.alt>=3.4.0
+featuretools
+pytest
+pytest-cov
+pytest-mock
