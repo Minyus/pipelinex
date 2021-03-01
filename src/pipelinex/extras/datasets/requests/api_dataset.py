@@ -60,6 +60,7 @@ class APIDataSet(AbstractDataSet):
         >>>     }
         >>> )
         >>> data = data_set.load()
+
     """
 
     # pylint: disable=too-many-arguments
