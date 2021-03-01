@@ -542,9 +542,9 @@ def nl_loss(input, *args, **kwargs):
 class NLLoss(torch.nn.NLLLoss):
     """The negative likelihood loss.
     To compute Cross Entropy Loss, there are 3 options.
-        NLLoss with torch.nn.Softmax
-        torch.nn.NLLLoss with torch.nn.LogSoftmax
-        torch.nn.CrossEntropyLoss
+    NLLoss with torch.nn.Softmax
+    torch.nn.NLLLoss with torch.nn.LogSoftmax
+    torch.nn.CrossEntropyLoss
     """
 
     def forward(self, input, target):
