@@ -34,6 +34,7 @@ dataset_dicts = {
 
 class MLflowDataSet(AbstractDataSet):
     """``MLflowDataSet`` saves data to, and loads data from MLflow.
+
     You can also specify a ``MLflowDataSet`` in catalog.yml
 
     Example:
@@ -70,7 +71,7 @@ class MLflowDataSet(AbstractDataSet):
                 If None (default), MLflow will not be used.
             filepath: File path, usually in local file system, to save to and load from.
                 Used only if the dataset arg is a string.
-                If None (default), `<temp directory>/<dataset_name arg>.<dataset arg>` is used.
+                If None (default), ``<temp directory>/<dataset_name arg>.<dataset arg>`` is used.
             dataset_name: Used only if the dataset arg is a string and filepath arg is None.
                 If None (default), Python object ID is used, but recommended to overwrite by
                 a Kedro hook.
