@@ -9,23 +9,7 @@ Pipeline for eXperimentation
 [[API docs]](https://pipelinex.readthedocs.io/)
 
 
-## Installation
-
-- [Option 1] from the PyPI:
-
-```bash
-$ pip install pipelinex
-```
-
-- [Option 2] development install (will be updated as you modify the source code):
-
-```bash
-$ git clone https://github.com/Minyus/pipelinex.git
-$ cd pipelinex
-$ python setup.py develop
-```
-
-## Overview
+## Introduction
 
 PipelineX is a Python package designed to make Machine Learning projects efficient with modular, reusable, and easy-to-use features for experimentation.
 
@@ -65,6 +49,22 @@ PipelineX shares similar API styles with
 
 - Domain-specific packages: [Allennlp](https://github.com/allenai/allennlp), [Ludwig](https://uber.github.io/ludwig/), [Detectron2](https://github.com/facebookresearch/detectron2)
 
+
+## Installation
+
+- [Option 1] from the PyPI:
+
+```bash
+$ pip install pipelinex
+```
+
+- [Option 2] development install (will be updated as you modify the source code):
+
+```bash
+$ git clone https://github.com/Minyus/pipelinex.git
+$ cd pipelinex
+$ python setup.py develop
+```
 
 ## Getting Started with Kedro 0.17.x
 
