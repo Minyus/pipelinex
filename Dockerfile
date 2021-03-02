@@ -138,14 +138,15 @@ RUN apt-get update \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
+ARG LOCAL_ROOT_DIR=/workspace
+COPY ./ ${LOCAL_ROOT_DIR}
+WORKDIR ${LOCAL_ROOT_DIR}
+
 # For PipelineX Users
 RUN pip --no-cache-dir install -r requirements_optional.txt
 RUN pip --no-cache-dir install pipelinex
 
 # For PipelineX Contributors
-# ARG LOCAL_ROOT_DIR=/workspace
-# COPY ./ ${LOCAL_ROOT_DIR}
-# WORKDIR ${LOCAL_ROOT_DIR}
 # RUN pip --no-cache-dir install -r requirements_dev.txt
 # RUN python setup.py develop
 
