@@ -30,12 +30,12 @@ PipelineX provides [enhancements](https://github.com/Minyus/pipelinex#yamlconfig
 
 PipelineX includes integration with the following Python packages.
 
-- [PyTorch](https://github.com/pytorch/pytorch)
-- [Ignite](https://github.com/pytorch/ignite)
-- [Pandas](https://github.com/pandas-dev/pandas)
-- [OpenCV](https://github.com/skvark/opencv-python)
-- [Memory Profiler](https://github.com/pythonprofilers/memory_profiler)
-- [NVIDIA Management Library](https://github.com/gpuopenanalytics/pynvml)
+- <[PyTorch](https://github.com/pytorch/pytorch)>
+- <[Ignite](https://github.com/pytorch/ignite)>
+- <[Pandas](https://github.com/pandas-dev/pandas)>
+- <[OpenCV](https://github.com/skvark/opencv-python)>
+- <[Memory Profiler](https://github.com/pythonprofilers/memory_profiler)>
+- <[NVIDIA Management Library](https://github.com/gpuopenanalytics/pynvml)>
 
 These wrappers are all independent and optional. You do _not_ need to install all of these Python packages.
 
@@ -633,9 +633,9 @@ Kedro is a Python package to develop pipelines consisting of:
 Kedro pipelines can be run sequentially or in parallel.
 
 Regarding Kedro, please see:
-- [Kedro's document](https://kedro.readthedocs.io/en/latest/)
-- [YouTube playlist: Writing Data Pipelines with Kedro](https://www.youtube.com/playlist?list=PLTU89LAWKRwEdiDKeMOU2ye6yU9Qd4MRo)
-- [Python Packages for Pipeline/Workflow](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow)
+- <[Kedro's document](https://kedro.readthedocs.io/en/latest/)>
+- <[YouTube playlist: Writing Data Pipelines with Kedro](https://www.youtube.com/playlist?list=PLTU89LAWKRwEdiDKeMOU2ye6yU9Qd4MRo)>
+- <[Python Packages for Pipeline/Workflow](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow)>
 
 Here is a simple example Kedro project.
 
@@ -1290,11 +1290,11 @@ Please see [CONTRIBUTING.md](https://github.com/Minyus/pipelinex/blob/master/CON
 
 Yusuke Minami
 
-- [GitHub](https://github.com/Minyus)
-- [Linkedin](https://www.linkedin.com/in/yusukeminami/)
-- [Twitter](https://twitter.com/Minyus86)
+- <[GitHub](https://github.com/Minyus)>
+- <[Linkedin](https://www.linkedin.com/in/yusukeminami/)>
+- <[Twitter](https://twitter.com/Minyus86)>
 
 ## Contributors
 
-- [shibuiwilliam](https://github.com/shibuiwilliam)
-- [MarchRaBBiT](https://github.com/MarchRaBBiT)
+- <[shibuiwilliam](https://github.com/shibuiwilliam)>
+- <[MarchRaBBiT](https://github.com/MarchRaBBiT)>
