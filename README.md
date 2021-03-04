@@ -348,9 +348,9 @@ Unfortunately, YAML and Jsonnet require a medium to share the same value.
 
 This is why PipelineX provides Anchor-less aliasing feature.
 
-You can directly look up another value in the same YAML/JSON file using `$` key without an anchor nor variable.
+You can directly look up another value in the same YAML/JSON file using "$" key without an anchor nor variable.
 
-To specify the nested key (key in a dict of dict), use `.` as the separator.
+To specify the nested key (key in a dict of dict), use "." as the separator.
 
 Example:
 
