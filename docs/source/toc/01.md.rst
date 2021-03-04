@@ -1,7 +1,0 @@
-Introduction
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   Introduction <../contents/01.md>

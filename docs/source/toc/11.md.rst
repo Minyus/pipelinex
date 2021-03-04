@@ -1,7 +1,0 @@
-Use with PyTorch Ignite
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   Use with PyTorch Ignite <../contents/11.md>

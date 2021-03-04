@@ -1,7 +1,0 @@
-Use with OpenCV
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   Use with OpenCV <../contents/12.md>

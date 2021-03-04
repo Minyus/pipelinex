@@ -1,7 +1,0 @@
-Supplements for Kedro
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   Supplements for Kedro <../contents/08.md>

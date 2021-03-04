@@ -1,7 +1,0 @@
-Use with PyTorch Lightning
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   Use with PyTorch Lightning <../contents/13.md>

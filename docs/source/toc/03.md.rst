@@ -1,7 +1,0 @@
-Getting Started with Kedro 0.17.x
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   Getting Started with Kedro 0.17.x <../contents/03.md>

@@ -1,7 +1,0 @@
-Author
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   Author <../contents/18.md>

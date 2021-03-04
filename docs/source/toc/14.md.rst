@@ -1,7 +1,0 @@
-Use with TensorFlow Keras
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   Use with TensorFlow Keras <../contents/14.md>

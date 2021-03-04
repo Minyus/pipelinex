@@ -1,7 +1,0 @@
-PipelineX
-============
-
-.. toctree::
-   :maxdepth: 4
-
-   PipelineX <../contents/00.md>
