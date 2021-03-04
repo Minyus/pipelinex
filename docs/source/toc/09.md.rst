@@ -1,0 +1,7 @@
+Enhanced Kedro context: YAML interface for Kedro pipelines
+============
+
+.. toctree::
+   :maxdepth: 4
+
+   Enhanced Kedro context: YAML interface for Kedro pipelines <../contents/09.md>

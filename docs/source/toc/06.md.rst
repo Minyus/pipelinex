@@ -1,0 +1,7 @@
+The unified data interface framework
+============
+
+.. toctree::
+   :maxdepth: 4
+
+   The unified data interface framework <../contents/06.md>

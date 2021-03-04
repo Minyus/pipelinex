@@ -1,0 +1,7 @@
+Installation
+============
+
+.. toctree::
+   :maxdepth: 4
+
+   Installation <../contents/02.md>

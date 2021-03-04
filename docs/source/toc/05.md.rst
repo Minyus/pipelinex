@@ -1,0 +1,7 @@
+Pythonic enhanced YAML JSON (HatchDict)
+============
+
+.. toctree::
+   :maxdepth: 4
+
+   Pythonic enhanced YAML JSON (HatchDict) <../contents/05.md>
