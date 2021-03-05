@@ -67,8 +67,7 @@ $ python setup.py develop
 ## Getting Started with Kedro 0.17.x
 
 Kedro starters (Cookiecutter templates) to use Kedro, Scikit-learn, MLflow, and PipelineX are available at:
-
-https://github.com/Minyus/kedro-starters-sklearn
+[kedro-starters-sklearn](https://github.com/Minyus/kedro-starters-sklearn)
 
 Iris dataset is included and used, but you can easily change to Kaggle Titanic dataset.
 
@@ -631,7 +630,7 @@ Kedro is a Python package to develop pipelines consisting of:
 Kedro pipelines can be run sequentially or in parallel.
 
 Regarding Kedro, please see:
-- <[Kedro's document](https://kedro.readthedocs.io/en/latest/)>
+- <[Kedro's document](https://kedro.readthedocs.io/en/stable/)>
 - <[YouTube playlist: Writing Data Pipelines with Kedro](https://www.youtube.com/playlist?list=PLTU89LAWKRwEdiDKeMOU2ye6yU9Qd4MRo)>
 - <[Python Packages for Pipeline/Workflow](https://github.com/Minyus/Python_Packages_for_Pipeline_Workflow)>
 
