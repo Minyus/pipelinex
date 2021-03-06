@@ -797,61 +797,86 @@ You can use `HatchDict` feature in `catalog.yml`.
 
 ## Integration of Kedro with MLflow as Kedro DataSet and Hooks (callbacks)
 
-- [pipelinex.extras.hooks](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras/hooks) provides Kedro hooks (callbacks) to use MLflow without adding any MLflow-related code in the node (task) functions.
+Kedro DataSet and Hooks (callbacks) are provided to use MLflow without adding any MLflow-related code in the node (task) functions.
 
-  - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures and logs duration time for the pipeline to MLflow with args:
+- Kedro DataSet
+  - `pipelinex.MLflowDataSet`(https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/mlflow/mlflow_dataset.py)
   
-    - enable_mlflow: Enable configuring and logging to MLflow.
-    - uri: `uri` arg fed to:
-        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.set_tracking_uri
-        as the MLflow tracking server URI.
-        Local file path, databases supported by SQLAlchemy (sqlite, mysql, mssql, and 
-        postgresql), HTTP server, Databricks workspace are supported. 
-        See MLflow's document at:
-        https://mlflow.org/docs/latest/tracking.html#where-runs-are-recorded
-    - experiment_name: `name` arg fed to:
-        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
-        as the MLflow experiment name.
-    - artifact_location: `artifact_location` arg fed to:
-        https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
-        as the URI to store the artifacts.
-        Local file paths, Amazon S3, Azure Blob Storage, Google Cloud Storage, SFTP server, 
-        NFS, and HDFS are supported. 
-        See MLflow's document at:
-        https://mlflow.org/docs/latest/tracking.html#id10
-    - run_name: Shown as 'Run Name' in the MLflow UI.
-    - offset_hours: The offset hour (e.g. 0 for UTC+00:00) used for `__time_begin` and `__time_end` parameters. 
+    Kedro Dataset that saves data to or loads data from MLflow. Set `dataset` argument as follows.
 
-  - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow with args:
+    - If `dataset` is set to a Kedro DataSet object or a dictionary, it will be saved/loaded as an MLFlow artifact.
+    - If `dataset` is set to a string either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img", "pkl", "txt", "yml", "yaml"}, Kedro DataSet object will be created with the string as the file extension and will be saved/loaded as an MLflow artifact. Under the hood, the following Kedro DataSet classes will be used (inspired by [Kedro Wings](https://github.com/tamsanh/kedro-wings)).
+      ```python
+      dataset_dicts = {
+        "json": {"type": "json.JSONDataSet"},
+        "csv": {"type": "pandas.CSVDataSet"},
+        "xls": {"type": "pandas.ExcelDataSet"},
+        "parquet": {"type": "pandas.ParquetDataSet"},
+        "pkl": {"type": "pickle.PickleDataSet"},
+        "png": {"type": "pillow.ImageDataSet"},
+        "jpg": {"type": "pillow.ImageDataSet"},
+        "jpeg": {"type": "pillow.ImageDataSet"},
+        "img": {"type": "pillow.ImageDataSet"},
+        "txt": {"type": "text.TextDataSet"},
+        "yaml": {"type": "yaml.YAMLDataSet"},
+        "yml": {"type": "yaml.YAMLDataSet"},
+      }
+      ``` 
+    - If `dataset` is set to a string "p", the value will be saved/loaded as an MLflow parameter (string).
+    - If `dataset` is set to a string "m", the value will be saved/loaded as an MLflow metric (numeric). 
+    - If `dataset` is set to None (default), MLflow will not be used.
 
-    - enable_mlflow: Enable logging to MLflow.
-    - filepaths_before_pipeline_run: The file paths of artifacts to log before the pipeline is run.
-    - datasets_after_node_run: The dataset names to log after the node is run.
-    - filepaths_after_pipeline_run: The file paths of artifacts to log after the pipeline is run.
-  
-  - [`pipelinex.MLflowDataSetsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs datasets of (list of) float/int and str classes to MLflow with arg:
+    Regarding all the options, see the [API document](https://pipelinex.readthedocs.io/en/latest/source/00_api_docs/pipelinex.extras.datasets.mlflow.html#module-pipelinex.extras.datasets.mlflow.mlflow_dataset)
 
-    - enable_mlflow: Enable logging to MLflow.
-  
-  - [`pipelinex.MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow and optionally visualizes the execution logs as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed, with args:
-    - enable_mlflow: Enable logging to MLflow.
-    - enable_plotly: Enable visualization of logged time as a gantt chart.
-    - gantt_filepath: File path to save the generated gantt chart.
-    - gantt_params: Args fed to:
-        https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html
-    - metric_name_prefix: Prefix for the metric names. The metric names are
-        - `metric_name_prefix` concatenated with the string returned by `task_name_func`.
-    - task_name_func: Callable to return the task name using ``kedro.pipeline.node.Node``
-        - object.
+- Kedro Hooks 
+
+  - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures MLflow logging and logs duration time for the pipeline to MLflow.
+
+  - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow.
+    
+  - [`pipelinex.MLflowDataSetsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs datasets of (list of) float/int and str classes to MLflow.
+
+  - [`pipelinex.MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow and optionally visualizes the execution logs as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed. 
   
   - [`pipelinex.AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
     - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset with args:
-      - enable_mlflow: Enable logging to MLflow.
-      - metric_name_prefix: Prefix for the metric names. The metric names are `metric_name_prefix` concatenated with 'load <data_set_name>' or 'save <data_set_name>'
+  
+  Regarding all the options, see the [API document](https://pipelinex.readthedocs.io/en/latest/source/00_api_docs/pipelinex.extras.hooks.mlflow.html#module-pipelinex.extras.hooks.mlflow)
 
-  To use these hooks for MLFlow, please use the [Kedro starters](https://github.com/Minyus/kedro-starters-sklearn) which includes the following example:
+  MLflow-ready Kedro projects can be generated by the [Kedro starters](https://github.com/Minyus/kedro-starters-sklearn) (Cookiecutter template) which include the following example config:
+
+  ```yaml
+  # catalog.yml
+
+  # Write a pickle file & upload to MLflow
+  model:
+    type: pipelinex.MLflowDataSet
+    dataset: pkl
+
+  # Write a csv file & upload to MLflow
+  pred_df: 
+    type: pipelinex.MLflowDataSet
+    dataset: csv
+
+  # Write an MLflow metric
+  score:
+    type: pipelinex.MLflowDataSet
+    dataset: m  
+  ```
 
   ```python
+  # catalog.py (alternative to catalog.yml)
+
+  catalog_dict = {
+    "model": MLflowDataSet(dataset="pkl"),  # Write a pickle file & upload to MLflow
+    "pred_df": MLflowDataSet(dataset="csv"),  # Write a csv file & upload to MLflow
+    "score": MLflowDataSet(dataset="m"),  # Write an MLflow metric
+  }
+  ```
+
+  ```python
+  # mlflow_config.py 
+
   import pipelinex
 
   mlflow_hooks = (
