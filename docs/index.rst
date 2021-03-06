@@ -23,13 +23,6 @@ Welcome to PipelineX's documentation!
    source/contents/10.md
    source/contents/11.md
    source/contents/12.md
-   source/contents/13.md
-   source/contents/14.md
-   source/contents/15.md
-   source/contents/16.md
-   source/contents/17.md
-   source/contents/18.md
-   source/contents/19.md
 
 Indices and tables
 ==================

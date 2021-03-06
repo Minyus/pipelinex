@@ -26,7 +26,7 @@ csplit -f '' -b %02d.md -n 2 ../../../README.md "/^## /" {*}
 4. Add the paths to the markdown files to `index.rst`
 
 ```
-for i in {0..19}; do printf "   source/contents/%02d.md\n" ${i}; done
+for i in {0..12}; do printf "   source/contents/%02d.md\n" ${i}; done
 ```
 
 5. Optional: Generate HTML files to review locally before pushing to the repository
