@@ -7,7 +7,7 @@ Welcome to PipelineX's documentation!
 =====================================
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 10
    :caption: Contents:
 
    source/contents/00.md
@@ -23,6 +23,7 @@ Welcome to PipelineX's documentation!
    source/contents/10.md
    source/contents/11.md
    source/contents/12.md
+   API Docs <source/00_api_docs/modules>
 
 Indices and tables
 ==================
