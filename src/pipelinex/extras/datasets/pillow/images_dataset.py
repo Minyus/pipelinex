@@ -35,7 +35,7 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
             load_args: Args fed to
                 https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.open
             save_args:
-                Args, e.g. 
+                Args, e.g.
 
                 - `suffix`: file suffix such as ".jpg"
                 - `upper`: optionally used as the upper pixel value corresponding to 0xFF (255)
