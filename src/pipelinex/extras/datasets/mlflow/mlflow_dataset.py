@@ -12,6 +12,7 @@ from pipelinex.extras.hooks.mlflow.mlflow_utils import (
     mlflow_log_artifacts,
     mlflow_log_metrics,
     mlflow_log_params,
+    mlflow_log_values,
 )
 
 log = logging.getLogger(__name__)
@@ -256,6 +257,8 @@ class MLflowDataSet(AbstractDataSet):
                 mlflow_log_params({self.dataset_name: data})
             elif self.dataset in {"m"}:
                 mlflow_log_metrics({self.dataset_name: data})
+            elif self.dataset in {"a"}:
+                mlflow_log_values({self.dataset_name: data})
             else:
                 mlflow_log_artifacts([self.filepath])
 

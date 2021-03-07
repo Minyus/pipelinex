@@ -1,5 +1,8 @@
 import importlib
 from typing import Any, Union, List, Iterable  # NOQA
+from logging import getLogger
+
+log = getLogger(__name__)
 
 
 class HatchDict:
@@ -229,13 +232,11 @@ def _hatch(
 def dot_flatten(d):
     try:
         from flatten_dict import flatten
+
+        d = flatten(d, reducer="dot")
     except Exception:
-        return d
-
-    def dot_reducer(k1, k2):
-        return k1 + "." + k2 if k1 else k2
-
-    return flatten(d, reducer=dot_reducer)
+        log.warning("{} failed to be flattened.".format(d), exc_info=True)
+    return d
 
 
 def pass_(*argsignore, **kwargsignore):

@@ -9,9 +9,10 @@ from kedro.pipeline import Pipeline
 
 from .mlflow_utils import (
     hook_impl,
+    mlflow_log_artifacts,
     mlflow_log_metrics,
     mlflow_log_params,
-    mlflow_log_artifacts,
+    mlflow_log_values,
 )
 
 
@@ -157,20 +158,20 @@ class MLflowCatalogLoggerHook:
         if name not in self.mlflow_catalog:
             if not self.auto:
                 return
-            if isinstance(value, (float, int)):
-                mlflow_log_metrics({name: value}, enable_mlflow=self.enable_mlflow)
-                return
-            elif isinstance(value, (str, list, tuple, dict, set)):
-                mlflow_log_params({name: value}, enable_mlflow=self.enable_mlflow)
-                return
+
+            mlflow_log_values({name: value}, enable_mlflow=self.enable_mlflow)
+            return
+
         catalog_instance = self.mlflow_catalog.get(name, None)
         if not catalog_instance:
             return
         elif isinstance(catalog_instance, str):
-            if catalog_instance in {"param", "p", "$"}:
+            if catalog_instance in {"p"}:
                 mlflow_log_params({name: value}, enable_mlflow=self.enable_mlflow)
-            elif catalog_instance in {"metric", "m", "#"}:
+            elif catalog_instance in {"m"}:
                 mlflow_log_metrics({name: value}, enable_mlflow=self.enable_mlflow)
+            elif catalog_instance in {"a"}:
+                mlflow_log_values({name: value}, enable_mlflow=self.enable_mlflow)
             elif catalog_instance in datasets_dict:
                 ds = datasets_dict.get(catalog_instance)
                 fp = tempfile.gettempdir() + "/" + name + "." + catalog_instance

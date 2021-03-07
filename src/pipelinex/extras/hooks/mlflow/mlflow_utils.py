@@ -1,10 +1,12 @@
 from pathlib import Path
 from logging import getLogger
 
+from pipelinex.hatch_dict.hatch_dict import dot_flatten
+
 log = getLogger(__name__)
 
 try:
-    from kedro.framework.hooks import hook_impl
+    from kedro.framework.hooks import hook_impl  # NOQA
 except ModuleNotFoundError:
 
     def hook_impl(func):
@@ -39,6 +41,7 @@ def mlflow_log_artifacts(paths, artifact_path=None, enable_mlflow=True):
 
 
 def mlflow_log_metrics(metrics, step=None, enable_mlflow=True):
+    assert isinstance(metrics, dict)
     log.info("{}".format(metrics))
 
     if enable_mlflow:
@@ -59,6 +62,7 @@ def mlflow_log_metrics(metrics, step=None, enable_mlflow=True):
 
 
 def mlflow_log_params(params, enable_mlflow=True):
+    assert isinstance(params, dict)
     log.info("{}".format(params))
 
     if enable_mlflow:
@@ -76,6 +80,23 @@ def mlflow_log_params(params, enable_mlflow=True):
             log.warning(
                 "{} failed to be logged by MLflow.".format(params), exc_info=True
             )
+
+
+def mlflow_log_values(d, enable_mlflow=True):
+    assert isinstance(d, dict)
+    log.info("{}".format(d))
+
+    d = dot_flatten(d)
+
+    if enable_mlflow:
+
+        metrics = {k: v for (k, v) in d.items() if isinstance(v, (float, int))}
+        mlflow_log_metrics(metrics)
+
+        params = {
+            k: v for (k, v) in d.items() if isinstance(v, (str, list, tuple, set))
+        }
+        mlflow_log_params(params)
 
 
 def mlflow_start_run(
