@@ -804,29 +804,25 @@ Kedro DataSet and Hooks (callbacks) are provided to use MLflow without adding an
 - Kedro DataSet
   - `pipelinex.MLflowDataSet`(https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/mlflow/mlflow_dataset.py)
   
-    Kedro Dataset that saves data to or loads data from MLflow. Set `dataset` argument as follows.
+    Kedro Dataset that saves data to or loads data from MLflow depending on `dataset` argument as follows.
 
-    - If `dataset` is set to a Kedro DataSet object or a dictionary, it will be saved/loaded as an MLFlow artifact.
-    - If `dataset` is set to a string either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img", "pkl", "txt", "yml", "yaml"}, Kedro DataSet object will be created with the string as the file extension and will be saved/loaded as an MLflow artifact. Under the hood, the following Kedro DataSet classes will be used (inspired by [Kedro Wings](https://github.com/tamsanh/kedro-wings)).
-      ```python
-      dataset_dicts = {
-        "json": {"type": "json.JSONDataSet"},
-        "csv": {"type": "pandas.CSVDataSet"},
-        "xls": {"type": "pandas.ExcelDataSet"},
-        "parquet": {"type": "pandas.ParquetDataSet"},
-        "pkl": {"type": "pickle.PickleDataSet"},
-        "png": {"type": "pillow.ImageDataSet"},
-        "jpg": {"type": "pillow.ImageDataSet"},
-        "jpeg": {"type": "pillow.ImageDataSet"},
-        "img": {"type": "pillow.ImageDataSet"},
-        "txt": {"type": "text.TextDataSet"},
-        "yaml": {"type": "yaml.YAMLDataSet"},
-        "yml": {"type": "yaml.YAMLDataSet"},
-      }
-      ``` 
-    - If `dataset` is set to a string "p", the value will be saved/loaded as an MLflow parameter (string).
-    - If `dataset` is set to a string "m", the value will be saved/loaded as an MLflow metric (numeric). 
-    - If `dataset` is set to None (default), MLflow will not be used.
+    - If set to "p", the value will be saved/loaded as an MLflow parameter (string).
+
+    - If set to "m", the value will be saved/loaded as an MLflow metric (numeric).
+
+    - If set to "a", the value will be saved/loaded based on the data type.
+
+        - If the data type is either {float, int}, the value will be saved/loaded as an MLflow metric.
+
+        - If the data type is either {str, list, tuple, set}, the value will be saved/load as an MLflow parameter.
+
+        - If the data type is dict, the value will be flattened with dot (".") as the separator and then saved/loaded as either an MLflow metric or parameter based on each data type as explained above.
+
+    - If set to either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img", "pkl", "txt", "yml", "yaml"}, the backend dataset instance will be created accordingly to save/load as an MLflow artifact.
+
+    - If set to a Kedro DataSet object or a dictionary, it will be used as the backend dataset to save/load as an MLflow artifact.
+
+    - If set to None (default), MLflow logging will be skipped.
 
     Regarding all the options, see the [API document](https://pipelinex.readthedocs.io/en/latest/source/00_api_docs/pipelinex.extras.datasets.mlflow.html#module-pipelinex.extras.datasets.mlflow.mlflow_dataset)
 
