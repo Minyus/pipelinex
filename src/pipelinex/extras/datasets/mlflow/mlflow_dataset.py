@@ -63,19 +63,31 @@ class MLflowDataSet(AbstractDataSet):
         """
 
         Args:
-            dataset: A Kedro DataSet object or a dictionary used to save/load.
-                If set to either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img",
-                "pkl", "txt", "yml", "yaml"}, dataset instance will be created accordingly with
-                filepath arg.
-                If set to "p", the value will be saved/loaded as a parameter (string).
-                If set to "m", the value will be saved/loaded as a metric (numeric).
-                If None (default), MLflow will not be used.
+            dataset: Specify how to treat the dataset as an MLflow metric, parameter, or artifact.
+
+                - If set to "p", the value will be saved/loaded as an MLflow parameter (string).
+
+                - If set to "m", the value will be saved/loaded as an MLflow metric (numeric).
+
+                - If set to "a", the value will be saved/loaded based on the data type.
+
+                    - If the data type is either {float, int}, the value will be saved/loaded as an MLflow metric.
+
+                    - If the data type is either {str, list, tuple, set}, the value will be saved/load as an MLflow parameter.
+
+                    - If the data type is dict, the value will be flattened with dot (".") as the separator and then saved/loaded as either an MLflow metric or parameter based on each data type as explained above.
+
+                - If set to either {"json", "csv", "xls", "parquet", "png", "jpg", "jpeg", "img", "pkl", "txt", "yml", "yaml"}, the backend dataset instance will be created accordingly to save/load as an MLflow artifact.
+
+                - If set to a Kedro DataSet object or a dictionary, it will be used as the backend dataset to save/load as an MLflow artifact.
+
+                - If set to None (default), MLflow logging will be skipped.
             filepath: File path, usually in local file system, to save to and load from.
                 Used only if the dataset arg is a string.
                 If None (default), ``<temp directory>/<dataset_name arg>.<dataset arg>`` is used.
             dataset_name: Used only if the dataset arg is a string and filepath arg is None.
-                If None (default), Python object ID is used, but recommended to overwrite by
-                a Kedro hook.
+                If None (default), Python object ID is used, but will be overwritten by
+                MLflowCatalogLoggerHook.
             saving_tracking_uri: MLflow Tracking URI to save to.
                 If None (default), MLFLOW_TRACKING_URI environment variable is used.
             saving_experiment_name: MLflow experiment name to save to.
