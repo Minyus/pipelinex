@@ -1,4 +1,4 @@
-## Integration of Kedro with the additional Python packages as Kedro DataSets, Hooks (callbacks), and wrappers. 
+## Kedro plugin for various data formats and packages 
 
 Supplements to kedro.extras
 [pipelinex.extras](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras) provides features not available in [kedro.extras](https://github.com/quantumblacklabs/kedro/tree/master/kedro/extras).
@@ -311,4 +311,5 @@ If you are devepping an image processing pipeline consisting of 5 steps and you 
 ### Use with TensorFlow/Keras
 
 (To-do: contributions are welcome.)
+
 

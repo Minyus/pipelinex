@@ -1,4 +1,4 @@
-## Kedro context to use YAML files more conveniently
+## Kedro plugin for YAML lovers
 
 Using [pipelinex.FlexibleContext](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/framework/context/flexible_context.py), you can use the YAML files more conveniently 
 

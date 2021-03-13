@@ -1,4 +1,4 @@
-## Integration of Kedro with MLflow as Kedro DataSet and Hooks (callbacks)
+## Kedro plugin for MLflow
 
 ### How to use MLflow from Kedro projects
 

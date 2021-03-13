@@ -1,6 +1,6 @@
-## Getting Started
+## Getting Started with PipelineX 
 
-### Getting Started with Kedro 0.17.x
+### Kedro 0.17.x Starter projects
 
 Kedro starters (Cookiecutter templates) to use Kedro, Scikit-learn, MLflow, and PipelineX are available at:
 [kedro-starters-sklearn](https://github.com/Minyus/kedro-starters-sklearn)

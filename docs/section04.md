@@ -1,4 +1,4 @@
-## `HatchDict`: YAML/JSON enhancement for Python developers
+## HatchDict: Python in YAML/JSON
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/HatchDict_demo.ipynb)
 

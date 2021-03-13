@@ -1,8 +1,10 @@
-## Author
+## Contributors are welcome!
 
-Yusuke Minami
+### How to contribute
 
-- <[GitHub](https://github.com/Minyus)>
-- <[Linkedin](https://www.linkedin.com/in/yusukeminami/)>
-- <[Twitter](https://twitter.com/Minyus86)>
+Please see [CONTRIBUTING.md](https://github.com/Minyus/pipelinex/blob/master/CONTRIBUTING.md) for details.
 
+### Contributor list
+
+- <[shibuiwilliam](https://github.com/shibuiwilliam)>
+- <[MarchRaBBiT](https://github.com/MarchRaBBiT)>

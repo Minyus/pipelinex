@@ -22,7 +22,6 @@ Welcome to PipelineX's documentation!
    section09.md
    section10.md
    section11.md
-   section12.md
    API Docs <modules>
 
 Indices and tables
