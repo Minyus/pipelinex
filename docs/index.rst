@@ -10,20 +10,20 @@ Welcome to PipelineX's documentation!
    :maxdepth: 10
    :caption: Contents:
 
-   source/contents/00.md
-   source/contents/01.md
-   source/contents/02.md
-   source/contents/03.md
-   source/contents/04.md
-   source/contents/05.md
-   source/contents/06.md
-   source/contents/07.md
-   source/contents/08.md
-   source/contents/09.md
-   source/contents/10.md
-   source/contents/11.md
-   source/contents/12.md
-   API Docs <source/00_api_docs/modules>
+   section00.md
+   section01.md
+   section02.md
+   section03.md
+   section04.md
+   section05.md
+   section06.md
+   section07.md
+   section08.md
+   section09.md
+   section10.md
+   section11.md
+   section12.md
+   API Docs <modules>
 
 Indices and tables
 ==================
