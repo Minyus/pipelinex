@@ -29,9 +29,9 @@ PipelineX provides the following options which can be used independently or toge
 
   Kedro context to define Kedro pipelines in a YAML file with more options
 
-- Kedro plugin for MLflow
+- MLflow-on-Kedro: Kedro plugin for MLflow
 
-  Integration of Kedro with [MLflow](https://github.com/mlflow/mlflow) with Kedro DataSets and Hooks.
+  `MLflow-on-Kedro` provides Integration of Kedro with [MLflow](https://github.com/mlflow/mlflow) with Kedro DataSets and Hooks.
 
   Note: You do not need to install MLflow if you do not use.
 
@@ -816,7 +816,7 @@ Enable caching using `cached` key set to True if you do not want Kedro to load t
 
 You can use `HatchDict` feature in `catalog.yml`.
 
-## Kedro plugin for MLflow
+## MLflow-on-Kedro: Kedro plugin for MLflow
 
 ### How to use MLflow from Kedro projects
 
@@ -938,7 +938,7 @@ Gantt chart for execution time, generated using Plotly, shown in MLflow's UI
 
 ### Comparison with `kedro-mlflow` package
 
-Both [PipelineX](https://pipelinex.readthedocs.io/) and [kedro-mlflow](https://kedro-mlflow.readthedocs.io/) provide integration of MLflow to Kedro. 
+Both [PipelineX](https://pipelinex.readthedocs.io/)'s MLflow-on-Kedro and [kedro-mlflow](https://kedro-mlflow.readthedocs.io/) provide integration of MLflow to Kedro. 
 Here are the comparisons.
 
 - Features supported by both PipelineX and kedro-mlflow

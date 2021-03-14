@@ -20,9 +20,9 @@ PipelineX provides the following options which can be used independently or toge
 
   Kedro context to define Kedro pipelines in a YAML file with more options
 
-- Kedro plugin for MLflow
+- MLflow-on-Kedro: Kedro plugin for MLflow
 
-  Integration of Kedro with [MLflow](https://github.com/mlflow/mlflow) with Kedro DataSets and Hooks.
+  `MLflow-on-Kedro` provides Integration of Kedro with [MLflow](https://github.com/mlflow/mlflow) with Kedro DataSets and Hooks.
 
   Note: You do not need to install MLflow if you do not use.
 
