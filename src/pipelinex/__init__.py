@@ -10,10 +10,10 @@ from .mlflow_on_kedro.decorators.mlflow_logger import *  # NOQA
 from .extras.ops.argparse_ops import *  # NOQA
 
 if find_spec("kedro"):
-    from .flex_kedro_pipeline.pipeline import *  # NOQA
-    from .flex_kedro_pipeline.sub_pipeline import *  # NOQA
-    from .flex_kedro_context.configure import *  # NOQA
-    from .flex_kedro_context.context.flexible_context import *  # NOQA
+    from .flex_kedro.pipeline.pipeline import *  # NOQA
+    from .flex_kedro.pipeline.sub_pipeline import *  # NOQA
+    from .flex_kedro.configure import *  # NOQA
+    from .flex_kedro.context.flexible_context import *  # NOQA
     from .extras.hooks.add_catalog_dict import *  # NOQA
     from .extras.hooks.add_transformers import *  # NOQA
     from .mlflow_on_kedro.hooks.mlflow.mlflow_basic_logger import *  # NOQA
