@@ -1,4 +1,4 @@
-## MLflow-on-Kedro: Kedro plugin for MLflow
+## MLflow-on-Kedro: Kedro plugin for MLflow users
 
 ### How to use MLflow from Kedro projects
 

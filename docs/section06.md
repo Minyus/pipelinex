@@ -1,16 +1,27 @@
-## Kedro plugin for YAML lovers
+## Flex-Kedro: Kedro plugin for flexible config
 
-Using [pipelinex.FlexibleContext](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/framework/context/flexible_context.py), you can use the YAML files more conveniently 
+Flex-Kedro provides more options to configure Kedro projects flexibly and thus quickly by KFlex-Kedro-Pipeline and Flex-Kedro-Context features.
 
-### Options available in `parameters.yml`
+### Flex-Kedro-Pipeline: Kedro plugin for quicker pipeline set up 
 
-#### Define Kedro pipelines 
+If you want to define Kedro pipelines quickly, you can consider to use `pipelinex.FlexiblePipeline` instead of `kedro.pipeline.Pipeline`. `pipelinex.FlexiblePipeline` adds the following options to `kedro.pipeline.Pipeline`. 
+- Optionally specify the default Python module (path of .py file) if you want to omit the module name
+- Optionally specify the Python function decorator to apply to each node
+- For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
+
+An example is available in the Flex-Kedro-Context section.
+
+### Flex-Kedro-Context: Kedro plugin for YAML lovers
+
+If you want to take advantage of YAML more than Kedro supports, you can consider to use 
+`pipelinex.FlexibleContext` instead of `kedro.framework.context.KedroContext`. 
+`pipelinex.FlexibleContext` adds preprocess of `parameters.yml` and `catalog.yml` to `kedro.framework.context.KedroContext` to provide flexibility.
+This option is for YAML lovers only. 
+If you don't like YAML very much, skip this one.
+
+#### Define Kedro pipelines in `parameters.yml`
   
-  You can define the inter-task dependency (DAG) for Kedro pipelines in `parameters.yml` using `PIPELINES` key.
-  - Optionally specify the default Python module (path of .py file) if you want to omit the module name
-  - Optionally specify the Python function decorator to apply to each node
-  - Specify `inputs`, `func`, and `outputs` for each node
-    - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
+You can define the inter-task dependency (DAG) for Kedro pipelines in `parameters.yml` using `PIPELINES` key. To define each Kedro pipeline, you can use the `kedro.pipeline.Pipeline` or its variant such as `pipelinex.FlexiblePipeline` as shown below.
 
 ```yaml
 # parameters.yml
@@ -30,10 +41,13 @@ PIPELINES:
         outputs: pred_df
 ```
 
-#### Configure Kedro run config using `RUN_CONFIG` key
-  - Optionally run nodes in parallel
-  - Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
-  Note: You can use Kedro CLI to overwrite these run configs.
+#### Configure Kedro run config using `RUN_CONFIG` key in `parameters.yml`
+
+- Optionally run nodes in parallel
+
+- Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
+
+Note: You can use Kedro CLI to overwrite these run configs.
 
 ```yaml
 # parameters.yml
@@ -50,7 +64,7 @@ RUN_CONFIG:
   load_versions: # None
 ```
 
-#### `HatchDict` feature
+#### Use `HatchDict` feature in `parameters.yml`
 
 You can use `HatchDict` feature in `parameters.yml`.
 
@@ -68,13 +82,12 @@ cols_features: # Columns used as features in the Titanic data table
 col_target: Survived # Column used as the target: whether the passenger survived or not
 ```
 
-### Options available in `catalog.yml`
-
-#### Enable caching
+#### Enable caching for Kedro DataSets in `catalog.yml`
 
 Enable caching using `cached` key set to True if you do not want Kedro to load the data from disk/database which were in the memory. ([`kedro.io.CachedDataSet`](https://kedro.readthedocs.io/en/latest/kedro.io.CachedDataSet.html#kedro.io.CachedDataSet) is used under the hood.)
 
-#### `HatchDict` feature
+#### Use `HatchDict` feature in `catalog.yml`
 
 You can use `HatchDict` feature in `catalog.yml`.
+
 

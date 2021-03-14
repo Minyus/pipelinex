@@ -16,13 +16,15 @@ PipelineX provides the following options which can be used independently or toge
 
   Note: `HatchDict` can be used with or without Kedro.
 
-- Kedro plugin for YAML lovers
+- Flex-Kedro: Kedro plugin for flexible config
 
-  Kedro context to define Kedro pipelines in a YAML file with more options
+  - Flex-Kedro-Pipeline: Kedro plugin for quicker pipeline set up 
 
-- MLflow-on-Kedro: Kedro plugin for MLflow
+  - Flex-Kedro-Context: Kedro plugin for YAML lovers
 
-  `MLflow-on-Kedro` provides Integration of Kedro with [MLflow](https://github.com/mlflow/mlflow) with Kedro DataSets and Hooks.
+- MLflow-on-Kedro: Kedro plugin for MLflow users
+
+  `MLflow-on-Kedro` provides integration of Kedro with [MLflow](https://github.com/mlflow/mlflow) with Kedro DataSets and Hooks.
 
   Note: You do not need to install MLflow if you do not use.
 

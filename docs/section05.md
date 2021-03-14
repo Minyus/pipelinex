@@ -1,4 +1,4 @@
-## Kedro Introduction
+## Introduction to Kedro
 
 ### Why the unified data interface framework is needed
 
