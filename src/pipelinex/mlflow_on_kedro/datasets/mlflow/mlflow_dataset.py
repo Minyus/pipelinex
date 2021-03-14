@@ -8,7 +8,7 @@ from kedro.io.core import AbstractDataSet
 from kedro.io import MemoryDataSet
 from kedro.extras.datasets.pickle import PickleDataSet
 
-from pipelinex.extras.hooks.mlflow.mlflow_utils import (
+from pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_utils import (
     mlflow_log_artifacts,
     mlflow_log_metrics,
     mlflow_log_params,

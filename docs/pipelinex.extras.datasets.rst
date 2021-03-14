@@ -13,7 +13,6 @@ Subpackages
    :maxdepth: 4
 
    pipelinex.extras.datasets.httpx
-   pipelinex.extras.datasets.mlflow
    pipelinex.extras.datasets.opencv
    pipelinex.extras.datasets.pandas
    pipelinex.extras.datasets.pandas_profiling

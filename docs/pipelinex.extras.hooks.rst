@@ -6,14 +6,6 @@ pipelinex.extras.hooks package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   pipelinex.extras.hooks.mlflow
-
 Submodules
 ----------
 

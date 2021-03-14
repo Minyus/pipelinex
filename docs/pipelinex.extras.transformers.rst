@@ -5,11 +5,3 @@ pipelinex.extras.transformers package
    :members:
    :undoc-members:
    :show-inheritance:
-
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   pipelinex.extras.transformers.mlflow

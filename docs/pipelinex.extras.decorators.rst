@@ -25,14 +25,6 @@ pipelinex.extras.decorators.memory\_profiler module
    :undoc-members:
    :show-inheritance:
 
-pipelinex.extras.decorators.mlflow\_logger module
--------------------------------------------------
-
-.. automodule:: pipelinex.extras.decorators.mlflow_logger
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 pipelinex.extras.decorators.nvml\_profiler module
 -------------------------------------------------
 

@@ -15,6 +15,7 @@ Subpackages
    pipelinex.extras
    pipelinex.framework
    pipelinex.hatch_dict
+   pipelinex.mlflow_on_kedro
    pipelinex.pipeline
 
 Submodules

@@ -6,7 +6,7 @@ from .utils import *  # NOQA
 from .hatch_dict.hatch_dict import *  # NOQA
 
 from .extras.decorators.decorators import *  # NOQA
-from .extras.decorators.mlflow_logger import *  # NOQA
+from .mlflow_on_kedro.decorators.mlflow_logger import *  # NOQA
 from .extras.ops.argparse_ops import *  # NOQA
 
 if find_spec("kedro"):
@@ -16,14 +16,14 @@ if find_spec("kedro"):
     from .framework.context.flexible_context import *  # NOQA
     from .extras.hooks.add_catalog_dict import *  # NOQA
     from .extras.hooks.add_transformers import *  # NOQA
-    from .extras.hooks.mlflow.mlflow_basic_logger import *  # NOQA
-    from .extras.hooks.mlflow.mlflow_catalog_logger import *  # NOQA
-    from .extras.hooks.mlflow.mlflow_artifacts_logger import *  # NOQA
-    from .extras.hooks.mlflow.mlflow_time_logger import *  # NOQA
-    from .extras.hooks.mlflow.mlflow_datasets_logger import *  # NOQA
-    from .extras.hooks.mlflow.mlflow_env_vars_logger import *  # NOQA
-    from .extras.datasets.mlflow.mlflow_dataset import *  # NOQA
-    from .extras.transformers.mlflow.mlflow_io_time_logger import *  # NOQA
+    from .mlflow_on_kedro.hooks.mlflow.mlflow_basic_logger import *  # NOQA
+    from .mlflow_on_kedro.hooks.mlflow.mlflow_catalog_logger import *  # NOQA
+    from .mlflow_on_kedro.hooks.mlflow.mlflow_artifacts_logger import *  # NOQA
+    from .mlflow_on_kedro.hooks.mlflow.mlflow_time_logger import *  # NOQA
+    from .mlflow_on_kedro.hooks.mlflow.mlflow_datasets_logger import *  # NOQA
+    from .mlflow_on_kedro.hooks.mlflow.mlflow_env_vars_logger import *  # NOQA
+    from .mlflow_on_kedro.datasets.mlflow.mlflow_dataset import *  # NOQA
+    from .mlflow_on_kedro.transformers.mlflow.mlflow_io_time_logger import *  # NOQA
 
 if find_spec("pandas"):
     from .extras.datasets.pandas.csv_local import *  # NOQA
