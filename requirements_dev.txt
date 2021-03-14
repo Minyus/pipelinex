@@ -7,3 +7,4 @@ featuretools
 pytest
 pytest-cov
 pytest-mock
+requests-mock>=1.8.0
