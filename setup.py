@@ -34,17 +34,17 @@ requires_dev += requires_docs
 readme = r"""
 # PipelineX
 
-PipelineX: Python package to build production-ready pipelines for experimentation with Kedro, MLflow, and more
+GitHub Repository:
+https://github.com/Minyus/pipelinex
 
-[![PyPI version](https://badge.fury.io/py/pipelinex.svg)](https://badge.fury.io/py/pipelinex)
-[![Documentation](https://readthedocs.org/projects/pipelinex/badge/?version=latest)](https://pipelinex.readthedocs.io/)
-![Python Version](https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7-blue.svg)
+Documentation:
+https://pipelinex.readthedocs.io/
 """
 
 setup(
     name=name,
     version=version,
-    description="Python package to build production-ready pipelines for experimentation with Kedro, MLflow, and more",
+    description="PipelineX: Python package to build ML pipelines for experimentation with Kedro, MLflow, and more",
     license="Apache Software License (Apache 2.0)",
     long_description=readme,
     long_description_content_type="text/markdown",
