@@ -1,5 +1,7 @@
 ## HatchDict: Python in YAML/JSON
 
+[pipelinex.hatch_dict API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.hatch_dict.html)
+
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/HatchDict_demo.ipynb)
 
 ### Import-less Python object (class and function)

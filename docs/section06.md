@@ -1,5 +1,7 @@
 ## Flex-Kedro: Kedro plugin for flexible config
 
+[pipelinex.flex_kedro API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.flex_kedro.html)
+
 Flex-Kedro provides more options to configure Kedro projects flexibly and thus quickly by KFlex-Kedro-Pipeline and Flex-Kedro-Context features.
 
 ### Flex-Kedro-Pipeline: Kedro plugin for quicker pipeline set up 

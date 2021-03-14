@@ -1,5 +1,7 @@
 ## MLflow-on-Kedro: Kedro plugin for MLflow users
 
+[pipelinex.mlflow_on_kedro API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.html)
+
 ### How to use MLflow from Kedro projects
 
 Kedro DataSet and Hooks (callbacks) are provided to use MLflow without adding any MLflow-related code in the node (task) functions.
