@@ -13,10 +13,10 @@ Subpackages
    :maxdepth: 4
 
    pipelinex.extras
-   pipelinex.framework
+   pipelinex.flex_kedro_context
+   pipelinex.flex_kedro_pipeline
    pipelinex.hatch_dict
    pipelinex.mlflow_on_kedro
-   pipelinex.pipeline
 
 Submodules
 ----------
