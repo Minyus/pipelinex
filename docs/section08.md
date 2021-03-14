@@ -1,4 +1,4 @@
-## Kedro plugin for various data formats and packages 
+## Kedro-Extras: Kedro plugin to use various Python packages 
 
 Supplements to kedro.extras
 [pipelinex.extras](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras) provides features not available in [kedro.extras](https://github.com/quantumblacklabs/kedro/tree/master/kedro/extras).

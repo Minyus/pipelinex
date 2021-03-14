@@ -37,9 +37,9 @@ PipelineX provides the following options which can be used independently or toge
 
   Note: You do not need to install MLflow if you do not use.
 
-- Kedro plugin for various data formats and packages 
+- Kedro-Extras: Kedro plugin to use various Python packages 
 
-  Integration of Kedro with the additional Python packages as Kedro DataSets, Hooks, and wrappers. 
+  `Kedro-Extras` provides Kedro DataSets, decorators, and wrappers to use various Python packages such as: 
 
   - <[PyTorch](https://github.com/pytorch/pytorch)>
   - <[Ignite](https://github.com/pytorch/ignite)>
@@ -460,7 +460,7 @@ pprint(train_params_converted)
 
 Machine Learning projects involves with loading and saving various data in various ways such as:
 
-- files in local/network file system, Hadoop File System (HDFS), Amazon S3, Google Cloud Storage
+- files in local/network file system, Hadoop Distributed File System (HDFS), Amazon S3, Google Cloud Storage
   - e.g. CSV, JSON, YAML, pickle, images, models, etc.
 - databases 
   - Postgresql, MySQL etc.
@@ -986,7 +986,7 @@ Here are the comparisons.
   - Option to use MLflow tag or raise error if MLflow parameter values exceed 250 characters
 
 
-## Kedro plugin for various data formats and packages 
+## Kedro-Extras: Kedro plugin to use various Python packages 
 
 Supplements to kedro.extras
 [pipelinex.extras](https://github.com/Minyus/pipelinex/tree/master/src/pipelinex/extras) provides features not available in [kedro.extras](https://github.com/quantumblacklabs/kedro/tree/master/kedro/extras).

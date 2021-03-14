@@ -28,9 +28,9 @@ PipelineX provides the following options which can be used independently or toge
 
   Note: You do not need to install MLflow if you do not use.
 
-- Kedro plugin for various data formats and packages 
+- Kedro-Extras: Kedro plugin to use various Python packages 
 
-  Integration of Kedro with the additional Python packages as Kedro DataSets, Hooks, and wrappers. 
+  `Kedro-Extras` provides Kedro DataSets, decorators, and wrappers to use various Python packages such as: 
 
   - <[PyTorch](https://github.com/pytorch/pytorch)>
   - <[Ignite](https://github.com/pytorch/ignite)>

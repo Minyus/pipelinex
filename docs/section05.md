@@ -4,7 +4,7 @@
 
 Machine Learning projects involves with loading and saving various data in various ways such as:
 
-- files in local/network file system, Hadoop File System (HDFS), Amazon S3, Google Cloud Storage
+- files in local/network file system, Hadoop Distributed File System (HDFS), Amazon S3, Google Cloud Storage
   - e.g. CSV, JSON, YAML, pickle, images, models, etc.
 - databases 
   - Postgresql, MySQL etc.
