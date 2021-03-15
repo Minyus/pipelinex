@@ -1,6 +1,6 @@
 ## Kedro-Extras: Kedro plugin to use various Python packages 
 
-[pipelinex.extras API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.extras.html)
+[API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.extras.html)
 
 Kedro-Extras provides Kedro DataSets and decorators not available in [kedro.extras](https://github.com/quantumblacklabs/kedro/tree/master/kedro/extras).
 

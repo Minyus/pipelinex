@@ -1,13 +1,13 @@
 ## MLflow-on-Kedro: Kedro plugin for MLflow users
 
-[pipelinex.mlflow_on_kedro API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.html)
+[API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.html)
 
 ### How to use MLflow from Kedro projects
 
 Kedro DataSet and Hooks (callbacks) are provided to use MLflow without adding any MLflow-related code in the node (task) functions.
 
 - Kedro DataSet
-  - `pipelinex.MLflowDataSet`(https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/datasets/mlflow/mlflow_dataset.py)
+  - `pipelinex.MLflowDataSet`(https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/mlflow_on_kedro/datasets/mlflow/mlflow_dataset.py)
   
     Kedro Dataset that saves data to or loads data from MLflow depending on `dataset` argument as follows.
 
@@ -29,22 +29,22 @@ Kedro DataSet and Hooks (callbacks) are provided to use MLflow without adding an
 
     - If set to None (default), MLflow logging will be skipped.
 
-    Regarding all the options, see the [API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.extras.datasets.mlflow.html#module-pipelinex.extras.datasets.mlflow.mlflow_dataset)
+    Regarding all the options, please see the [API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.datasets.mlflow.html)
 
 - Kedro Hooks 
 
-  - [`pipelinex.MLflowBasicLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_basic_logger.py): Configures MLflow logging and logs duration time for the pipeline to MLflow.
+  - [`pipelinex.MLflowBasicLoggerHook`](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.hooks.mlflow.html#module-pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_basic_logger): Configures MLflow logging and logs duration time for the pipeline to MLflow.
 
-  - [`pipelinex.MLflowArtifactsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_artifacts_logger.py): Logs artifacts of specified file paths and dataset names to MLflow.
+  - [`pipelinex.MLflowArtifactsLoggerHook`](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.hooks.mlflow.html#module-pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_artifacts_logger): Logs artifacts of specified file paths and dataset names to MLflow.
     
-  - [`pipelinex.MLflowDataSetsLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_outputs_logger.py): Logs datasets of (list of) float/int and str classes to MLflow.
+  - [`pipelinex.MLflowDataSetsLoggerHook`](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.hooks.mlflow.html#pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_datasets_logger.MLflowDataSetsLoggerHook): Logs datasets of (list of) float/int and str classes to MLflow.
 
-  - [`pipelinex.MLflowTimeLoggerHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/mlflow/mlflow_time_logger.py): Logs duration time for each node (task) to MLflow and optionally visualizes the execution logs as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed. 
+  - [`pipelinex.MLflowTimeLoggerHook`](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.hooks.mlflow.html#pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_time_logger.MLflowTimeLoggerHook): Logs duration time for each node (task) to MLflow and optionally visualizes the execution logs as a Gantt chart by [`plotly.figure_factory.create_gantt`](https://plotly.github.io/plotly.py-docs/generated/plotly.figure_factory.create_gantt.html) if `plotly` is installed. 
   
-  - [`pipelinex.AddTransformersHook`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/hooks/add_transformers.py): Adds Kedro transformers such as:
-    - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://github.com/Minyus/pipelinex/blob/master/src/pipelinex/extras/transformers/mlflow/mlflow_io_time_logger.py): Logs duration time to load and save each dataset with args:
+  - [`pipelinex.AddTransformersHook`](https://pipelinex.readthedocs.io/en/latest/pipelinex.extras.hooks.html#pipelinex.extras.hooks.add_transformers.AddTransformersHook): Adds Kedro transformers such as:
+    - [`pipelinex.MLflowIOTimeLoggerTransformer`](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.transformers.mlflow.html#pipelinex.mlflow_on_kedro.transformers.mlflow.mlflow_io_time_logger.MLflowIOTimeLoggerTransformer): Logs duration time to load and save each dataset with args:
   
-  Regarding all the options, see the [API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.extras.hooks.mlflow.html#module-pipelinex.extras.hooks.mlflow)
+  Regarding all the options, please see the [API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.mlflow_on_kedro.hooks.mlflow.html)
 
   MLflow-ready Kedro projects can be generated by the [Kedro starters](https://github.com/Minyus/kedro-starters-sklearn) (Cookiecutter template) which include the following example config:
 
@@ -142,12 +142,12 @@ Here are the comparisons.
     - If the data type is dict, the value will be flattened with dot (".") as
     the separator and then saved/loaded as either an MLflow metric or parameter 
     based on each data type as explained above. 
-    - For example, `"data_loading_config": {"train": {"batch_size": 32}}` will be logged as MLflow metric of `"data_loading_config.train.batch_size": 32`)
+    - For example, `"data_loading_config": {"train": {"batch_size": 32}}` will be logged as MLflow metric of `"data_loading_config.train.batch_size": 32`
   - [Flexible config per DataSet] For each Kedro DataSet, it is possible to configure differently. For example, a dict value can be logged as an MLflow parameter (string) as is while another one can be logged as an MLflow metric after being flattened.
   - [Direct artifact logging] Option to specify the paths of any data to log as MLflow artifacts after Kedro pipeline runs without using a Kedro DataSet, which is useful if you want to save local files (e.g. info/warning/error log files, intermediate model weights saved by Machine Learning packages such as PyTorch and TensorFlow, etc.) 
   - [Environment Variable logging] Option to log Environment Variables
   - [Downloading] Option to download MLflow artifacts, params, metrics from an existing MLflow experiment run using the Kedro DataSet
-  - [Up to date] Support for Kedro 0.17.0 (released in Dec 2020) or later 
+  - [Up to date] Support for Kedro 0.17.x (released in Dec 2020) or later 
 
 - Features provided by only kedro-mlflow
   - A wrapper for MLflow's `log_model`

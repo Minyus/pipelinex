@@ -1,6 +1,6 @@
 ## Flex-Kedro: Kedro plugin for flexible config
 
-[pipelinex.flex_kedro API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.flex_kedro.html)
+[API document](https://pipelinex.readthedocs.io/en/latest/pipelinex.flex_kedro.html)
 
 Flex-Kedro provides more options to configure Kedro projects flexibly and thus quickly by KFlex-Kedro-Pipeline and Flex-Kedro-Context features.
 
@@ -43,13 +43,14 @@ PIPELINES:
         outputs: pred_df
 ```
 
-#### Configure Kedro run config using `RUN_CONFIG` key in `parameters.yml`
+#### Configure Kedro run config in `parameters.yml`
 
-- Optionally run nodes in parallel
+You can specify the run config in `parameters.yml` using `RUN_CONFIG` key instead of specifying the args for `kedro run` command for every run. 
 
-- Optionally run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.)
+You can still set the args for `kedro run` to overwrite. 
 
-Note: You can use Kedro CLI to overwrite these run configs.
+In addition to the args for `kedro run`, you can opt to run only missing nodes (skip tasks which have already been run to resume pipeline using the intermediate data files or databases.) by `only_missing` key.
+
 
 ```yaml
 # parameters.yml
