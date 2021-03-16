@@ -6,12 +6,87 @@ Flex-Kedro provides more options to configure Kedro projects flexibly and thus q
 
 ### Flex-Kedro-Pipeline: Kedro plugin for quicker pipeline set up 
 
-If you want to define Kedro pipelines quickly, you can consider to use `pipelinex.FlexiblePipeline` instead of `kedro.pipeline.Pipeline`. `pipelinex.FlexiblePipeline` adds the following options to `kedro.pipeline.Pipeline`. 
-- Optionally specify the default Python module (path of .py file) if you want to omit the module name
-- Optionally specify the Python function decorator to apply to each node
+If you want to define Kedro pipelines quickly, you can consider to use `pipelinex.FlexiblePipeline` instead of `kedro.pipeline.Pipeline`. `pipelinex.FlexiblePipeline` adds the following options to `kedro.pipeline.Pipeline`.
+- To define each node, dict can be used instead of `kedro.pipeline.node` 
+
+  Example:
+
+  ```python
+  pipelinex.FlexiblePipeline(
+      nodes=[dict(func=task_func1, inputs="my_input", outputs="my_output")]
+  )
+  ```
+
+  will be equivalent to:
+
+  ```python
+  kedro.pipeline.Pipeline(
+      nodes=[
+          kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")
+      ]
+  )
+  ```
+
 - For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
 
-An example is available in the Flex-Kedro-Context section.
+  Example:
+
+  ```python
+  pipelinex.FlexiblePipeline(
+      nodes=[
+          dict(
+              func=[task_func1, task_func2, task_func3],
+              inputs="my_input",
+              outputs="my_output",
+          )
+      ]
+  )
+  ```
+
+  will be equivalent to:
+
+  ```python
+  kedro.pipeline.Pipeline(
+      nodes=[
+          kedro.pipeline.node(
+              func=task_func1, inputs="my_input", outputs="my_output__001"
+          ),
+          kedro.pipeline.node(
+              func=task_func2, inputs="my_output__001", outputs="my_output__002"
+          ),
+          kedro.pipeline.node(
+              func=task_func3, inputs="my_output__002", outputs="my_output"
+          ),
+      ]
+  )
+  ```
+
+- Optionally specify the Python function decorator(s) to apply to multiple nodes under the pipeline using `decorator` argument instead of using [`decorate`](https://kedro.readthedocs.io/en/stable/kedro.pipeline.Pipeline.html#kedro.pipeline.Pipeline.decorate) method of `kedro.pipeline.Pipeline`.
+
+  Example:
+
+  ```python
+  pipelinex.FlexiblePipeline(
+      nodes=[
+          kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")
+      ],
+      decorator=[task_deco, task_deco],
+  )
+  ```
+
+  will be equivalent to:
+
+  ```python
+  kedro.pipeline.Pipeline(
+      nodes=[
+          kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")
+      ]
+  ).decorate(task_deco, task_deco)
+
+  ```
+
+- Optionally specify the default python module (path of .py file) if you do not want to repeat the same (deep and/or long) Python module (e.g. `foo.bar.my_task1`, `foo.bar.my_task2`, etc.)
+
 
 ### Flex-Kedro-Context: Kedro plugin for YAML lovers
 

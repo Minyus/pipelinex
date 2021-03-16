@@ -1,4 +1,4 @@
-## Getting Started with PipelineX 
+## Getting Started with PipelineX
 
 ### Kedro 0.17.x Starter projects
 
