@@ -1,12 +1,14 @@
 ## Install PipelineX
 
-- [Option 1] pip install from the PyPI:
+### [Option 1] Install from the PyPI
 
 ```bash
 pip install pipelinex
 ```
 
-- [Option 2] development install (will be updated as you modify the source code):
+### [Option 2] Development install 
+
+This is recommended only if you want to modify the source code of PipelineX.
 
 ```bash
 git clone https://github.com/Minyus/pipelinex.git

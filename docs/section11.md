@@ -6,5 +6,5 @@ Please see [CONTRIBUTING.md](https://github.com/Minyus/pipelinex/blob/master/CON
 
 ### Contributor list
 
-- <[shibuiwilliam](https://github.com/shibuiwilliam)>
-- <[MarchRaBBiT](https://github.com/MarchRaBBiT)>
+- <[@shibuiwilliam](https://github.com/shibuiwilliam)>
+- <[@MarchRaBBiT](https://github.com/MarchRaBBiT)>

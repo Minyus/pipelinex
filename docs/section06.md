@@ -6,8 +6,12 @@ Flex-Kedro provides more options to configure Kedro projects flexibly and thus q
 
 ### Flex-Kedro-Pipeline: Kedro plugin for quicker pipeline set up 
 
-If you want to define Kedro pipelines quickly, you can consider to use `pipelinex.FlexiblePipeline` instead of `kedro.pipeline.Pipeline`. `pipelinex.FlexiblePipeline` adds the following options to `kedro.pipeline.Pipeline`.
-- To define each node, dict can be used instead of `kedro.pipeline.node` 
+If you want to define Kedro pipelines quickly, you can consider to use `pipelinex.FlexiblePipeline` instead of `kedro.pipeline.Pipeline`. 
+`pipelinex.FlexiblePipeline` adds the following options to `kedro.pipeline.Pipeline`.
+
+#### Dict for nodes
+
+To define each node, dict can be used instead of `kedro.pipeline.node`. 
 
   Example:
 
@@ -27,7 +31,9 @@ If you want to define Kedro pipelines quickly, you can consider to use `pipeline
   )
   ```
 
-- For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
+#### Sequential nodes
+
+For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
 
   Example:
 
@@ -60,6 +66,8 @@ If you want to define Kedro pipelines quickly, you can consider to use `pipeline
       ]
   )
   ```
+
+#### Decorators without using the method
 
 - Optionally specify the Python function decorator(s) to apply to multiple nodes under the pipeline using `decorator` argument instead of using [`decorate`](https://kedro.readthedocs.io/en/stable/kedro.pipeline.Pipeline.html#kedro.pipeline.Pipeline.decorate) method of `kedro.pipeline.Pipeline`.
 

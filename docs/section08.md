@@ -306,12 +306,4 @@ Wrappers of OpenCV and `ImagesLocalDataSet` are the solution. You can concentrat
 
 If you are devepping an image processing pipeline consisting of 5 steps and you have 10 images, for example, you can check 10 generated images in each of 5 folders, 50 images in total, during development.
 
-### Use with PyTorch Lightning
-
-(To-do: contributions are welcome.)
-
-### Use with TensorFlow/Keras
-
-(To-do: contributions are welcome.)
-
 

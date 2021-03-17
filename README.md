@@ -49,13 +49,15 @@ Please refer [here](https://github.com/Minyus/Python_Packages_for_Pipeline_Workf
 
 ## Install PipelineX
 
-- [Option 1] pip install from the PyPI:
+### [Option 1] Install from the PyPI
 
 ```bash
 pip install pipelinex
 ```
 
-- [Option 2] development install (will be updated as you modify the source code):
+### [Option 2] Development install 
+
+This is recommended only if you want to modify the source code of PipelineX.
 
 ```bash
 git clone https://github.com/Minyus/pipelinex.git
@@ -744,8 +746,12 @@ Flex-Kedro provides more options to configure Kedro projects flexibly and thus q
 
 ### Flex-Kedro-Pipeline: Kedro plugin for quicker pipeline set up 
 
-If you want to define Kedro pipelines quickly, you can consider to use `pipelinex.FlexiblePipeline` instead of `kedro.pipeline.Pipeline`. `pipelinex.FlexiblePipeline` adds the following options to `kedro.pipeline.Pipeline`.
-- To define each node, dict can be used instead of `kedro.pipeline.node` 
+If you want to define Kedro pipelines quickly, you can consider to use `pipelinex.FlexiblePipeline` instead of `kedro.pipeline.Pipeline`. 
+`pipelinex.FlexiblePipeline` adds the following options to `kedro.pipeline.Pipeline`.
+
+#### Dict for nodes
+
+To define each node, dict can be used instead of `kedro.pipeline.node`. 
 
   Example:
 
@@ -765,7 +771,9 @@ If you want to define Kedro pipelines quickly, you can consider to use `pipeline
   )
   ```
 
-- For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
+#### Sequential nodes
+
+For sub-pipelines consisting of nodes of only single input and single output, you can optionally use Sequential API similar to PyTorch (`torch.nn.Sequential`) and Keras (`tf.keras.Sequential`)
 
   Example:
 
@@ -798,6 +806,8 @@ If you want to define Kedro pipelines quickly, you can consider to use `pipeline
       ]
   )
   ```
+
+#### Decorators without using the method
 
 - Optionally specify the Python function decorator(s) to apply to multiple nodes under the pipeline using `decorator` argument instead of using [`decorate`](https://kedro.readthedocs.io/en/stable/kedro.pipeline.Pipeline.html#kedro.pipeline.Pipeline.decorate) method of `kedro.pipeline.Pipeline`.
 
@@ -1371,14 +1381,6 @@ Wrappers of OpenCV and `ImagesLocalDataSet` are the solution. You can concentrat
 
 If you are devepping an image processing pipeline consisting of 5 steps and you have 10 images, for example, you can check 10 generated images in each of 5 folders, 50 images in total, during development.
 
-### Use with PyTorch Lightning
-
-(To-do: contributions are welcome.)
-
-### Use with TensorFlow/Keras
-
-(To-do: contributions are welcome.)
-
 
 ## Story behind PipelineX
 
@@ -1405,9 +1407,8 @@ After I confirmed my package worked well with the Kaggle competition, I released
 
 ## Author
 
-Yusuke Minami
+[Yusuke Minami @Minyus](https://github.com/Minyus)
 
-- <[GitHub](https://github.com/Minyus)>
 - <[Linkedin](https://www.linkedin.com/in/yusukeminami/)>
 - <[Twitter](https://twitter.com/Minyus86)>
 
@@ -1419,5 +1420,5 @@ Please see [CONTRIBUTING.md](https://github.com/Minyus/pipelinex/blob/master/CON
 
 ### Contributor list
 
-- <[shibuiwilliam](https://github.com/shibuiwilliam)>
-- <[MarchRaBBiT](https://github.com/MarchRaBBiT)>
+- <[@shibuiwilliam](https://github.com/shibuiwilliam)>
+- <[@MarchRaBBiT](https://github.com/MarchRaBBiT)>
