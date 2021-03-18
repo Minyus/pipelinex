@@ -4,7 +4,9 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Minyus/pipelinex/blob/master/notebooks/HatchDict_demo.ipynb)
 
-### Import-less Python object (class and function)
+### Python objects in YAML/JSON
+
+#### Introduction to YAML
 
 YAML is a common text format used for application config files.
 
@@ -104,7 +106,12 @@ This way is inefficient as we need to add `import` and `if` statements for the o
 
 Any better way?
 
+#### Python tags in YAML
+
 PyYAML provides [UnsafeLoader](<https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation>) which can load Python objects without `import`.
+
+
+Example usage of `!!python/object`
 
 ```python
 import yaml
@@ -136,6 +143,29 @@ LogisticRegression(C=1.23456, class_weight=None, dual=None, fit_intercept=None,
                    solver=None, tol=None, verbose=None, warm_start=None)
 ```
 
+Example usage of `!!python/name`
+
+```python
+import yaml
+
+# Read parameters dict from a YAML file in actual use
+params_yaml = """
+numpy_array_func: 
+  !!python/name:numpy.array
+"""
+
+try:
+    parameters = yaml.unsafe_load(params_yaml)  # unsafe_load required for PyYAML 5.1 or later
+except:
+    parameters = yaml.load(params_yaml)
+
+numpy_array_func = parameters.get("numpy_array_func")
+
+import numpy
+
+assert numpy_array_func == numpy.array
+```
+
 [PyYAML's `!!python/object` and `!!python/name`](https://pyyaml.org/wiki/PyYAMLDocumentation), however, has the following problems.
 
 - `!!python/object` or `!!python/name` are too long to write.
@@ -145,6 +175,8 @@ Any better way?
 
 PipelineX provides the solution.
 
+#### Alternative to Python tags in YAML
+
 PipelineX's HatchDict provides an easier syntax, as follows, to convert Python dictionaries read from YAML or JSON files to Python objects without `import`.
 
 - Use `=` key to specify the package, module, and class/function with `.` separator in `foo_package.bar_module.baz_class` format.
@@ -153,9 +185,9 @@ PipelineX's HatchDict provides an easier syntax, as follows, to convert Python d
 
 To return an object instance like PyYAML's `!!python/object`, feed positional and/or keyword arguments. If there is no arguments, just feed null (known as `None` in Python) to `_` key.
 
-To return an uninstantiated (raw) object like PyYAML's `!!python/name`, just feed `=` key without positional nor keyword arugments.
+To return an uninstantiated (raw) object like PyYAML's `!!python/name`, just feed `=` key without positional nor keyword arguments.
 
-Example:
+Example alternative to `!!python/object`:
 
 ```python
 from pipelinex import HatchDict
@@ -199,13 +231,35 @@ LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
                    warm_start=False)
 ```
 
+Example alternative to `!!python/name`:
+
+```python
+from pipelinex import HatchDict
+import yaml
+
+# Read parameters dict from a YAML file in actual use
+params_yaml="""
+numpy_array_func:
+  =: numpy.array
+"""
+parameters = yaml.safe_load(params_yaml)
+
+numpy_array_func = HatchDict(parameters).get("numpy_array_func")
+
+import numpy
+
+assert numpy_array_func == numpy.array
+```
+
 This import-less Python object supports nested objects (objects that receives object arguments) by recursive depth-first search.
 
-For more examples, please see [Use with PyTorch](https://github.com/Minyus/pipelinex#use-with-pytorch) and `parameters.yml` in [example/demo projects](https://github.com/Minyus/pipelinex#exampledemo-projects) .
+For more examples, please see [Use with PyTorch](https://pipelinex.readthedocs.io/en/latest/section08.html#use-with-pytorch). 
 
 This import-less Python object feature, inspired by the fact that Kedro uses `load_obj` for file I/O (`DataSet`), uses `load_obj` copied from [kedro.utils](https://github.com/quantumblacklabs/kedro/blob/0.15.4/kedro/utils.py) which dynamically imports Python objects using [`importlib`](https://docs.python.org/3.6/library/importlib.html), a Python standard library.
 
-### Anchor-less aliasing (self-lookup)
+### Anchor-less aliasing in YAML/JSON
+
+#### Aliasing in YAML
 
 To avoid repeating, YAML natively provides Anchor&Alias [Anchor&Alias](https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html) feature, and [Jsonnet](https://github.com/google/jsonnet) provides [Variable](https://github.com/google/jsonnet/blob/master/examples/variables.jsonnet) feature to JSON.
 
@@ -236,7 +290,9 @@ pprint(train_params_dict)
 
 Unfortunately, YAML and Jsonnet require a medium to share the same value.
 
-This is why PipelineX provides Anchor-less aliasing feature.
+This is why PipelineX provides anchor-less aliasing feature.
+
+#### Alternative to aliasing in YAML
 
 You can directly look up another value in the same YAML/JSON file using "$" key without an anchor nor variable.
 
@@ -277,7 +333,7 @@ pprint(train_params)
 {'train_batch_size': 32, 'val_batch_size': 32}
 ```
 
-### Python expression
+### Python expression in YAML/JSON
 
 Strings wrapped in parentheses are evaluated as a Python expression.
 
