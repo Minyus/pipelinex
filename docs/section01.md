@@ -6,7 +6,7 @@ PipelineX provides the following options which can be used independently or toge
 
 - HatchDict: Python in YAML/JSON
 
-  `HatchDict` provides extension for YAML/JSON summarized as follows.
+  `HatchDict` is a Python dict parser that enables you to include Python objects in YAML/JSON files. 
 
   Note: `HatchDict` can be used with or without Kedro.
 

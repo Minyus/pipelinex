@@ -4,8 +4,8 @@ PipelineX: Python package to build ML pipelines for experimentation with Kedro, 
 
 [![Python version](https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/pipelinex/)
 [![PyPI version](https://badge.fury.io/py/pipelinex.svg)](https://badge.fury.io/py/pipelinex)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/Minyus/pipelinex/blob/master/LICENSEj)
 [![Documentation](https://readthedocs.org/projects/pipelinex/badge/?version=latest)](https://pipelinex.readthedocs.io/)
-
 
 ## PipelineX Overview
 
@@ -15,7 +15,7 @@ PipelineX provides the following options which can be used independently or toge
 
 - HatchDict: Python in YAML/JSON
 
-  `HatchDict` provides extension for YAML/JSON summarized as follows.
+  `HatchDict` is a Python dict parser that enables you to include Python objects in YAML/JSON files. 
 
   Note: `HatchDict` can be used with or without Kedro.
 

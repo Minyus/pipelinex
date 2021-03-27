@@ -10,6 +10,7 @@ Welcome to PipelineX's documentation!
    :maxdepth: 10
    :caption: Contents:
 
+   Badges <section00.md>
    section01.md
    section02.md
    section03.md
