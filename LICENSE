@@ -1,17 +1,7 @@
-Copyright 2019 Yusuke Minami (@Minyus)
-as the main author
+For all components of PipelineX:
 
-Copyright 2018-2019 QuantumBlack Visual Analytics Limited
-regarding the following parts:
-- `load_obj` function copied from https://github.com/quantumblacklabs/kedro/blob/0.15.4/kedro/utils.py
-- `run` method copied from https://github.com/quantumblacklabs/kedro/blob/0.15.3/kedro/context/context.py
-- `decorators.py` copied from https://github.com/quantumblacklabs/kedro/blob/0.15.3/kedro/pipeline/decorators.py
-- `memory_profiler.py` copied from https://github.com/quantumblacklabs/kedro/blob/0.15.9/kedro/extras/decorators/memory_profiler.py
-- `csv_local.py` copied from https://github.com/quantumblacklabs/kedro/blob/0.15.9/kedro/io/csv_local.py
-- `api_dataset.py` copied from https://github.com/quantumblacklabs/kedro/blob/b996cb673bf7ada4dd8356f7fd22894a9cf7f51d/kedro/extras/datasets/api/api_dataset.py
-- `test_api_dataset.py` copied from https://github.com/quantumblacklabs/kedro/blob/b996cb673bf7ada4dd8356f7fd22894a9cf7f51d/tests/extras/datasets/api/test_api_dataset.py
-- `core.py` copied from https://github.com/quantumblacklabs/kedro/blob/153ab056517b543801dbe0b092c29ddea24b73c9/kedro/io/core.py
-- Some parts of `MLflowDataSet` copied from https://github.com/quantumblacklabs/kedro/blob/0.17.0/kedro/io/cached_dataset.py
+
+Copyright 2021 Yusuke Minami (@Minyus)
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,8 +17,37 @@ limitations under the License.
 
 
 
-Regarding the following parts:
-- dataset_dicts in `MLflowDataSet` copied from https://github.com/tamsanh/kedro-wings/blob/master/kedro_wings/kedro_wings.py#L37-L48
+For the following components of PipelineX:
+- [pipelinex.hatch_dict] `load_obj` function copied from https://github.com/quantumblacklabs/kedro/blob/0.15.4/kedro/utils.py
+- [pipelinex.flex_kedro]`run` method copied from https://github.com/quantumblacklabs/kedro/blob/0.15.3/kedro/context/context.py
+- [pipelinex.extras] `decorators.py` copied from https://github.com/quantumblacklabs/kedro/blob/0.15.3/kedro/pipeline/decorators.py
+- [pipelinex.extras] `memory_profiler.py` copied from https://github.com/quantumblacklabs/kedro/blob/0.15.9/kedro/extras/decorators/memory_profiler.py
+- [pipelinex.extras] `csv_local.py` copied from https://github.com/quantumblacklabs/kedro/blob/0.15.9/kedro/io/csv_local.py
+- [pipelinex.extras] `api_dataset.py` copied from https://github.com/quantumblacklabs/kedro/blob/b996cb673bf7ada4dd8356f7fd22894a9cf7f51d/kedro/extras/datasets/api/api_dataset.py
+- [pipelinex.extras] `test_api_dataset.py` copied from https://github.com/quantumblacklabs/kedro/blob/b996cb673bf7ada4dd8356f7fd22894a9cf7f51d/tests/extras/datasets/api/test_api_dataset.py
+- [pipelinex.extras] `core.py` copied from https://github.com/quantumblacklabs/kedro/blob/153ab056517b543801dbe0b092c29ddea24b73c9/kedro/io/core.py
+- [pipelinex.mlflow_on_kedro] Some parts of `MLflowDataSet` copied from https://github.com/quantumblacklabs/kedro/blob/0.17.0/kedro/io/cached_dataset.py
+
+
+Copyright 2018-2019 QuantumBlack Visual Analytics Limited
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+
+
+For the following components:
+- [pipelinex.mlflow_on_kedro] dataset_dicts in `MLflowDataSet` copied from https://github.com/tamsanh/kedro-wings/blob/master/kedro_wings/kedro_wings.py#L37-L48
+
 
 MIT License
 
@@ -54,8 +73,8 @@ SOFTWARE.
 
 
 
-Regarding the following parts:
-- `flexible_checkpoint.py` based on https://github.com/pytorch/ignite/blob/v0.2.1/ignite/handlers/checkpoint.py
+For the following components:
+- [pipelinex.extras] `flexible_checkpoint.py` based on https://github.com/pytorch/ignite/blob/v0.2.1/ignite/handlers/checkpoint.py
 
 BSD 3-Clause License
 
