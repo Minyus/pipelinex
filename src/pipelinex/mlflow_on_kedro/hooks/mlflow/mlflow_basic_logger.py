@@ -2,7 +2,7 @@ from importlib.util import find_spec
 from logging import getLogger
 from datetime import datetime, timedelta
 import time
-from typing import Any, Dict, List, Union  # NOQA
+from typing import Any, Dict, List, Optional, Union  # NOQA
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
@@ -44,6 +44,9 @@ class MLflowBasicLoggerHook:
         experiment_name: str = None,
         artifact_location: str = None,
         run_name: str = None,
+        run_id: str = None,
+        nested: bool = False,
+        tags: Optional[Dict[str, Any]] = None,
         offset_hours: float = 0,
         enable_logging_time_begin: bool = True,
         enable_logging_time_end: bool = True,
@@ -62,6 +65,13 @@ class MLflowBasicLoggerHook:
             artifact_location: `artifact_location` arg fed to:
                 https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.create_experiment
             run_name: Shown as 'Run Name' in MLflow UI.
+            run_id: An existing MLflow experiment run UUID instead of letting MLflow create
+                a new run under the experiment_name. `run_id` arg fed to:
+                https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.start_run
+            nested: `nested` arg fed to:
+                https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.start_run
+            tags: `tags` arg fed to:
+                https://www.mlflow.org/docs/latest/python_api/mlflow.html#mlflow.start_run
             offset_hours: The offset hour (e.g. 0 for UTC+00:00) to log in MLflow. 0 in default.
             enable_logging_time_begin: Enable logging the time the Kedro pipeline began. True in default.
             enable_logging_time_end: Enable logging the time the Kedro pipeline ended. True in default.

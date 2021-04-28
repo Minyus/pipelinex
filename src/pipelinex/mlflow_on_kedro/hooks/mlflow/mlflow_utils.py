@@ -100,9 +100,17 @@ def mlflow_log_values(d, enable_mlflow=True):
 
 
 def mlflow_start_run(
-    uri, experiment_name, artifact_location, run_name=None, enable_mlflow=True
+    uri=None,
+    run_id=None,
+    experiment_name=None,
+    artifact_location=None,
+    run_name=None,
+    nested=False,
+    tags=None,
+    enable_mlflow=True,
 ):
     if enable_mlflow:
+        assert run_id or experiment_name
 
         from mlflow import (
             create_experiment,
@@ -115,6 +123,15 @@ def mlflow_start_run(
         if uri:
             set_tracking_uri(uri)
 
+        if run_id:
+            start_run(
+                run_id=run_id,
+                run_name=run_name,
+                nested=nested,
+                tags=tags,
+            )
+            return
+
         if experiment_name:
             try:
                 experiment_id = create_experiment(
@@ -123,7 +140,12 @@ def mlflow_start_run(
                 )
             except MlflowException:
                 experiment_id = get_experiment_by_name(experiment_name).experiment_id
-            start_run(experiment_id=experiment_id, run_name=run_name)
+            start_run(
+                experiment_id=experiment_id,
+                run_name=run_name,
+                nested=nested,
+                tags=tags,
+            )
 
 
 def mlflow_end_run(enable_mlflow=True):
