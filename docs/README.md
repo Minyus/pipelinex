@@ -13,7 +13,7 @@ pip install pipelinex[docs]
 2. Generate rst (reStructuredText) files for API based on docstrings
 ```bash
 cd <repository>/docs
-sphinx-apidoc --module-first -o ./ ../src/pipelinex
+sphinx-apidoc -f --module-first -o ./ ../src/pipelinex
 ```
 
 3. Split the repository top README.md into smaller markdown files
