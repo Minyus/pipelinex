@@ -15,8 +15,6 @@ mlflow
 plotly
 scikit-learn
 scikit-image
-shap
-allennlp
 memory_profiler
 pynvml
 flatten-dict
