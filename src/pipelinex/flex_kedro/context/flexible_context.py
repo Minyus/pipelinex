@@ -15,6 +15,6 @@ class FlexibleContext(
 
 
 class MLflowFlexibleContext(FlexibleContext):
-    """ Deprecated alias for FlexibleContext for backward-compatibility """
+    """Deprecated alias for FlexibleContext for backward-compatibility"""
 
     pass

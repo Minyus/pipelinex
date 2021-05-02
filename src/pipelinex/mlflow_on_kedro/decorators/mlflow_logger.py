@@ -11,9 +11,7 @@ def _func_full_name(func: Callable):
 
 
 def _func_name(func: Callable):
-    return getattr(func, "__name__", "") or (
-        getattr(getattr(func, "__class__", ""), "__name__", "") + ".__call__"
-    )
+    return getattr(func, "__name__", "") or (getattr(getattr(func, "__class__", ""), "__name__", "") + ".__call__")
 
 
 def _human_readable_time(elapsed: float):  # pragma: no cover

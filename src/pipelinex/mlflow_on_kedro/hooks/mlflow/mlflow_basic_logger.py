@@ -102,17 +102,12 @@ class MLflowBasicLoggerHook:
         )
 
     @hook_impl
-    def before_pipeline_run(
-        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
-    ):
+    def before_pipeline_run(self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog):
         if self.logging_kedro_run_params:
             run_params_renamed = {
                 ("___" + k): v
                 for (k, v) in run_params.items()
-                if (
-                    isinstance(self.logging_kedro_run_params, str)
-                    and self.logging_kedro_run_params == "__ALL__"
-                )
+                if (isinstance(self.logging_kedro_run_params, str) and self.logging_kedro_run_params == "__ALL__")
                 or k in self.logging_kedro_run_params
             }
             mlflow_log_params(run_params_renamed, enable_mlflow=self.enable_mlflow)
@@ -129,9 +124,7 @@ class MLflowBasicLoggerHook:
             self._time_begin = time.time()
 
     @hook_impl
-    def after_pipeline_run(
-        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
-    ):
+    def after_pipeline_run(self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog):
         if self.enable_logging_time_end:
             timestamp, timestamp_int = get_timestamps(offset_hours=self.offset_hours)
             time_dict = {"__time_end": timestamp}

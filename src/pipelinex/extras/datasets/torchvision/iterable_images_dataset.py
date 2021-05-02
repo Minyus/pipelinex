@@ -36,9 +36,7 @@ class IterableImagesDataSet(AbstractVersionedDataSet):
                 None, the latest version will be loaded.
         """
 
-        super().__init__(
-            filepath=Path(filepath), version=version, exists_function=self._exists
-        )
+        super().__init__(filepath=Path(filepath), version=version, exists_function=self._exists)
         self._load_args = load_args
         self._save_args = save_args
 
@@ -59,7 +57,7 @@ class IterableImagesDataSet(AbstractVersionedDataSet):
         return vision_dataset
 
     def _save(self, vision_dataset) -> None:
-        """ Not Implemented """
+        """Not Implemented"""
         return None
 
     def _describe(self) -> Dict[str, Any]:

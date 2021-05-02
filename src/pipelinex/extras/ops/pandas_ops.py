@@ -62,9 +62,7 @@ def _preprocess_columns(columns):
 class DfBaseTask:
     method = None
 
-    def __init__(
-        self, groupby=None, columns=None, keep_others=False, method=None, **kwargs
-    ):
+    def __init__(self, groupby=None, columns=None, keep_others=False, method=None, **kwargs):
         if self.method is None:
             self.method = method
         columns_dict, columns = _preprocess_columns(columns)
@@ -256,9 +254,7 @@ class DfSample:
             if col_assign:
                 assert isinstance(col_assign, str)
                 sample_set = set(sample_arr.tolist())
-                df[col_assign] = df[col_sample].map(
-                    lambda v: np.int8(v in sample_set), na_action="ignore"
-                )
+                df[col_assign] = df[col_sample].map(lambda v: np.int8(v in sample_set), na_action="ignore")
             else:
                 sample_series = pd.Series(sample_arr, name=col_sample)
                 df = pd.merge(df, sample_series, how="right", on=col_sample)
@@ -321,57 +317,27 @@ class DfAddRowStat:
         cols_int = t_df.select_dtypes(include=INT_TYPES).columns.to_list()
 
         if cols_float:
-            df["{}_float_na_".format(prefix)] = (
-                df[cols_float].isna().astype("int8").sum(axis=1)
-            )
+            df["{}_float_na_".format(prefix)] = df[cols_float].isna().astype("int8").sum(axis=1)
 
-            df["{}_float_zero_".format(prefix)] = (
-                (df[cols_float] == 0.0).astype("int8").sum(axis=1)
-            )
-            df["{}_float_pos_".format(prefix)] = (
-                (df[cols_float] > 0.0).astype("int8").sum(axis=1)
-            )
-            df["{}_float_neg_".format(prefix)] = (
-                (df[cols_float] < 0.0).astype("int8").sum(axis=1)
-            )
-            df["{}_float_pos_ones_".format(prefix)] = (
-                (df[cols_float] == 1.0).astype("int8").sum(axis=1)
-            )
-            df["{}_float_neg_ones_".format(prefix)] = (
-                (df[cols_float] == -1.0).astype("int8").sum(axis=1)
-            )
-            df["{}_float_gt_pos_ones_".format(prefix)] = (
-                (df[cols_float] > 1.0).astype("int8").sum(axis=1)
-            )
-            df["{}_float_lt_neg_ones_".format(prefix)] = (
-                (df[cols_float] < -1.0).astype("int8").sum(axis=1)
-            )
+            df["{}_float_zero_".format(prefix)] = (df[cols_float] == 0.0).astype("int8").sum(axis=1)
+            df["{}_float_pos_".format(prefix)] = (df[cols_float] > 0.0).astype("int8").sum(axis=1)
+            df["{}_float_neg_".format(prefix)] = (df[cols_float] < 0.0).astype("int8").sum(axis=1)
+            df["{}_float_pos_ones_".format(prefix)] = (df[cols_float] == 1.0).astype("int8").sum(axis=1)
+            df["{}_float_neg_ones_".format(prefix)] = (df[cols_float] == -1.0).astype("int8").sum(axis=1)
+            df["{}_float_gt_pos_ones_".format(prefix)] = (df[cols_float] > 1.0).astype("int8").sum(axis=1)
+            df["{}_float_lt_neg_ones_".format(prefix)] = (df[cols_float] < -1.0).astype("int8").sum(axis=1)
             df["{}_float_max_".format(prefix)] = df[cols_float].max(axis=1)
             df["{}_float_min_".format(prefix)] = df[cols_float].min(axis=1)
             df["{}_float_mean_".format(prefix)] = df[cols_float].mean(axis=1)
 
         if cols_int:
-            df["{}_int_zero_".format(prefix)] = (
-                (df[cols_int] == 0).astype("int8").sum(axis=1)
-            )
-            df["{}_int_pos_".format(prefix)] = (
-                (df[cols_int] > 0).astype("int8").sum(axis=1)
-            )
-            df["{}_int_neg_".format(prefix)] = (
-                (df[cols_int] < 0).astype("int8").sum(axis=1)
-            )
-            df["{}_int_pos_ones_".format(prefix)] = (
-                (df[cols_int] == 1).astype("int8").sum(axis=1)
-            )
-            df["{}_int_neg_ones_".format(prefix)] = (
-                (df[cols_int] == -1).astype("int8").sum(axis=1)
-            )
-            df["{}_int_gt_pos_ones_".format(prefix)] = (
-                (df[cols_int] > 1).astype("int8").sum(axis=1)
-            )
-            df["{}_int_lt_neg_ones_".format(prefix)] = (
-                (df[cols_int] < -1).astype("int8").sum(axis=1)
-            )
+            df["{}_int_zero_".format(prefix)] = (df[cols_int] == 0).astype("int8").sum(axis=1)
+            df["{}_int_pos_".format(prefix)] = (df[cols_int] > 0).astype("int8").sum(axis=1)
+            df["{}_int_neg_".format(prefix)] = (df[cols_int] < 0).astype("int8").sum(axis=1)
+            df["{}_int_pos_ones_".format(prefix)] = (df[cols_int] == 1).astype("int8").sum(axis=1)
+            df["{}_int_neg_ones_".format(prefix)] = (df[cols_int] == -1).astype("int8").sum(axis=1)
+            df["{}_int_gt_pos_ones_".format(prefix)] = (df[cols_int] > 1).astype("int8").sum(axis=1)
+            df["{}_int_lt_neg_ones_".format(prefix)] = (df[cols_int] < -1).astype("int8").sum(axis=1)
             df["{}_int_max_".format(prefix)] = df[cols_int].max(axis=1)
             df["{}_int_min_".format(prefix)] = df[cols_int].min(axis=1)
             df["{}_int_mean_".format(prefix)] = df[cols_int].mean(axis=1)
@@ -642,9 +608,7 @@ class DfSlice:
 
 
 class DfFocusTransform:
-    def __init__(
-        self, focus, columns, groupby=None, keep_others=False, func="max", **kwargs
-    ):
+    def __init__(self, focus, columns, groupby=None, keep_others=False, func="max", **kwargs):
         assert isinstance(focus, (dict, str))
         assert isinstance(columns, (dict, list, str))
         columns_dict, columns = _preprocess_columns(columns)
@@ -664,16 +628,8 @@ class DfFocusTransform:
         keep_others = self.keep_others
         func = self.func
         kwargs = self.kwargs
-        df = DfCondReplace(
-            replace_if_flag=False, flag=focus, columns=columns_dict, value=np.nan
-        )(df)
-        df = DfTransform(
-            groupby=groupby,
-            columns=columns,
-            keep_others=keep_others,
-            func=func,
-            **kwargs
-        )(df)
+        df = DfCondReplace(replace_if_flag=False, flag=focus, columns=columns_dict, value=np.nan)(df)
+        df = DfTransform(groupby=groupby, columns=columns, keep_others=keep_others, func=func, **kwargs)(df)
         return df
 
 
@@ -926,9 +882,9 @@ class DfSpatialFeatures:
         for g_name, g_df in g_df_iter:
             if isinstance(affinity_scale, dict):
                 affinity_scale_1darr = g_df.eval(**affinity_scale).values
-                affinity_scale = np.expand_dims(
-                    affinity_scale_1darr, axis=0
-                ) * np.expand_dims(affinity_scale_1darr, axis=1)
+                affinity_scale = np.expand_dims(affinity_scale_1darr, axis=0) * np.expand_dims(
+                    affinity_scale_1darr, axis=1
+                )
 
             coo_2darr = g_df[coo_cols].values
             if output in ["distance"]:
@@ -972,9 +928,7 @@ class DfSpatialFeatures:
                     sort=sort,
                 )
                 if output in ["n_connected"]:
-                    output_2darr = np.sum(
-                        (output_2darr < 1.0e-8).astype(np.uint64), axis=1, keepdims=True
-                    )
+                    output_2darr = np.sum((output_2darr < 1.0e-8).astype(np.uint64), axis=1, keepdims=True)
             else:
                 raise NotImplementedError(output)
             output_2darr_list.append(output_2darr)
@@ -989,12 +943,8 @@ class DfSpatialFeatures:
             if keep_others:
                 return DfAssignColumns(name_fmt=col_name_fmt)(df, output_2darr)
             else:
-                output_col_names = [
-                    col_name_fmt.format(i) for i in range(output_2darr.shape[1])
-                ]
-                return pd.DataFrame(
-                    output_2darr, columns=output_col_names, index=df.index
-                )
+                output_col_names = [col_name_fmt.format(i) for i in range(output_2darr.shape[1])]
+                return pd.DataFrame(output_2darr, columns=output_col_names, index=df.index)
 
 
 def nested_dict_to_df(d, row_oriented=True, index_name="index", reset_index=True):
@@ -1010,9 +960,7 @@ def nested_dict_to_df(d, row_oriented=True, index_name="index", reset_index=True
 
 class NestedDictToDf:
     def __init__(self, row_oriented=True, index_name="index", reset_index=True):
-        self.kwargs = dict(
-            row_oriented=row_oriented, index_name=index_name, reset_index=reset_index
-        )
+        self.kwargs = dict(row_oriented=row_oriented, index_name=index_name, reset_index=reset_index)
 
     def __call__(self, d):
         return nested_dict_to_df(d, **self.kwargs)

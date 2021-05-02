@@ -16,9 +16,7 @@ class AddTransformersHook:
 
     def __init__(
         self,
-        transformers: Union[
-            AbstractTransformer, List[AbstractTransformer], Tuple[AbstractTransformer]
-        ],
+        transformers: Union[AbstractTransformer, List[AbstractTransformer], Tuple[AbstractTransformer]],
     ):
         """
         Args:

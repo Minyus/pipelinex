@@ -68,9 +68,7 @@ class HatchDict:
                 "int",
             }
         ), "Received key: {}".format(key)
-        assert lookup.__class__.__name__ in {"dict"}, "Received lookup: s{}".format(
-            lookup
-        )
+        assert lookup.__class__.__name__ in {"dict"}, "Received lookup: s{}".format(lookup)
 
         if key is None:
             d = self.egg
@@ -91,9 +89,7 @@ class HatchDict:
             self.warmed_egg = d
 
         if self.eval_parentheses:
-            d, s = _dfs_apply(
-                d_input=d, hatch_args=dict(eval_parentheses=self.eval_parentheses)
-            )
+            d, s = _dfs_apply(d_input=d, hatch_args=dict(eval_parentheses=self.eval_parentheses))
             self.warmed_egg = d
 
         lookup_input = {}
@@ -184,12 +180,7 @@ def _dfs_apply(
             s.append(_s)
 
     if isinstance(d_input, str):
-        if (
-            eval_parentheses
-            and len(d_input) >= 2
-            and d_input[0] == "("
-            and d_input[-1] == ")"
-        ):
+        if eval_parentheses and len(d_input) >= 2 and d_input[0] == "(" and d_input[-1] == ")":
             d = eval(d)
 
     return d, s
@@ -214,9 +205,7 @@ def _hatch(
 
         attribute_name = d.pop(attr_key, None)
         for k in d:
-            assert isinstance(
-                k, str
-            ), "Non-string key '{}' in '{}' is not valid for callable: '{}'.".format(
+            assert isinstance(k, str), "Non-string key '{}' in '{}' is not valid for callable: '{}'.".format(
                 k, d, a.__name__
             )
         d = a(*pos_args, **d)
@@ -339,7 +328,5 @@ def load_obj(obj_path: str, default_obj_path: str = "") -> Any:
     obj_name = obj_path_list[0]
     module_obj = importlib.import_module(obj_path)
     if not hasattr(module_obj, obj_name):
-        raise AttributeError(
-            "Object `{}` cannot be loaded from `{}`.".format(obj_name, obj_path)
-        )
+        raise AttributeError("Object `{}` cannot be loaded from `{}`.".format(obj_name, obj_path))
     return getattr(module_obj, obj_name)

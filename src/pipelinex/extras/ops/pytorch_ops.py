@@ -13,11 +13,10 @@ class ModuleListMerge(torch.nn.Sequential):
 class ModuleConcat(ModuleListMerge):
     def forward(self, input):
         tt_list = super().forward(input)
-        assert len(set([tuple(list(tt.size())[2:]) for tt in tt_list])) == 1, (
-            "Sizes of tensors must match except in dimension 1. "
-            "\n{}\n got tensor sizes: \n{}\n".format(
-                self, [tt.size() for tt in tt_list]
-            )
+        assert (
+            len(set([tuple(list(tt.size())[2:]) for tt in tt_list])) == 1
+        ), "Sizes of tensors must match except in dimension 1. " "\n{}\n got tensor sizes: \n{}\n".format(
+            self, [tt.size() for tt in tt_list]
         )
         return torch.cat(tt_list, dim=1)
 
@@ -25,9 +24,7 @@ class ModuleConcat(ModuleListMerge):
 def _check_size_match(self, tt_list):
     assert (
         len(set([tuple(list(tt.size())) for tt in tt_list])) == 1
-    ), "Sizes of tensors must match. " "\n{}\n got tensor sizes: \n{}\n".format(
-        self, [tt.size() for tt in tt_list]
-    )
+    ), "Sizes of tensors must match. " "\n{}\n got tensor sizes: \n{}\n".format(self, [tt.size() for tt in tt_list])
 
 
 def element_wise_sum(tt_list):
@@ -210,15 +207,7 @@ def as_tuple(x):
     return tuple(x) if isinstance(x, (list, type(np.array))) else x
 
 
-def setup_conv_params(
-    kernel_size=1,
-    dilation=None,
-    padding=None,
-    stride=None,
-    raise_error=False,
-    *args,
-    **kwargs
-):
+def setup_conv_params(kernel_size=1, dilation=None, padding=None, stride=None, raise_error=False, *args, **kwargs):
     kwargs["kernel_size"] = as_tuple(kernel_size)
     if dilation is not None:
         kwargs["dilation"] = as_tuple(dilation)
@@ -231,9 +220,7 @@ def setup_conv_params(
         if raise_error and r:
             raise ValueError(
                 "Invalid combination of kernel_size: {}, dilation: {}. "
-                "If dilation is odd, kernel_size must be even.".format(
-                    kernel_size, dilation
-                )
+                "If dilation is odd, kernel_size must be even.".format(kernel_size, dilation)
             )
         kwargs["padding"] = tuple(p)
     else:
@@ -331,29 +318,17 @@ class ModuleBottleneck2d(torch.nn.Sequential):
         activation = activation or TensorSkip()
         super().__init__(
             TensorConv2d(
-                in_channels=in_channels,
-                out_channels=mid_channels,
-                kernel_size=(1, 1),
-                stride=(1, 1),
-                **kwargs
+                in_channels=in_channels, out_channels=mid_channels, kernel_size=(1, 1), stride=(1, 1), **kwargs
             ),
             batch_norm,
             activation,
             TensorConv2d(
-                in_channels=mid_channels,
-                out_channels=mid_channels,
-                kernel_size=kernel_size,
-                stride=stride,
-                **kwargs
+                in_channels=mid_channels, out_channels=mid_channels, kernel_size=kernel_size, stride=stride, **kwargs
             ),
             batch_norm,
             activation,
             TensorConv2d(
-                in_channels=mid_channels,
-                out_channels=out_channels,
-                kernel_size=(1, 1),
-                stride=(1, 1),
-                **kwargs
+                in_channels=mid_channels, out_channels=out_channels, kernel_size=(1, 1), stride=(1, 1), **kwargs
             ),
         )
 
@@ -556,9 +531,7 @@ class CrossEntropyLoss2d(torch.nn.CrossEntropyLoss):
         input_hw = list(input.shape)[-2:]
         target_hw = list(target.shape)[-2:]
         if input_hw != target_hw:
-            input = torch.nn.functional.interpolate(
-                input, size=target_hw, mode="bilinear", align_corners=True
-            )
+            input = torch.nn.functional.interpolate(input, size=target_hw, mode="bilinear", align_corners=True)
         input_4dtt = to_channel_last_tensor(input)
         input_2dtt = input_4dtt.reshape(-1, input_4dtt.shape[-1])
         target_1dtt = target.reshape(-1)

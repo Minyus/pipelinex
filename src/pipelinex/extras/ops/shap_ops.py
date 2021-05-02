@@ -13,12 +13,8 @@ class ExplainModel:
 
         train_size = kwargs.get("train_size")
         val_size = kwargs.get("val_size")
-        train_data_loader_params = kwargs.get(
-            "train_data_loader_params", dict(batch_size=100)
-        )
-        val_data_loader_params = kwargs.get(
-            "val_data_loader_params", dict(batch_size=3)
-        )
+        train_data_loader_params = kwargs.get("train_data_loader_params", dict(batch_size=100))
+        val_data_loader_params = kwargs.get("val_data_loader_params", dict(batch_size=3))
         if train_size:
             train_data_loader_params["batch_size"] = train_size
         if val_size:
@@ -76,10 +72,7 @@ def _explain_pytorch_model(
         for samp_i in range(len(val_images_tt))
     ]
 
-    val_image_names = [
-        "y_{}_x_{}".format(val_labels[samp_i], samp_i)
-        for samp_i in range(len(val_images_tt))
-    ]
+    val_image_names = ["y_{}_x_{}".format(val_labels[samp_i], samp_i) for samp_i in range(len(val_images_tt))]
 
     shap_nhwc_arr = Scale(lower=0, upper=255)(shap_nhwc_arr)
     val_images_nhwc_arr = Scale(lower=0, upper=255)(val_images_nhwc_arr)
@@ -107,7 +100,5 @@ class Scale:
             min_val = a.min()
             upper = upper or max_val
             lower = lower or min_val
-            a = (
-                ((a - min_val) / (max_val - min_val)) * (upper - lower) + lower
-            ).astype(np.uint8)
+            a = (((a - min_val) / (max_val - min_val)) * (upper - lower) + lower).astype(np.uint8)
         return a

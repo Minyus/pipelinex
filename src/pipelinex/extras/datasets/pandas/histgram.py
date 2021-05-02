@@ -25,7 +25,7 @@ class HistgramDataSet(AbstractDataSet):
         )
 
     def _load(self) -> Any:
-        """ loading is not supported. """
+        """loading is not supported."""
         return None
 
     def _save(self, df: pd.DataFrame) -> None:

@@ -8,11 +8,9 @@ log = logging.getLogger(__name__)
 
 
 class EfficientCSVLocalDataSet(CSVLocalDataSet):
-    """"""
+    """ """
 
-    DEFAULT_LOAD_ARGS = dict(
-        engine="c", keep_default_na=False, na_values=[""], skiprows=0
-    )  # type: Dict[str, Any]
+    DEFAULT_LOAD_ARGS = dict(engine="c", keep_default_na=False, na_values=[""], skiprows=0)  # type: Dict[str, Any]
     DEFAULT_PREVIEW_ARGS = dict(nrows=None, low_memory=False)  # type: Dict[str, Any]
 
     def __init__(
@@ -94,9 +92,7 @@ def dict_string_val_prefix(
     return {k: (prefix + v) for k, v in d.items()}
 
 
-def _get_necessary_dtypes(
-    df, margin=100, float_dtype="float16", int_dtype="int8", verbose=True
-):
+def _get_necessary_dtypes(df, margin=100, float_dtype="float16", int_dtype="int8", verbose=True):
     dtypes_dict = df.dtypes.to_dict()
     # dtypes_dict = {col: dtype.name for col, dtype in dtypes_dict.items()}
 
@@ -119,18 +115,15 @@ def _get_necessary_dtypes(
 
         if dtype == np.int64:
             if int_dtype == "int8" and (
-                (df[col].max() + margin) < np.iinfo(np.int8).max
-                and (df[col].min() - margin) > np.iinfo(np.int8).min
+                (df[col].max() + margin) < np.iinfo(np.int8).max and (df[col].min() - margin) > np.iinfo(np.int8).min
             ):
                 dtypes_dict[col] = "int8"  # np.int8
             if int_dtype == "int16" and (
-                (df[col].max() + margin) < np.iinfo(np.int16).max
-                and (df[col].min() - margin) > np.iinfo(np.int16).min
+                (df[col].max() + margin) < np.iinfo(np.int16).max and (df[col].min() - margin) > np.iinfo(np.int16).min
             ):
                 dtypes_dict[col] = "float16"  # np.float16
             elif int_dtype in {"int32", "int16"} and (
-                (df[col].max() + margin) < np.iinfo(np.int32).max
-                and (df[col].min() - margin) > np.iinfo(np.int32).min
+                (df[col].max() + margin) < np.iinfo(np.int32).max and (df[col].min() - margin) > np.iinfo(np.int32).min
             ):
                 dtypes_dict[col] = "int32"  # np.int32
             else:

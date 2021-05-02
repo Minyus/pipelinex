@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 
 class FlexibleCatalogContext(KedroContext):
-    """ Convert Kedrex's Syntactic Sugar to pure Kedro Catalog. """
+    """Convert Kedrex's Syntactic Sugar to pure Kedro Catalog."""
 
     def _create_catalog(  # pylint: disable=no-self-use,too-many-arguments
         self,
@@ -45,12 +45,8 @@ class FlexibleCatalogContext(KedroContext):
         if "PIPELINE_JSON_TEXT" in conf_catalog:
             pipeline_json_text_dataset = conf_catalog.pop("PIPELINE_JSON_TEXT")
             assert isinstance(pipeline_json_text_dataset, dict)
-            pipeline_json_text_dataset.setdefault(
-                "type", "kedro.extras.datasets.text.TextDataSet"
-            )
-            self._pipeline_json_text_dataset = HatchDict(
-                pipeline_json_text_dataset, obj_key="type"
-            ).get()
+            pipeline_json_text_dataset.setdefault("type", "kedro.extras.datasets.text.TextDataSet")
+            self._pipeline_json_text_dataset = HatchDict(pipeline_json_text_dataset, obj_key="type").get()
 
         conf_catalog_processed = {}
 
@@ -69,12 +65,7 @@ class FlexibleCatalogContext(KedroContext):
         return ds_name, ds_dict
 
     def _set_filepath(self, ds_name, ds_dict):
-        if not any(
-            [
-                (key in ds_dict)
-                for key in ["filepath", "path", "url", "urls", "table_name", "sql"]
-            ]
-        ):
+        if not any([(key in ds_dict) for key in ["filepath", "path", "url", "urls", "table_name", "sql"]]):
             ds_dict["filepath"] = ds_name
             ds_name = Path(ds_name).stem
         return ds_name, ds_dict

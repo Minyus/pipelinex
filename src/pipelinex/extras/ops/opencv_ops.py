@@ -82,10 +82,7 @@ def expand_repeat(a, repeats=1, axis=None):
 
 
 def _sum_up(*imgs):
-    imgs = [
-        (_expand_repeat(img, repeats=3, axis=2) if img.ndim == 2 else img)
-        for img in imgs
-    ]
+    imgs = [(_expand_repeat(img, repeats=3, axis=2) if img.ndim == 2 else img) for img in imgs]
     imgs = [_fit_to_1(img) for img in imgs]
     out_img = np.sum(np.stack(imgs), axis=0)
     if out_img.shape[2] == 1:
@@ -302,7 +299,4 @@ diagonal_edge_kernel_dict = {
 class CvDiagonalEdgeFilter2d(CvModuleL2):
     def __init__(self, kernel_type=2, **kwargs):
         kwargs.setdefault("ddepth", -1)
-        self.modules = [
-            CvFilter2d(kernel=k, **kwargs)
-            for k in diagonal_edge_kernel_dict[kernel_type]
-        ]
+        self.modules = [CvFilter2d(kernel=k, **kwargs) for k in diagonal_edge_kernel_dict[kernel_type]]

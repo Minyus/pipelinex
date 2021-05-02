@@ -191,9 +191,7 @@ class NetworkTrain:
         device = "cuda" if torch.cuda.is_available() else "cpu"
         model.to(device)
         optimizer_ = optimizer(model.parameters(), **optimizer_params)
-        trainer = create_supervised_trainer(
-            model, optimizer_, loss_fn=loss_fn, device=device
-        )
+        trainer = create_supervised_trainer(model, optimizer_, loss_fn=loss_fn, device=device)
 
         train_data_loader_params.setdefault("shuffle", True)
         train_data_loader_params.setdefault("drop_last", True)
@@ -202,51 +200,37 @@ class NetworkTrain:
         )
         train_loader = DataLoader(train_dataset, **train_data_loader_params)
 
-        RunningAverage(output_transform=lambda x: x, alpha=0.98).attach(
-            trainer, "ema_loss"
-        )
+        RunningAverage(output_transform=lambda x: x, alpha=0.98).attach(trainer, "ema_loss")
 
-        RunningAverage(output_transform=lambda x: x, alpha=2 ** (-1022)).attach(
-            trainer, "batch_loss"
-        )
+        RunningAverage(output_transform=lambda x: x, alpha=2 ** (-1022)).attach(trainer, "batch_loss")
 
         if scheduler:
 
-            class ParamSchedulerSavingAsMetric(
-                ParamSchedulerSavingAsMetricMixIn, scheduler
-            ):
+            class ParamSchedulerSavingAsMetric(ParamSchedulerSavingAsMetricMixIn, scheduler):
                 pass
 
             cycle_epochs = scheduler_params.pop("cycle_epochs", 1)
-            scheduler_params.setdefault(
-                "cycle_size", int(cycle_epochs * len(train_loader))
-            )
+            scheduler_params.setdefault("cycle_size", int(cycle_epochs * len(train_loader)))
             scheduler_params.setdefault("param_name", "lr")
             scheduler_ = ParamSchedulerSavingAsMetric(optimizer_, **scheduler_params)
             trainer.add_event_handler(Events.ITERATION_STARTED, scheduler_)
 
         if evaluate_train_data:
-            evaluator_train = create_supervised_evaluator(
-                model, metrics=evaluation_metrics, device=device
-            )
+            evaluator_train = create_supervised_evaluator(model, metrics=evaluation_metrics, device=device)
 
         if evaluate_val_data:
             val_data_loader_params["batch_size"] = _clip_batch_size(
                 val_data_loader_params.get("batch_size", 1), val_dataset, "val"
             )
             val_loader = DataLoader(val_dataset, **val_data_loader_params)
-            evaluator_val = create_supervised_evaluator(
-                model, metrics=evaluation_metrics, device=device
-            )
+            evaluator_val = create_supervised_evaluator(model, metrics=evaluation_metrics, device=device)
 
         if model_checkpoint_params:
             assert isinstance(model_checkpoint_params, dict)
             minimize = model_checkpoint_params.pop("minimize", True)
             save_interval = model_checkpoint_params.get("save_interval", None)
             if not save_interval:
-                model_checkpoint_params.setdefault(
-                    "score_function", get_score_function("ema_loss", minimize=minimize)
-                )
+                model_checkpoint_params.setdefault("score_function", get_score_function("ema_loss", minimize=minimize))
             model_checkpoint_params.setdefault("score_name", "ema_loss")
             mc = model_checkpoint(**model_checkpoint_params)
             trainer.add_event_handler(Events.EPOCH_COMPLETED, mc, {"model": model})
@@ -262,9 +246,7 @@ class NetworkTrain:
                 ), "Remove either 'metric' or 'score_function' from early_stopping_params: {}".format(
                     early_stopping_params
                 )
-                early_stopping_params["score_function"] = get_score_function(
-                    metric, minimize=minimize
-                )
+                early_stopping_params["score_function"] = get_score_function(metric, minimize=minimize)
 
             es = EarlyStopping(trainer=trainer, **early_stopping_params)
             if evaluate_val_data:
@@ -294,9 +276,7 @@ class NetworkTrain:
         else:
 
             def log_train_metrics(engine):
-                log.info(
-                    "[Epoch: {} | {}]".format(engine.state.epoch, engine.state.metrics)
-                )
+                log.info("[Epoch: {} | {}]".format(engine.state.epoch, engine.state.metrics))
 
             trainer.add_event_handler(Events.EPOCH_COMPLETED, log_train_metrics)
 
@@ -311,9 +291,7 @@ class NetworkTrain:
                     log.info(train_report)
 
             eval_train_event = (
-                Events[evaluate_train_data]
-                if isinstance(evaluate_train_data, str)
-                else Events.EPOCH_COMPLETED
+                Events[evaluate_train_data] if isinstance(evaluate_train_data, str) else Events.EPOCH_COMPLETED
             )
             trainer.add_event_handler(eval_train_event, log_evaluation_train_data)
 
@@ -327,11 +305,7 @@ class NetworkTrain:
                 else:
                     log.info(val_report)
 
-            eval_val_event = (
-                Events[evaluate_val_data]
-                if isinstance(evaluate_val_data, str)
-                else Events.EPOCH_COMPLETED
-            )
+            eval_val_event = Events[evaluate_val_data] if isinstance(evaluate_val_data, str) else Events.EPOCH_COMPLETED
             trainer.add_event_handler(eval_val_event, log_evaluation_val_data)
 
         if mlflow_logging:
@@ -433,9 +407,7 @@ def load_latest_model(model_checkpoint_params=None):
                     model_path = sorted(files)[-1]
                     log.info("Model path: {}".format(model_path))
                     loaded = torch.load(model_path)
-                    save_as_state_dict = model_checkpoint_params.get(
-                        "save_as_state_dict", True
-                    )
+                    save_as_state_dict = model_checkpoint_params.get("save_as_state_dict", True)
                     if save_as_state_dict:
                         assert model
                         model.load_state_dict(loaded)
@@ -457,28 +429,20 @@ def _name(obj):
 def _clip_batch_size(batch_size, dataset, tag=""):
     dataset_size = len(dataset)
     if batch_size > dataset_size:
-        log.warning(
-            "[{}] batch size ({}) is clipped to dataset size ({})".format(
-                tag, batch_size, dataset_size
-            )
-        )
+        log.warning("[{}] batch size ({}) is clipped to dataset size ({})".format(tag, batch_size, dataset_size))
         return dataset_size
     else:
         return batch_size
 
 
 def _get_report_str(engine, evaluator, tag=""):
-    report_str = "[Epoch: {} | {} | Metrics: {}]".format(
-        engine.state.epoch, tag, evaluator.state.metrics
-    )
+    report_str = "[Epoch: {} | {} | Metrics: {}]".format(engine.state.epoch, tag, evaluator.state.metrics)
     return report_str
 
 
 def _loggable_dict(d, prefix=None):
     return {
-        ("{}_{}".format(prefix, k) if prefix else k): (
-            "{}".format(v) if isinstance(v, (tuple, list, dict, set)) else v
-        )
+        ("{}_{}".format(prefix, k) if prefix else k): ("{}".format(v) if isinstance(v, (tuple, list, dict, set)) else v)
         for k, v in d.items()
     }
 
