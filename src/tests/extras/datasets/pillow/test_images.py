@@ -9,7 +9,9 @@ def test_save_and_load():
 
     with tempfile.TemporaryDirectory() as dir:
 
-        ds = ImagesLocalDataSet(path=dir + "/foobar_images", save_args={"suffix": ".jpg"})
+        ds = ImagesLocalDataSet(
+            path=dir + "/foobar_images", save_args={"suffix": ".jpg"}
+        )
 
         image_dict = {
             "foo_image": 255 * np.ones((480, 640, 3), dtype=np.uint8),

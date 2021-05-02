@@ -32,7 +32,9 @@ class FbetaScore(Metric):
             is_multilabel=is_multilabel,
             device=device,
         )
-        super(FbetaScore, self).__init__(output_transform=output_transform, device=device)
+        super(FbetaScore, self).__init__(
+            output_transform=output_transform, device=device
+        )
 
     @reinit__is_reduced
     def reset(self) -> None:

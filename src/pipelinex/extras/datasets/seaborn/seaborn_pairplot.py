@@ -24,7 +24,9 @@ class SeabornPairPlotDataSet(AbstractVersionedDataSet):
         version: Version = None,
     ) -> None:
 
-        super().__init__(filepath=Path(filepath), version=version, exists_function=self._exists)
+        super().__init__(
+            filepath=Path(filepath), version=version, exists_function=self._exists
+        )
         self._load_args = {}
         self._save_args = save_args
         self._sample_args = sample_args
@@ -62,7 +64,9 @@ class SeabornPairPlotDataSet(AbstractVersionedDataSet):
             i = 0
             for x in _reshape(x_vars or cols_all, chunk_size):
                 for y in _reshape(y_vars or cols_all, chunk_size):
-                    log.info("Generating pairplot: x_vars = {}, y_vars = {}".format(x, y))
+                    log.info(
+                        "Generating pairplot: x_vars = {}, y_vars = {}".format(x, y)
+                    )
                     try:
                         plt.figure()
                         g = sns.pairplot(data, x_vars=x, y_vars=y, **save_args)
@@ -73,7 +77,9 @@ class SeabornPairPlotDataSet(AbstractVersionedDataSet):
                         plt.close("all")
                     except Exception:
                         log.error(
-                            "Failed to generate pairplot: x_vars = {}, y_vars = {}".format(x, y),
+                            "Failed to generate pairplot: x_vars = {}, y_vars = {}".format(
+                                x, y
+                            ),
                             exc_info=True,
                         )
         else:

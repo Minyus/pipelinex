@@ -76,11 +76,13 @@ class OnlyMissingOptionContext(KedroContext):
             )
             if pipeline_name:
                 raise KedroContextError(
-                    "The project is not fully migrated to use multiple pipelines. " + common_migration_message
+                    "The project is not fully migrated to use multiple pipelines. "
+                    + common_migration_message
                 )
 
             warn(
-                "You are using the deprecated pipeline construction mechanism. " + common_migration_message,
+                "You are using the deprecated pipeline construction mechanism. "
+                + common_migration_message,
                 DeprecationWarning,
             )
             pipeline = self.pipeline
@@ -116,7 +118,9 @@ class OnlyMissingOptionContext(KedroContext):
         }
         journal = Journal(record_data)
 
-        catalog = self._get_catalog(save_version=save_version, journal=journal, load_versions=load_versions)
+        catalog = self._get_catalog(
+            save_version=save_version, journal=journal, load_versions=load_versions
+        )
 
         # Run the runner
         runner = runner or SequentialRunner()
@@ -167,5 +171,7 @@ class StringRunnerOptionContext(KedroContext):
         return super().run(*args, runner=runner, **kwargs)
 
 
-class FlexibleRunContext(SavePipelineJsonContext, StringRunnerOptionContext, OnlyMissingOptionContext):
+class FlexibleRunContext(
+    SavePipelineJsonContext, StringRunnerOptionContext, OnlyMissingOptionContext
+):
     pass

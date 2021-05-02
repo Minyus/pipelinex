@@ -70,7 +70,9 @@ def df_set_index(
     return decorator
 
 
-def total_seconds_to_datetime(cols: Union[List[str], str], origin: str = "1970-01-01") -> Callable:
+def total_seconds_to_datetime(
+    cols: Union[List[str], str], origin: str = "1970-01-01"
+) -> Callable:
     """decorator with arguments"""
     if not isinstance(cols, list):
         cols = [cols]
@@ -86,7 +88,9 @@ def total_seconds_to_datetime(cols: Union[List[str], str], origin: str = "1970-0
                         log.warning("Could not find column: ".format(col))
                 cols_ = [col for col in cols if col in df.columns]
                 for col in cols_:
-                    df.loc[:, col] = pd.to_datetime(df[col], unit="s", origin=pd.Timestamp(origin))
+                    df.loc[:, col] = pd.to_datetime(
+                        df[col], unit="s", origin=pd.Timestamp(origin)
+                    )
             df = func(df, parameters, *args, **kwargs)
             if isinstance(df, pd.DataFrame):
                 for col in cols_:

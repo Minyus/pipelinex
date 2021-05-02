@@ -99,7 +99,9 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
             if dict_structure is None:
                 return list(images_dict.values())
             if dict_structure == "sep_names":
-                return dict(images=list(images_dict.values()), names=list(images_dict.keys()))
+                return dict(
+                    images=list(images_dict.values()), names=list(images_dict.keys())
+                )
 
             return images_dict
 
@@ -160,7 +162,9 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
                 images = scale(lower=lower, upper=upper)(images)
                 dataset = Np3DArrDataset(images)
             else:
-                raise ValueError("Unsupported number of dimensions: {}".format(images.ndim))
+                raise ValueError(
+                    "Unsupported number of dimensions: {}".format(images.ndim)
+                )
         elif hasattr(images, "__getitem__") and hasattr(images, "__len__"):
             if not to_scale:
                 p.mkdir(parents=True, exist_ok=True)
@@ -177,7 +181,9 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
                     img.save(s, **save_args)
                 return None
             else:
-                dataset = Np3DArrDatasetFromList(images, transform=scale(lower=lower, upper=upper))
+                dataset = Np3DArrDatasetFromList(
+                    images, transform=scale(lower=lower, upper=upper)
+                )
         else:
             raise ValueError("Unsupported data type: {}".format(type(images)))
 
@@ -215,7 +221,9 @@ class ImagesLocalDataSet(AbstractVersionedDataSet):
         return Path(path).exists()
 
 
-def load_image(load_path, load_args, as_numpy=False, channel_first=False, reverse_color=False):
+def load_image(
+    load_path, load_args, as_numpy=False, channel_first=False, reverse_color=False
+):
     with load_path.open("rb") as local_file:
         img = Image.open(local_file, **load_args)
         if as_numpy:
@@ -238,7 +246,9 @@ def scale(**kwargs):
             log.info(stat_dict)
             upper = upper or max_val
             lower = lower or min_val
-            a = (((a - min_val) / (max_val - min_val)) * (upper - lower) + lower).astype(np.uint8)
+            a = (
+                ((a - min_val) / (max_val - min_val)) * (upper - lower) + lower
+            ).astype(np.uint8)
         return a
 
     return _scale

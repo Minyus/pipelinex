@@ -28,7 +28,9 @@ class FlexibleParametersContext(KedroContext):
                 self._hook_manager = getattr(self, "_hook_manager", get_hook_manager())
                 self._register_kedro_hooks(hooks)
             else:
-                log.warning("HOOKS defined in config file is ignored as the installed kedro version is not 0.16.x")
+                log.warning(
+                    "HOOKS defined in config file is ignored as the installed kedro version is not 0.16.x"
+                )
         self._kedro_pipelines = params.pop("PIPELINES", None)
         self._kedro_run_config = params.pop("RUN_CONFIG", None) or {}
         self._params = params
@@ -61,7 +63,9 @@ class FlexibleParametersContext(KedroContext):
         return self._params
 
     def _get_pipelines(self) -> Dict[str, Pipeline]:
-        assert self._kedro_pipelines, "'PIPELINES' key or value is missing in parameters."
+        assert (
+            self._kedro_pipelines
+        ), "'PIPELINES' key or value is missing in parameters."
         return self._kedro_pipelines
 
     def run(self, *args, **kwargs):

@@ -50,10 +50,10 @@ typed-ast = "==1.4.2"
 python_version = "3.7"
 
 [scripts]
-fmt = "black --line-length 120 src/"
+fmt = "black src/"
 install = "pip install pipelinex"
 install_dev = "python setup.py develop"
-lint = "black --check --diff --line-length 120 src/"
+lint = "black --check --diff src/"
 sort = "isort -rc src/"
 test = "pytest -v src/tests"
 vet = "mypy src/"

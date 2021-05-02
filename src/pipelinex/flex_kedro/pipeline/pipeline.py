@@ -20,8 +20,12 @@ class FlexiblePipeline(kedro.pipeline.Pipeline):
 
             assert node is not None, "Node {}: is empty.".format(i)
             if isinstance(node, dict):
-                assert "inputs" in node, "Node {} ({}): is missing 'inputs' key.".format(i, node)
-                assert "outputs" in node, "Node {} ({}): is missing 'outputs' key.".format(i, node)
+                assert (
+                    "inputs" in node
+                ), "Node {} ({}): is missing 'inputs' key.".format(i, node)
+                assert (
+                    "outputs" in node
+                ), "Node {} ({}): is missing 'outputs' key.".format(i, node)
 
                 if parameters_in_inputs:
                     inputs = node.get("inputs")

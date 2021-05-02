@@ -29,11 +29,15 @@ def mlflow_log_artifacts(paths, artifact_path=None, enable_mlflow=True):
                     log.info("File at '{}' was logged by MLflow.".format(resolved_path))
                 elif Path(path).is_dir():
                     log_artifacts(path, artifact_path)
-                    log.info("Directory at '{}' was logged by MLflow.".format(resolved_path))
+                    log.info(
+                        "Directory at '{}' was logged by MLflow.".format(resolved_path)
+                    )
                 else:
                     log.warning("Path '{}' does not exist.".format(resolved_path))
         except Exception:
-            log.warning("{} failed to be logged by MLflow.".format(paths), exc_info=True)
+            log.warning(
+                "{} failed to be logged by MLflow.".format(paths), exc_info=True
+            )
 
 
 def mlflow_log_metrics(metrics, step=None, enable_mlflow=True):
@@ -42,13 +46,19 @@ def mlflow_log_metrics(metrics, step=None, enable_mlflow=True):
 
     if enable_mlflow:
         try:
-            metrics = {k.replace(":", ".."): float(v) for (k, v) in metrics.items() if isinstance(v, (float, int))}
+            metrics = {
+                k.replace(":", ".."): float(v)
+                for (k, v) in metrics.items()
+                if isinstance(v, (float, int))
+            }
 
             from mlflow import log_metrics
 
             log_metrics(metrics, step)
         except Exception:
-            log.warning("{} failed to be logged by MLflow.".format(metrics), exc_info=True)
+            log.warning(
+                "{} failed to be logged by MLflow.".format(metrics), exc_info=True
+            )
 
 
 def mlflow_log_params(params, enable_mlflow=True):
@@ -58,14 +68,18 @@ def mlflow_log_params(params, enable_mlflow=True):
     if enable_mlflow:
         try:
             params = {
-                k.replace(":", ".."): ("{}".format(v)[:250]) for (k, v) in params.items() if isinstance(v, str) or v
+                k.replace(":", ".."): ("{}".format(v)[:250])
+                for (k, v) in params.items()
+                if isinstance(v, str) or v
             }
 
             from mlflow import log_params
 
             log_params(params)
         except Exception:
-            log.warning("{} failed to be logged by MLflow.".format(params), exc_info=True)
+            log.warning(
+                "{} failed to be logged by MLflow.".format(params), exc_info=True
+            )
 
 
 def mlflow_log_values(d, enable_mlflow=True):
@@ -79,7 +93,9 @@ def mlflow_log_values(d, enable_mlflow=True):
         metrics = {k: v for (k, v) in d.items() if isinstance(v, (float, int))}
         mlflow_log_metrics(metrics)
 
-        params = {k: v for (k, v) in d.items() if isinstance(v, (str, list, tuple, set))}
+        params = {
+            k: v for (k, v) in d.items() if isinstance(v, (str, list, tuple, set))
+        }
         mlflow_log_params(params)
 
 
@@ -96,7 +112,12 @@ def mlflow_start_run(
     if enable_mlflow:
         assert run_id or experiment_name
 
-        from mlflow import create_experiment, get_experiment_by_name, set_tracking_uri, start_run
+        from mlflow import (
+            create_experiment,
+            get_experiment_by_name,
+            set_tracking_uri,
+            start_run,
+        )
         from mlflow.exceptions import MlflowException
 
         if uri:

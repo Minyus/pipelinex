@@ -148,10 +148,13 @@ else:
 
             """
             try:
-                class_obj, config = parse_dataset_definition(config, load_version, save_version)
+                class_obj, config = parse_dataset_definition(
+                    config, load_version, save_version
+                )
             except Exception as ex:
                 raise DataSetError(
-                    "An exception occurred when parsing config " "for DataSet `{}`:\n{}".format(name, str(ex))
+                    "An exception occurred when parsing config "
+                    "for DataSet `{}`:\n{}".format(name, str(ex))
                 )
 
             try:
@@ -160,12 +163,16 @@ else:
                 raise DataSetError(
                     "\n{}.\nDataSet '{}' must only contain "
                     "arguments valid for the constructor "
-                    "of `{}.{}`.".format(str(err), name, class_obj.__module__, class_obj.__qualname__)
+                    "of `{}.{}`.".format(
+                        str(err), name, class_obj.__module__, class_obj.__qualname__
+                    )
                 )
             except Exception as err:
                 raise DataSetError(
                     "\n{}.\nFailed to instantiate DataSet "
-                    "'{}' of type `{}.{}`.".format(str(err), name, class_obj.__module__, class_obj.__qualname__)
+                    "'{}' of type `{}.{}`.".format(
+                        str(err), name, class_obj.__module__, class_obj.__qualname__
+                    )
                 )
             return data_set
 
@@ -193,7 +200,9 @@ else:
             except Exception as exc:
                 # This exception handling is by design as the composed data sets
                 # can throw any type of exception.
-                message = "Failed while loading data from data set {}.\n{}".format(str(self), str(exc))
+                message = "Failed while loading data from data set {}.\n{}".format(
+                    str(self), str(exc)
+                )
                 raise DataSetError(message) from exc
 
         def save(self, data: Any) -> None:
@@ -216,7 +225,9 @@ else:
             except DataSetError:
                 raise
             except Exception as exc:
-                message = "Failed while saving data to data set {}.\n{}".format(str(self), str(exc))
+                message = "Failed while saving data to data set {}.\n{}".format(
+                    str(self), str(exc)
+                )
                 raise DataSetError(message) from exc
 
         def __str__(self):
@@ -231,7 +242,9 @@ else:
                 fmt = "{}={}" if is_root else "'{}': {}"  # 1
 
                 if isinstance(obj, dict):
-                    sorted_dict = sorted(obj.items(), key=lambda pair: str(pair[0]))  # 2
+                    sorted_dict = sorted(
+                        obj.items(), key=lambda pair: str(pair[0])
+                    )  # 2
 
                     text = ", ".join(
                         fmt.format(key, _to_str(value))  # 2
@@ -264,7 +277,9 @@ else:
         def _describe(self) -> Dict[str, Any]:
             raise NotImplementedError(
                 "`{}` is a subclass of AbstractDataSet and"
-                "it must implement the `_describe` method".format(self.__class__.__name__)
+                "it must implement the `_describe` method".format(
+                    self.__class__.__name__
+                )
             )
 
         def exists(self) -> bool:
@@ -282,7 +297,9 @@ else:
                 self._logger.debug("Checking whether target of %s exists", str(self))
                 return self._exists()
             except Exception as exc:
-                message = "Failed during exists check for data set {}.\n{}".format(str(self), str(exc))
+                message = "Failed during exists check for data set {}.\n{}".format(
+                    str(self), str(exc)
+                )
                 raise DataSetError(message) from exc
 
         def _exists(self) -> bool:
@@ -303,7 +320,9 @@ else:
                 self._logger.debug("Releasing %s", str(self))
                 self._release()
             except Exception as exc:
-                message = "Failed during release for data set {}.\n{}".format(str(self), str(exc))
+                message = "Failed during release for data set {}.\n{}".format(
+                    str(self), str(exc)
+                )
                 raise DataSetError(message) from exc
 
         def _release(self) -> None:
@@ -373,7 +392,10 @@ else:
         class_obj = config.pop("type")
         if isinstance(class_obj, str):
             if len(class_obj.strip(".")) != len(class_obj):
-                raise DataSetError("`type` class path does not support relative " "paths or paths ending with a dot.")
+                raise DataSetError(
+                    "`type` class path does not support relative "
+                    "paths or paths ending with a dot."
+                )
 
             class_paths = (prefix + class_obj for prefix in _DEFAULT_PACKAGES)
 
@@ -386,7 +408,9 @@ else:
         if not issubclass(class_obj, AbstractDataSet):
             raise DataSetError(
                 "DataSet type `{}.{}` is invalid: all data set types must extend "
-                "`AbstractDataSet`.".format(class_obj.__module__, class_obj.__qualname__)
+                "`AbstractDataSet`.".format(
+                    class_obj.__module__, class_obj.__qualname__
+                )
             )
 
         if VERSION_KEY in config:
@@ -499,10 +523,14 @@ else:
             # version from the given path
             pattern = str(self._get_versioned_path("*"))
             version_paths = sorted(self._glob_function(pattern), reverse=True)
-            most_recent = next((path for path in version_paths if self._exists_function(path)), None)
+            most_recent = next(
+                (path for path in version_paths if self._exists_function(path)), None
+            )
 
             if not most_recent:
-                raise VersionNotFoundError("Did not find any versions for {}".format(str(self)))
+                raise VersionNotFoundError(
+                    "Did not find any versions for {}".format(str(self))
+                )
 
             return PurePath(most_recent).parent.name
 
@@ -545,12 +573,16 @@ else:
             return super().load()
 
         def save(self, data: Any) -> None:
-            save_version = self.resolve_save_version()  # Make sure last save version is set
+            save_version = (
+                self.resolve_save_version()
+            )  # Make sure last save version is set
             super().save(data)
 
             load_version = self.resolve_load_version()
             if load_version != save_version:
-                warnings.warn(_CONSISTENCY_WARNING.format(save_version, load_version, str(self)))
+                warnings.warn(
+                    _CONSISTENCY_WARNING.format(save_version, load_version, str(self))
+                )
 
         def exists(self) -> bool:
             """Checks whether a data set's output already exists by calling
@@ -569,7 +601,9 @@ else:
             except VersionNotFoundError:
                 return False
             except Exception as exc:  # SKIP_IF_NO_SPARK
-                message = "Failed during exists check for data set {}.\n{}".format(str(self), str(exc))
+                message = "Failed during exists check for data set {}.\n{}".format(
+                    str(self), str(exc)
+                )
                 raise DataSetError(message) from exc
 
         def _release(self) -> None:
@@ -586,7 +620,10 @@ else:
         Returns:
             Parsed filepath.
         """
-        if re.match(r"^[a-zA-Z]:[\\/]", filepath) or re.match(r"^[a-zA-Z0-9]+://", filepath) is None:
+        if (
+            re.match(r"^[a-zA-Z]:[\\/]", filepath)
+            or re.match(r"^[a-zA-Z0-9]+://", filepath) is None
+        ):
             return {"protocol": "file", "path": filepath}
 
         parsed_path = urlsplit(filepath)
@@ -611,7 +648,9 @@ else:
 
         return options
 
-    def get_protocol_and_path(filepath: str, version: Version = None) -> Tuple[str, str]:
+    def get_protocol_and_path(
+        filepath: str, version: Version = None
+    ) -> Tuple[str, str]:
         """Parses filepath on protocol and path.
 
         Args:
@@ -658,4 +697,6 @@ else:
         """Validate that string values do not include white-spaces or ;"""
         for key, value in kwargs.items():
             if " " in value or ";" in value:
-                raise DataSetError("Neither white-space nor semicolon are allowed in `{}`.".format(key))
+                raise DataSetError(
+                    "Neither white-space nor semicolon are allowed in `{}`.".format(key)
+                )

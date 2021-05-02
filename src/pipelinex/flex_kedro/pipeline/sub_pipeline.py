@@ -18,11 +18,17 @@ class SubPipeline(Pipeline):
         funcs = _load_callables(func, module)
 
         inputs = inputs or []
-        intermediate_base = outputs[0] if (outputs and isinstance(outputs, list)) else outputs
+        intermediate_base = (
+            outputs[0] if (outputs and isinstance(outputs, list)) else outputs
+        )
         nodes = []
         for i, f in enumerate(funcs):
             intermediate_flag = i + 1 < len(funcs)
-            intermediate = intermediate_node_name_fmt.format(intermediate_base, i + 1) if intermediate_flag else outputs
+            intermediate = (
+                intermediate_node_name_fmt.format(intermediate_base, i + 1)
+                if intermediate_flag
+                else outputs
+            )
             nodes.append(node(func=f, inputs=inputs, outputs=intermediate, **kwargs))
             if intermediate_flag:
                 inputs = intermediate
@@ -56,7 +62,11 @@ def _load_callables(func, default_module):
             assert callable(f), "{} should be callable or str.".format(f)
 
     funcs = [
-        f if callable(f) else load_obj(f, default_obj_path=default_module) if isinstance(f, str) else None
+        f
+        if callable(f)
+        else load_obj(f, default_obj_path=default_module)
+        if isinstance(f, str)
+        else None
         for f in funcs
     ]
 

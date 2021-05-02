@@ -28,9 +28,13 @@ async def request_coroutine(session, method, url, request_args):
 
 async def requests_coroutine(session_config, method, url_list, request_args):
     async with httpx.AsyncClient(**session_config) as session:
-        request_coroutines = [request_coroutine(session, method, url, request_args) for url in url_list]
+        request_coroutines = [
+            request_coroutine(session, method, url, request_args) for url in url_list
+        ]
 
-        request_tasks = [asyncio.ensure_future(coroutine) for coroutine in request_coroutines]
+        request_tasks = [
+            asyncio.ensure_future(coroutine) for coroutine in request_coroutines
+        ]
         r = await asyncio.wait(request_tasks)
     return r
 
@@ -48,7 +52,9 @@ class AsyncAPIDataSet(APIDataSet):
 
         name_url_list = list(url_dict.items())
         url_list = [e[1] for e in name_url_list]
-        tasks_done, tasks_pending = asyncio_run(requests_coroutine(session_config, method, url_list, request_args))
+        tasks_done, tasks_pending = asyncio_run(
+            requests_coroutine(session_config, method, url_list, request_args)
+        )
 
         name_list = [e[0] for e in name_url_list]
         response_dict = {}
