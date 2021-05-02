@@ -1,9 +1,8 @@
+import numpy as np
+import pandas as pd
 import sklearn
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import QuantileTransformer, StandardScaler, MinMaxScaler
-import pandas as pd
-import numpy as np
-
+from sklearn.preprocessing import MinMaxScaler, QuantileTransformer, StandardScaler
 
 sklearn_version = getattr(sklearn, "__version__")
 

@@ -1,8 +1,10 @@
 import copy
-from typing import Any, Dict, Union
-import numpy as np
-from .csv_local import CSVLocalDataSet
 import logging
+from typing import Any, Dict, Union
+
+import numpy as np
+
+from .csv_local import CSVLocalDataSet
 
 log = logging.getLogger(__name__)
 

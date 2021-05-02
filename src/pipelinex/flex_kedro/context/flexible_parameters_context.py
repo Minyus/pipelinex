@@ -1,13 +1,13 @@
-from typing import Any, Dict  # NOQA
 from importlib import import_module
 from logging import getLogger
+from typing import Any, Dict  # NOQA
 
 import kedro
 from kedro.pipeline import Pipeline  # NOQA
 
 from pipelinex import HatchDict
-from .context import KedroContext, get_hook_manager
 
+from .context import KedroContext, get_hook_manager
 
 log = getLogger(__name__)
 

@@ -1,13 +1,14 @@
-import logging.config
 import logging
+import logging.config
 from typing import Any, Dict, Iterable, Optional, Union  # NOQA
 from warnings import warn
-import kedro
-from kedro.versioning import Journal
-from .context import KedroContext, KedroContextError
-from kedro.runner import AbstractRunner, SequentialRunner
-import kedro.runner
 
+import kedro
+import kedro.runner
+from kedro.runner import AbstractRunner, SequentialRunner
+from kedro.versioning import Journal
+
+from .context import KedroContext, KedroContextError
 from .save_pipeline_json_context import SavePipelineJsonContext
 
 log = logging.getLogger(__name__)

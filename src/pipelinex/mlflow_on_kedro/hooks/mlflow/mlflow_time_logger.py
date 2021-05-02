@@ -1,16 +1,15 @@
-from importlib.util import find_spec
 import json
-import time
-from logging import getLogger
-from pprint import pformat
-from pathlib import Path
 import tempfile
+import time
+from importlib.util import find_spec
+from logging import getLogger
+from pathlib import Path
+from pprint import pformat
 from typing import Any, Callable, Dict  # NOQA
 
 from kedro.pipeline.node import Node  # NOQA
 
-from .mlflow_utils import hook_impl, mlflow_log_metrics, mlflow_log_artifacts
-
+from .mlflow_utils import hook_impl, mlflow_log_artifacts, mlflow_log_metrics
 
 log = getLogger(__name__)
 

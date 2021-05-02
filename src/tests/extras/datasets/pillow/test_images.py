@@ -1,5 +1,7 @@
 import tempfile
+
 import numpy as np
+
 from pipelinex import ImagesLocalDataSet
 
 

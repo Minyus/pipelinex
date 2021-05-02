@@ -1,32 +1,31 @@
 import logging
 from functools import wraps
-from typing import Callable
-
 from importlib.util import find_spec
+from typing import Callable
 
 if find_spec("pynvml"):
     from pynvml import (
-        nvmlInit,
-        nvmlSystemGetDriverVersion,
-        nvmlSystemGetNVMLVersion,
         nvmlDeviceGetCount,
         nvmlDeviceGetHandleByIndex,
-        nvmlDeviceGetName,
         nvmlDeviceGetMemoryInfo,
+        nvmlDeviceGetName,
         nvmlDeviceGetUtilizationRates,
+        nvmlInit,
         nvmlShutdown,
+        nvmlSystemGetDriverVersion,
+        nvmlSystemGetNVMLVersion,
     )
 elif find_spec("py3nvml"):
     from py3nvml.py3nvml import (
-        nvmlInit,
-        nvmlSystemGetDriverVersion,
-        nvmlSystemGetNVMLVersion,
         nvmlDeviceGetCount,
         nvmlDeviceGetHandleByIndex,
-        nvmlDeviceGetName,
         nvmlDeviceGetMemoryInfo,
+        nvmlDeviceGetName,
         nvmlDeviceGetUtilizationRates,
+        nvmlInit,
         nvmlShutdown,
+        nvmlSystemGetDriverVersion,
+        nvmlSystemGetNVMLVersion,
     )
 else:
     raise ImportError("Install pynvml or py3nvml.")

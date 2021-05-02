@@ -8,7 +8,6 @@ from kedro.pipeline.node import Node
 
 from .mlflow_utils import hook_impl, mlflow_log_artifacts
 
-
 log = getLogger(__name__)
 
 

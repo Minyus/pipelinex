@@ -26,14 +26,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-member
-import PIL
 import io
 
+# pylint: disable=no-member
+import PIL
 import pytest
+from kedro.io.core import DataSetError
 
 from pipelinex import AsyncAPIDataSet as APIDataSet
-from kedro.io.core import DataSetError
 
 
 def test_successfully_load_with_content_response():

@@ -1,12 +1,12 @@
 import logging
+import tempfile
 from importlib.util import find_spec
 from pathlib import Path
-import tempfile
 from typing import Any, Dict, Union
 
-from kedro.io.core import AbstractDataSet
-from kedro.io import MemoryDataSet
 from kedro.extras.datasets.pickle import PickleDataSet
+from kedro.io import MemoryDataSet
+from kedro.io.core import AbstractDataSet
 
 from pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_utils import (
     mlflow_log_artifacts,

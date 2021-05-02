@@ -1,7 +1,9 @@
-from typing import Any, Dict
-import pandas as pd
-from .csv_local import CSVLocalDataSet
 import logging
+from typing import Any, Dict
+
+import pandas as pd
+
+from .csv_local import CSVLocalDataSet
 
 log = logging.getLogger(__name__)
 

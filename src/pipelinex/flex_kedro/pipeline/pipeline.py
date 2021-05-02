@@ -1,6 +1,8 @@
+from typing import Callable, Iterable, List, Union  # NOQA
+
 import kedro
+
 from .sub_pipeline import SubPipeline
-from typing import Callable, Union, List, Iterable  # NOQA
 
 
 class FlexiblePipeline(kedro.pipeline.Pipeline):

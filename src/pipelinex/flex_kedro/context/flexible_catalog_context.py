@@ -3,9 +3,11 @@ import logging
 from pathlib import Path
 from typing import Any, Dict  # NOQA
 
-from .context import KedroContext
 from kedro.io import DataCatalog
+
 from pipelinex import HatchDict
+
+from .context import KedroContext
 
 log = logging.getLogger(__name__)
 

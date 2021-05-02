@@ -1,7 +1,7 @@
-from kedro.pipeline import node
-from kedro.pipeline import Pipeline
-from kedro.utils import load_obj
 from typing import Any, Callable, Dict, List, Union  # NOQA
+
+from kedro.pipeline import Pipeline, node
+from kedro.utils import load_obj
 
 
 class SubPipeline(Pipeline):

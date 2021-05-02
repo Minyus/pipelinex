@@ -1,5 +1,5 @@
-from pathlib import Path
 from logging import getLogger
+from pathlib import Path
 
 from pipelinex.hatch_dict.hatch_dict import dot_flatten
 
@@ -96,12 +96,7 @@ def mlflow_start_run(
     if enable_mlflow:
         assert run_id or experiment_name
 
-        from mlflow import (
-            create_experiment,
-            get_experiment_by_name,
-            start_run,
-            set_tracking_uri,
-        )
+        from mlflow import create_experiment, get_experiment_by_name, set_tracking_uri, start_run
         from mlflow.exceptions import MlflowException
 
         if uri:

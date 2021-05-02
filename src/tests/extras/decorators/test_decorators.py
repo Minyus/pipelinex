@@ -1,6 +1,7 @@
-from pipelinex import log_time
-from time import sleep
 import logging
+from time import sleep
+
+from pipelinex import log_time
 
 logging.basicConfig(level=logging.DEBUG)
 

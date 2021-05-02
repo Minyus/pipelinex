@@ -1,22 +1,18 @@
 import copy
-import numpy as np
+import logging
 from pathlib import Path
 
-import torch
-from torch.utils.data import DataLoader
 import ignite
-from ignite.engine import Events, create_supervised_trainer, create_supervised_evaluator
-from ignite.metrics import RunningAverage
-from ignite.handlers import EarlyStopping, ModelCheckpoint
+import numpy as np
+import torch
+from ignite.contrib.handlers.mlflow_logger import MLflowLogger, OutputHandler, global_step_from_engine
 from ignite.contrib.handlers.tqdm_logger import ProgressBar
-from ignite.contrib.handlers.mlflow_logger import (
-    MLflowLogger,
-    OutputHandler,
-    global_step_from_engine,
-)
-from ..handlers.time_limit import TimeLimit
+from ignite.engine import Events, create_supervised_evaluator, create_supervised_trainer
+from ignite.handlers import EarlyStopping, ModelCheckpoint
+from ignite.metrics import RunningAverage
+from torch.utils.data import DataLoader
 
-import logging
+from ..handlers.time_limit import TimeLimit
 
 log = logging.getLogger(__name__)
 

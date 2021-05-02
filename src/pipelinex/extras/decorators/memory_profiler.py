@@ -1,6 +1,6 @@
-from importlib.util import find_spec
 import logging
 from functools import wraps
+from importlib.util import find_spec
 from typing import Callable
 
 log = logging.getLogger(__name__)

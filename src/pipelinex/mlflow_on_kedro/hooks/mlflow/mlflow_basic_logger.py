@@ -1,20 +1,13 @@
+import time
+from datetime import datetime, timedelta
 from importlib.util import find_spec
 from logging import getLogger
-from datetime import datetime, timedelta
-import time
 from typing import Any, Dict, List, Optional, Union  # NOQA
 
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
 
-from .mlflow_utils import (
-    hook_impl,
-    mlflow_start_run,
-    mlflow_log_metrics,
-    mlflow_log_params,
-    mlflow_end_run,
-)
-
+from .mlflow_utils import hook_impl, mlflow_end_run, mlflow_log_metrics, mlflow_log_params, mlflow_start_run
 
 log = getLogger(__name__)
 

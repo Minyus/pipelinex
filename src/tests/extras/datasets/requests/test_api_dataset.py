@@ -26,17 +26,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-member
-import PIL
 import io
 import socket
 
+# pylint: disable=no-member
+import PIL
 import pytest
 import requests
 import requests_mock
+from kedro.io.core import DataSetError
 
 from pipelinex import APIDataSet
-from kedro.io.core import DataSetError
 
 POSSIBLE_METHODS = ["GET", "OPTIONS", "HEAD", "POST", "PUT", "PATCH", "DELETE"]
 

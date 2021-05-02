@@ -1,6 +1,6 @@
 import importlib
-from typing import Any, Union, List, Iterable  # NOQA
 from logging import getLogger
+from typing import Any, Iterable, List, Union  # NOQA
 
 log = getLogger(__name__)
 

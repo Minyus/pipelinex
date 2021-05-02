@@ -1,26 +1,20 @@
+import tempfile
 from importlib.util import find_spec
 from logging import getLogger
-import tempfile
 from typing import Any, Dict, Union  # NOQA
 
 from kedro.io import AbstractDataSet, DataCatalog
-from kedro.pipeline.node import Node
 from kedro.pipeline import Pipeline
+from kedro.pipeline.node import Node
 
-from .mlflow_utils import (
-    hook_impl,
-    mlflow_log_artifacts,
-    mlflow_log_metrics,
-    mlflow_log_params,
-    mlflow_log_values,
-)
-
+from .mlflow_utils import hook_impl, mlflow_log_artifacts, mlflow_log_metrics, mlflow_log_params, mlflow_log_values
 
 log = getLogger(__name__)
 
 
 def get_kedro_runner():
     import inspect
+
     from kedro.runner import AbstractRunner
 
     return next(

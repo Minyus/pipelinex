@@ -1,11 +1,13 @@
 import copy
+import logging
 from pathlib import Path
 from typing import Any, Dict, List
+
+import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
+
 from ..core import AbstractVersionedDataSet, DataSetError, Version
-import logging
 
 log = logging.getLogger(__name__)
 

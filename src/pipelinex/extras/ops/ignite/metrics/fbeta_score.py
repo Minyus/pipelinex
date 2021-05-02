@@ -1,9 +1,7 @@
-from ignite.metrics import Metric, Precision, Recall
-
-from typing import Sequence, Callable, Optional, Union
+from typing import Callable, Optional, Sequence, Union
 
 import torch
-
+from ignite.metrics import Metric, Precision, Recall
 from ignite.metrics.metric import reinit__is_reduced
 
 __all__ = ["FbetaScore"]

@@ -1,6 +1,7 @@
-from pipelinex.utils import DictToDict, dict_io, list_of_dict_to_dict_of_list
 import cv2
 import numpy as np
+
+from pipelinex.utils import DictToDict, dict_io, list_of_dict_to_dict_of_list
 
 
 class NpDictToDict(DictToDict):

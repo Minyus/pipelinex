@@ -1,6 +1,6 @@
+import time
 from importlib.util import find_spec
 from logging import getLogger
-import time
 from typing import Any, Callable  # NOQA
 
 from kedro.io import AbstractTransformer

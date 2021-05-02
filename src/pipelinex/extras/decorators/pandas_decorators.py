@@ -1,8 +1,8 @@
+import logging
 from functools import wraps
-import pandas as pd
 from typing import Callable, List, Union
 
-import logging
+import pandas as pd
 
 log = logging.getLogger(__name__)
 
