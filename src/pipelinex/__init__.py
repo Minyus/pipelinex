@@ -2,27 +2,26 @@ __version__ = "0.7.0"
 
 from importlib.util import find_spec
 
-from .utils import *  # NOQA
-from .hatch_dict.hatch_dict import *  # NOQA
-
 from .extras.decorators.decorators import *  # NOQA
-from .mlflow_on_kedro.decorators.mlflow_logger import *  # NOQA
 from .extras.ops.argparse_ops import *  # NOQA
+from .hatch_dict.hatch_dict import *  # NOQA
+from .mlflow_on_kedro.decorators.mlflow_logger import *  # NOQA
+from .utils import *  # NOQA
 
 if find_spec("kedro"):
-    from .flex_kedro.pipeline.pipeline import *  # NOQA
-    from .flex_kedro.pipeline.sub_pipeline import *  # NOQA
-    from .flex_kedro.configure import *  # NOQA
-    from .flex_kedro.context.flexible_context import *  # NOQA
     from .extras.hooks.add_catalog_dict import *  # NOQA
     from .extras.hooks.add_transformers import *  # NOQA
+    from .flex_kedro.configure import *  # NOQA
+    from .flex_kedro.context.flexible_context import *  # NOQA
+    from .flex_kedro.pipeline.pipeline import *  # NOQA
+    from .flex_kedro.pipeline.sub_pipeline import *  # NOQA
+    from .mlflow_on_kedro.datasets.mlflow.mlflow_dataset import *  # NOQA
+    from .mlflow_on_kedro.hooks.mlflow.mlflow_artifacts_logger import *  # NOQA
     from .mlflow_on_kedro.hooks.mlflow.mlflow_basic_logger import *  # NOQA
     from .mlflow_on_kedro.hooks.mlflow.mlflow_catalog_logger import *  # NOQA
-    from .mlflow_on_kedro.hooks.mlflow.mlflow_artifacts_logger import *  # NOQA
-    from .mlflow_on_kedro.hooks.mlflow.mlflow_time_logger import *  # NOQA
     from .mlflow_on_kedro.hooks.mlflow.mlflow_datasets_logger import *  # NOQA
     from .mlflow_on_kedro.hooks.mlflow.mlflow_env_vars_logger import *  # NOQA
-    from .mlflow_on_kedro.datasets.mlflow.mlflow_dataset import *  # NOQA
+    from .mlflow_on_kedro.hooks.mlflow.mlflow_time_logger import *  # NOQA
     from .mlflow_on_kedro.transformers.mlflow.mlflow_io_time_logger import *  # NOQA
 
 if find_spec("pandas"):
@@ -61,8 +60,8 @@ if find_spec("numpy"):
     from .extras.ops.numpy_ops import *  # NOQA
 
 if find_spec("pandas"):
-    from .extras.ops.pandas_ops import *  # NOQA
     from .extras.decorators.pandas_decorators import *  # NOQA
+    from .extras.ops.pandas_ops import *  # NOQA
 
 if find_spec("torch"):
     from .extras.ops.pytorch_ops import *  # NOQA

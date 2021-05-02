@@ -1,9 +1,10 @@
 import copy
+import logging
 from pathlib import Path
 from typing import Any, Dict
-import logging
 
 import cv2
+
 from ..core import AbstractVersionedDataSet, DataSetError, Version
 
 log = logging.getLogger(__name__)

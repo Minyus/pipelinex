@@ -1,11 +1,9 @@
 from logging import getLogger
 
-
 log = getLogger(__name__)
 
 try:
     from kedro.framework.context import *  # NOQA
-
     from kedro.framework.hooks import get_hook_manager
 
 except (ImportError, ModuleNotFoundError):

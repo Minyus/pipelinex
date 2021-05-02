@@ -1,0 +1,62 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[packages]
+flatten-dict = ">=0.3.0"
+numpy = "*"
+
+[dev-packages]
+Pillow = "*"
+Sphinx = "==3.5.1"
+black = "*"
+featuretools = "*"
+flake8 = "*"
+flatten-dict = "*"
+httpx = "*"
+isort = "*"
+kedro = "*"
+"keyrings.alt" = ">=3.4.0"
+matplotlib = "*"
+memory-profiler = "*"
+mlflow = "*"
+nested-lookup = "*"
+opencv-contrib-python = "*"
+opencv-python = "*"
+pandas = "*"
+pandas-profiling = "*"
+plotly = "*"
+pynvml = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-mock = "*"
+pytorch-ignite = "*"
+recommonmark = "==0.7.1"
+requests = "*"
+requests-mock = ">=1.8.0"
+scikit-image = "*"
+scikit-learn = "*"
+seaborn = "*"
+sphinx-autodoc-typehints = "==1.11.1"
+sphinx-copybutton = "==0.3.1"
+sphinx-rtd-theme = "==0.5.1"
+torch = "*"
+torch-vision = "*"
+twine = "*"
+typed-ast = "==1.4.2"
+
+[requires]
+python_version = "3.7"
+
+[scripts]
+fmt = "black --line-length 120 src/"
+install = "pip install pipelinex"
+install_dev = "python setup.py develop"
+lint = "black --check --diff --line-length 120 src/"
+sort = "isort -rc src/"
+test = "pytest -v src/tests"
+vet = "mypy src/"
+
+[pipenv]
+allow_prereleases = true

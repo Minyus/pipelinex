@@ -1,6 +1,6 @@
+import time
 from importlib.util import find_spec
 from logging import getLogger
-import time
 from typing import Any, Callable  # NOQA
 
 from kedro.io import AbstractTransformer
@@ -29,11 +29,7 @@ class MLflowIOTimeLoggerTransformer(AbstractTransformer):
     def _log_time(self, time_begin, data_set_name, action):
         time_ = time.time() - time_begin
         data_set_name = data_set_name.replace(":", "..")
-        time_dict = {
-            "{}{} {}".format(self.metric_name_prefix, action, data_set_name)[
-                :250
-            ]: time_
-        }
+        time_dict = {"{}{} {}".format(self.metric_name_prefix, action, data_set_name)[:250]: time_}
 
         log.info("Time duration: {}".format(time_dict))
         if self.enable_mlflow:

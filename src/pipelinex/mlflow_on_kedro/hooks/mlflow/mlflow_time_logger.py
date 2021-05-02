@@ -1,27 +1,21 @@
-from importlib.util import find_spec
 import json
-import time
-from logging import getLogger
-from pprint import pformat
-from pathlib import Path
 import tempfile
+import time
+from importlib.util import find_spec
+from logging import getLogger
+from pathlib import Path
+from pprint import pformat
 from typing import Any, Callable, Dict  # NOQA
 
 from kedro.pipeline.node import Node  # NOQA
 
-from .mlflow_utils import hook_impl, mlflow_log_metrics, mlflow_log_artifacts
-
+from .mlflow_utils import hook_impl, mlflow_log_artifacts, mlflow_log_metrics
 
 log = getLogger(__name__)
 
 
 def _get_task_name(node: Node) -> str:
-    func_name = (
-        node._func_name.replace("<", "")
-        .replace(">", "")
-        .split(" ")[0]
-        .split(".")[-1][:250]
-    )
+    func_name = node._func_name.replace("<", "").replace(">", "").split(" ")[0].split(".")[-1][:250]
     return "{} -- {}".format(func_name, " - ".join(node.outputs))
 
 
@@ -74,13 +68,9 @@ class MLflowTimeLoggerHook:
         self.gantt_params = gantt_params
         self.metric_name_prefix = metric_name_prefix
         self.task_name_func = task_name_func
-        self.time_log_filepath = time_log_filepath or (
-            tempfile.gettempdir() + "/_time_log.json"
-        )
+        self.time_log_filepath = time_log_filepath or (tempfile.gettempdir() + "/_time_log.json")
         Path(self.time_log_filepath).parent.mkdir(parents=True, exist_ok=True)
-        dump_dict(
-            self.time_log_filepath, {"time_begin": {}, "time_end": {}, "time": {}}
-        )
+        dump_dict(self.time_log_filepath, {"time_begin": {}, "time_end": {}, "time": {}})
 
         self._time_begin_dict = {}
         self._time_end_dict = {}
@@ -109,12 +99,7 @@ class MLflowTimeLoggerHook:
         self._time_end_dict.update(time_end_dict)
         self.update_time_dict("time_end", time_end_dict)
 
-        time_dict = {
-            task_name: (
-                self._time_end_dict.get(task_name)
-                - self._time_begin_dict.get(task_name)
-            )
-        }
+        time_dict = {task_name: (self._time_end_dict.get(task_name) - self._time_begin_dict.get(task_name))}
 
         log.info("Time duration: {}".format(time_dict))
 
@@ -122,17 +107,13 @@ class MLflowTimeLoggerHook:
 
         self.update_time_dict("time", time_dict)
 
-        metric_time_dict = {
-            (self.metric_name_prefix + k): v for (k, v) in time_dict.items()
-        }
+        metric_time_dict = {(self.metric_name_prefix + k): v for (k, v) in time_dict.items()}
         mlflow_log_metrics(metric_time_dict, enable_mlflow=self.enable_mlflow)
 
     @hook_impl
     def after_pipeline_run(self, run_params, pipeline, catalog):
 
-        self._time_begin_dict = self._time_begin_dict or self.load_time_dict(
-            "time_begin"
-        )
+        self._time_begin_dict = self._time_begin_dict or self.load_time_dict("time_begin")
         self._time_end_dict = self._time_end_dict or self.load_time_dict("time_end")
         self._time_dict = self._time_dict or self.load_time_dict("time")
 
@@ -140,9 +121,7 @@ class MLflowTimeLoggerHook:
 
         if self.enable_plotly:
             if not (self._time_begin_dict and self._time_end_dict):
-                log.warning(
-                    "Time log dicts are not found. Skipping generating the Gantt Chart."
-                )
+                log.warning("Time log dicts are not found. Skipping generating the Gantt Chart.")
                 return
 
             tasks_reversed = list(self._time_begin_dict.keys())[::-1]

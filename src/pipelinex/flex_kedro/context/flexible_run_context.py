@@ -1,13 +1,14 @@
-import logging.config
 import logging
+import logging.config
 from typing import Any, Dict, Iterable, Optional, Union  # NOQA
 from warnings import warn
-import kedro
-from kedro.versioning import Journal
-from .context import KedroContext, KedroContextError
-from kedro.runner import AbstractRunner, SequentialRunner
-import kedro.runner
 
+import kedro
+import kedro.runner
+from kedro.runner import AbstractRunner, SequentialRunner
+from kedro.versioning import Journal
+
+from .context import KedroContext, KedroContextError
 from .save_pipeline_json_context import SavePipelineJsonContext
 
 log = logging.getLogger(__name__)
@@ -75,13 +76,11 @@ class OnlyMissingOptionContext(KedroContext):
             )
             if pipeline_name:
                 raise KedroContextError(
-                    "The project is not fully migrated to use multiple pipelines. "
-                    + common_migration_message
+                    "The project is not fully migrated to use multiple pipelines. " + common_migration_message
                 )
 
             warn(
-                "You are using the deprecated pipeline construction mechanism. "
-                + common_migration_message,
+                "You are using the deprecated pipeline construction mechanism. " + common_migration_message,
                 DeprecationWarning,
             )
             pipeline = self.pipeline
@@ -117,9 +116,7 @@ class OnlyMissingOptionContext(KedroContext):
         }
         journal = Journal(record_data)
 
-        catalog = self._get_catalog(
-            save_version=save_version, journal=journal, load_versions=load_versions
-        )
+        catalog = self._get_catalog(save_version=save_version, journal=journal, load_versions=load_versions)
 
         # Run the runner
         runner = runner or SequentialRunner()
@@ -170,7 +167,5 @@ class StringRunnerOptionContext(KedroContext):
         return super().run(*args, runner=runner, **kwargs)
 
 
-class FlexibleRunContext(
-    SavePipelineJsonContext, StringRunnerOptionContext, OnlyMissingOptionContext
-):
+class FlexibleRunContext(SavePipelineJsonContext, StringRunnerOptionContext, OnlyMissingOptionContext):
     pass

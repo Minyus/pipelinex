@@ -1,7 +1,9 @@
-from typing import Any, Dict
-import pandas as pd
-from .csv_local import CSVLocalDataSet
 import logging
+from typing import Any, Dict
+
+import pandas as pd
+
+from .csv_local import CSVLocalDataSet
 
 log = logging.getLogger(__name__)
 
@@ -32,7 +34,7 @@ class PandasCatMatrixDataSet(CSVLocalDataSet):
         )
 
     def _load(self) -> Any:
-        """ loading is not supported. """
+        """loading is not supported."""
         return None
 
     def _save(self, df: pd.DataFrame) -> None:

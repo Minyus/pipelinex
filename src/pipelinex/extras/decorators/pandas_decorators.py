@@ -1,8 +1,8 @@
+import logging
 from functools import wraps
-import pandas as pd
 from typing import Callable, List, Union
 
-import logging
+import pandas as pd
 
 log = logging.getLogger(__name__)
 
@@ -45,12 +45,12 @@ def log_df_summary(func: Callable) -> Callable:
 def df_set_index(
     cols: Union[List[str], str],
 ) -> Callable:
-    """ decorator with arguments """
+    """decorator with arguments"""
     if not isinstance(cols, list):
         cols = [cols]
 
     def decorator(func: Callable) -> Callable:
-        """ decorator without arguments """
+        """decorator without arguments"""
 
         @wraps(func)
         def wrapper(df, parameters, *args, **kwargs):
@@ -70,15 +70,13 @@ def df_set_index(
     return decorator
 
 
-def total_seconds_to_datetime(
-    cols: Union[List[str], str], origin: str = "1970-01-01"
-) -> Callable:
-    """ decorator with arguments """
+def total_seconds_to_datetime(cols: Union[List[str], str], origin: str = "1970-01-01") -> Callable:
+    """decorator with arguments"""
     if not isinstance(cols, list):
         cols = [cols]
 
     def decorator(func: Callable) -> Callable:
-        """ decorator without arguments """
+        """decorator without arguments"""
 
         @wraps(func)
         def wrapper(df, parameters, *args, **kwargs):
@@ -88,9 +86,7 @@ def total_seconds_to_datetime(
                         log.warning("Could not find column: ".format(col))
                 cols_ = [col for col in cols if col in df.columns]
                 for col in cols_:
-                    df.loc[:, col] = pd.to_datetime(
-                        df[col], unit="s", origin=pd.Timestamp(origin)
-                    )
+                    df.loc[:, col] = pd.to_datetime(df[col], unit="s", origin=pd.Timestamp(origin))
             df = func(df, parameters, *args, **kwargs)
             if isinstance(df, pd.DataFrame):
                 for col in cols_:

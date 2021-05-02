@@ -1,6 +1,7 @@
-from pipelinex import nvml_profile
-from time import sleep
 import logging
+from time import sleep
+
+from pipelinex import nvml_profile
 
 logging.basicConfig(level=logging.DEBUG)
 

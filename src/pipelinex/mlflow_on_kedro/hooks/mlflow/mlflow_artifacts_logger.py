@@ -8,7 +8,6 @@ from kedro.pipeline.node import Node
 
 from .mlflow_utils import hook_impl, mlflow_log_artifacts
 
-
 log = getLogger(__name__)
 
 
@@ -40,15 +39,11 @@ class MLflowArtifactsLoggerHook:
         mlflow_log_artifacts(artifacts, enable_mlflow=self.enable_mlflow)
 
     @hook_impl
-    def before_pipeline_run(
-        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
-    ):
+    def before_pipeline_run(self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog):
         self._log_artifacts(self.filepaths_before_pipeline_run)
 
     @hook_impl
-    def after_pipeline_run(
-        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
-    ):
+    def after_pipeline_run(self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog):
         self._log_artifacts(self.filepaths_after_pipeline_run)
 
     def _log_datasets(self, catalog, datasets):

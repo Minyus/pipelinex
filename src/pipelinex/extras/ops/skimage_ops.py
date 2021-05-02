@@ -1,5 +1,6 @@
-from pipelinex.utils import DictToDict
 from skimage import segmentation
+
+from pipelinex.utils import DictToDict
 
 
 class SkimageSegmentationDictToDict(DictToDict):

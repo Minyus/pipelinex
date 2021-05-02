@@ -1,10 +1,9 @@
-from importlib.util import find_spec
 import os
+from importlib.util import find_spec
 from logging import getLogger
 from typing import List  # NOQA
 
 from .mlflow_utils import hook_impl, mlflow_log_metrics, mlflow_log_params
-
 
 log = getLogger(__name__)
 

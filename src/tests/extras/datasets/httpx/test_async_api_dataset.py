@@ -26,14 +26,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# pylint: disable=no-member
-import PIL
 import io
 
+# pylint: disable=no-member
+import PIL
 import pytest
+from kedro.io.core import DataSetError
 
 from pipelinex import AsyncAPIDataSet as APIDataSet
-from kedro.io.core import DataSetError
 
 
 def test_successfully_load_with_content_response():
@@ -72,9 +72,7 @@ def test_attribute_not_found():
 
 foobar_prefix = "https://raw.githubusercontent.com/"
 foo_image_url = foobar_prefix + "quantumblacklabs/kedro/develop/img/kedro_banner.png"
-bar_image_url = (
-    foobar_prefix + "quantumblacklabs/kedro/develop/img/pipeline_visualisation.png"
-)
+bar_image_url = foobar_prefix + "quantumblacklabs/kedro/develop/img/pipeline_visualisation.png"
 
 
 def test_successfully_load_from_url_dict_with_content_response():

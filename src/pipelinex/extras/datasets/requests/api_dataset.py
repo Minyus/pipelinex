@@ -35,6 +35,7 @@ from typing import Any, Dict, List, Tuple, Union
 
 import requests
 from requests.auth import AuthBase
+
 from ..core import AbstractDataSet, DataSetError
 
 
@@ -224,9 +225,7 @@ class APIDataSet(AbstractDataSet):
                 output_dict[name] = response
                 continue
             else:
-                raise DataSetError(
-                    "Response has no attribute: {}".format(self._attribute)
-                )
+                raise DataSetError("Response has no attribute: {}".format(self._attribute))
 
             try:
                 for transform in self._transforms:
@@ -248,19 +247,12 @@ class APIDataSet(AbstractDataSet):
             return output_dict
 
     def _save(self, data: Any) -> None:
-        raise DataSetError(
-            "{} is a read only data set type".format(self.__class__.__name__)
-        )
+        raise DataSetError("{} is a read only data set type".format(self.__class__.__name__))
 
     def _exists(self) -> bool:
         response_dict = self._execute_request()
 
-        return all(
-            [
-                getattr(response, "status_code") == requests.codes.ok
-                for response in response_dict.values()
-            ]
-        )
+        return all([getattr(response, "status_code") == requests.codes.ok for response in response_dict.values()])
 
     def __call__(
         self,

@@ -1,7 +1,8 @@
-from typing import Any, Dict
-import pandas as pd
-import matplotlib.pyplot as plt
 import logging
+from typing import Any, Dict
+
+import matplotlib.pyplot as plt
+import pandas as pd
 
 from ..core import AbstractDataSet
 
@@ -25,7 +26,7 @@ class HistgramDataSet(AbstractDataSet):
         )
 
     def _load(self) -> Any:
-        """ loading is not supported. """
+        """loading is not supported."""
         return None
 
     def _save(self, df: pd.DataFrame) -> None:

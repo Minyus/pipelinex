@@ -1,26 +1,20 @@
+import tempfile
 from importlib.util import find_spec
 from logging import getLogger
-import tempfile
 from typing import Any, Dict, Union  # NOQA
 
 from kedro.io import AbstractDataSet, DataCatalog
-from kedro.pipeline.node import Node
 from kedro.pipeline import Pipeline
+from kedro.pipeline.node import Node
 
-from .mlflow_utils import (
-    hook_impl,
-    mlflow_log_artifacts,
-    mlflow_log_metrics,
-    mlflow_log_params,
-    mlflow_log_values,
-)
-
+from .mlflow_utils import hook_impl, mlflow_log_artifacts, mlflow_log_metrics, mlflow_log_params, mlflow_log_values
 
 log = getLogger(__name__)
 
 
 def get_kedro_runner():
     import inspect
+
     from kedro.runner import AbstractRunner
 
     return next(
@@ -137,9 +131,7 @@ class MLflowCatalogLoggerHook:
         self.auto = auto
 
     @hook_impl
-    def before_pipeline_run(
-        self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog
-    ) -> None:
+    def before_pipeline_run(self, run_params: Dict[str, Any], pipeline: Pipeline, catalog: DataCatalog) -> None:
         for dataset_name in catalog._data_sets:
             if catalog._data_sets[dataset_name].__class__.__name__ == "MLflowDataSet":
                 setattr(catalog._data_sets[dataset_name], "_dataset_name", dataset_name)
@@ -193,11 +185,7 @@ class MLflowCatalogLoggerHook:
                 ds(filepath=fp).save(value)
                 mlflow_log_artifacts([fp], enable_mlflow=self.enable_mlflow)
             else:
-                log.warning(
-                    "'{}' is not supported as mlflow_catalog entry and ignored.".format(
-                        catalog_instance
-                    )
-                )
+                log.warning("'{}' is not supported as mlflow_catalog entry and ignored.".format(catalog_instance))
                 return
         else:
             if not hasattr(catalog_instance, "save"):

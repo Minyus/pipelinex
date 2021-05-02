@@ -1,12 +1,12 @@
 import logging
+import tempfile
 from importlib.util import find_spec
 from pathlib import Path
-import tempfile
 from typing import Any, Dict, Union
 
-from kedro.io.core import AbstractDataSet
-from kedro.io import MemoryDataSet
 from kedro.extras.datasets.pickle import PickleDataSet
+from kedro.io import MemoryDataSet
+from kedro.io.core import AbstractDataSet
 
 from pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_utils import (
     mlflow_log_artifacts,
@@ -124,9 +124,7 @@ class MLflowDataSet(AbstractDataSet):
         if isinstance(dataset, str):
             if (dataset not in {"p", "m"}) and (dataset not in dataset_dicts):
                 raise ValueError(
-                    "`dataset`: {} not supported. Specify one of {}.".format(
-                        dataset, list(dataset_dicts.keys())
-                    )
+                    "`dataset`: {} not supported. Specify one of {}.".format(dataset, list(dataset_dicts.keys()))
                 )
         self._ready = False
         self._running_parallel = None
@@ -139,23 +137,14 @@ class MLflowDataSet(AbstractDataSet):
             self.dataset_name = self.dataset_name or self._dataset_name
             _dataset = self.dataset
             if isinstance(self.dataset, str):
-                dataset_dict = dataset_dicts.get(
-                    self.dataset, {"type": "pickle.PickleDataSet"}
-                )
+                dataset_dict = dataset_dicts.get(self.dataset, {"type": "pickle.PickleDataSet"})
                 dataset_dict["filepath"] = self.filepath = (
-                    self.filepath
-                    or tempfile.gettempdir()
-                    + "/"
-                    + self.dataset_name
-                    + "."
-                    + self.dataset
+                    self.filepath or tempfile.gettempdir() + "/" + self.dataset_name + "." + self.dataset
                 )
                 _dataset = dataset_dict
 
             if isinstance(_dataset, dict):
-                self._dataset = AbstractDataSet.from_config(
-                    self._dataset_name, _dataset
-                )
+                self._dataset = AbstractDataSet.from_config(self._dataset_name, _dataset)
             elif isinstance(_dataset, AbstractDataSet):
                 self._dataset = _dataset
             else:
@@ -209,11 +198,7 @@ class MLflowDataSet(AbstractDataSet):
             run = client.get_run(self.loading_run_id)
             value = run.data.params.get(self.dataset_name, None)
             if value is None:
-                raise KeyError(
-                    "param '{}' not found in run_id '{}'.".format(
-                        self.dataset_name, self.loading_run_id
-                    )
-                )
+                raise KeyError("param '{}' not found in run_id '{}'.".format(self.dataset_name, self.loading_run_id))
 
             PickleDataSet(filepath=self.filepath).save(value)
 
@@ -221,11 +206,7 @@ class MLflowDataSet(AbstractDataSet):
             run = client.get_run(self.loading_run_id)
             value = run.data.metrics.get(self.dataset_name, None)
             if value is None:
-                raise KeyError(
-                    "metric '{}' not found in run_id '{}'.".format(
-                        self.dataset_name, self.loading_run_id
-                    )
-                )
+                raise KeyError("metric '{}' not found in run_id '{}'.".format(self.dataset_name, self.loading_run_id))
             PickleDataSet(filepath=self.filepath).save(value)
 
         else:
@@ -260,9 +241,7 @@ class MLflowDataSet(AbstractDataSet):
                 mlflow.start_run(run_id=self.saving_run_id)
 
             elif self.saving_experiment_name:
-                experiment_id = mlflow.get_experiment_by_name(
-                    self.saving_experiment_name
-                ).experiment_id
+                experiment_id = mlflow.get_experiment_by_name(self.saving_experiment_name).experiment_id
                 mlflow.start_run(run_id=self.saving_run_id, experiment_id=experiment_id)
 
             if self.dataset in {"p"}:

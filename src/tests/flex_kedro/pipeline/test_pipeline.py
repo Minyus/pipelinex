@@ -41,14 +41,8 @@ def task_deco(func: Callable) -> Callable:
 
 
 def test_dict():
-    fp = pipelinex.FlexiblePipeline(
-        nodes=[dict(func=task_func1, inputs="my_input", outputs="my_output")]
-    )
-    kp = kedro.pipeline.Pipeline(
-        nodes=[
-            kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")
-        ]
-    )
+    fp = pipelinex.FlexiblePipeline(nodes=[dict(func=task_func1, inputs="my_input", outputs="my_output")])
+    kp = kedro.pipeline.Pipeline(nodes=[kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")])
     assert_eq(fp, kp)
 
 
@@ -64,15 +58,9 @@ def test_sequential():
     )
     kp = kedro.pipeline.Pipeline(
         nodes=[
-            kedro.pipeline.node(
-                func=task_func1, inputs="my_input", outputs="my_output__001"
-            ),
-            kedro.pipeline.node(
-                func=task_func2, inputs="my_output__001", outputs="my_output__002"
-            ),
-            kedro.pipeline.node(
-                func=task_func3, inputs="my_output__002", outputs="my_output"
-            ),
+            kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output__001"),
+            kedro.pipeline.node(func=task_func2, inputs="my_output__001", outputs="my_output__002"),
+            kedro.pipeline.node(func=task_func3, inputs="my_output__002", outputs="my_output"),
         ]
     )
     assert_eq(fp, kp)
@@ -82,14 +70,10 @@ def test_decorator():
     if kedro.__version__[:5] not in {"0.16.", "0.17."}:
         return
     fp = pipelinex.FlexiblePipeline(
-        nodes=[
-            kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")
-        ],
+        nodes=[kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")],
         decorator=[task_deco, task_deco],
     )
     kp = kedro.pipeline.Pipeline(
-        nodes=[
-            kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")
-        ]
+        nodes=[kedro.pipeline.node(func=task_func1, inputs="my_input", outputs="my_output")]
     ).decorate(task_deco, task_deco)
     assert_eq(fp, kp)

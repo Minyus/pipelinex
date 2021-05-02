@@ -36,10 +36,7 @@ from typing import Any, Dict
 
 import pandas as pd
 
-from ..core import (
-    AbstractVersionedDataSet,
-    Version,
-)
+from ..core import AbstractVersionedDataSet, Version
 
 
 class CSVLocalDataSet(AbstractVersionedDataSet):

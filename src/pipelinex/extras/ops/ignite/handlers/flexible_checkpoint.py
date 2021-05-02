@@ -1,10 +1,9 @@
-from datetime import datetime, timedelta
+import logging
 import os
 import tempfile
+from datetime import datetime, timedelta
 
 import torch
-
-import logging
 
 log = logging.getLogger(__name__)
 
@@ -106,16 +105,10 @@ class ModelCheckpoint(object):
         self._save_as_state_dict = save_as_state_dict
 
         if not (save_interval is None) ^ (score_function is None):
-            raise ValueError(
-                "Exactly one of `save_interval`, or `score_function` "
-                "arguments must be provided."
-            )
+            raise ValueError("Exactly one of `save_interval`, or `score_function` " "arguments must be provided.")
 
         if score_function is None and score_name is not None:
-            raise ValueError(
-                "If `score_name` is provided, then `score_function` "
-                "should be also provided."
-            )
+            raise ValueError("If `score_name` is provided, then `score_function` " "should be also provided.")
 
         if create_dir:
             if not os.path.exists(dirname):
@@ -126,11 +119,7 @@ class ModelCheckpoint(object):
             raise ValueError("Directory path '{}' is not found.".format(dirname))
 
         if require_empty:
-            matched = [
-                fname
-                for fname in os.listdir(dirname)
-                if fname.startswith(self._fname_prefix)
-            ]
+            matched = [fname for fname in os.listdir(dirname) if fname.startswith(self._fname_prefix)]
 
             if len(matched) > 0:
                 raise ValueError(
@@ -185,9 +174,7 @@ class ModelCheckpoint(object):
                 suffix = "_{}={:.7}".format(self._score_name, abs(priority))
 
             for name, obj in to_save.items():
-                fname = "{}_{}_{}{}.pth".format(
-                    self._fname_prefix, name, self._iteration, suffix
-                )
+                fname = "{}_{}_{}{}.pth".format(self._fname_prefix, name, self._iteration, suffix)
                 path = os.path.join(self._dirname, fname)
 
                 self._save(obj=obj, path=path)
@@ -204,19 +191,10 @@ class ModelCheckpoint(object):
 
 class FlexibleModelCheckpoint(ModelCheckpoint):
     def __init__(
-        self,
-        dirname,
-        filename_prefix,
-        offset_hours=0,
-        filename_format=None,
-        suffix_format=None,
-        *args,
-        **kwargs
+        self, dirname, filename_prefix, offset_hours=0, filename_format=None, suffix_format=None, *args, **kwargs
     ):
         if "%" in filename_prefix:
-            filename_prefix = get_timestamp(
-                fmt=filename_prefix, offset_hours=offset_hours
-            )
+            filename_prefix = get_timestamp(fmt=filename_prefix, offset_hours=offset_hours)
         super().__init__(dirname, filename_prefix, *args, **kwargs)
         if not callable(filename_format):
             if isinstance(filename_format, str):
@@ -262,9 +240,7 @@ class FlexibleModelCheckpoint(ModelCheckpoint):
                 suffix = self._suffix_format(self._score_name, abs(priority))
 
             for name, obj in to_save.items():
-                fname = self._filename_format(
-                    self._fname_prefix, name, self._iteration, suffix
-                )
+                fname = self._filename_format(self._fname_prefix, name, self._iteration, suffix)
                 path = os.path.join(self._dirname, fname)
 
                 self._save(obj=obj, path=path)

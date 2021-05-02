@@ -1,5 +1,7 @@
 from typing import Any, Dict
+
 import pandas as pd
+
 from .csv_local import CSVLocalDataSet
 
 
@@ -29,7 +31,7 @@ class PandasDescribeDataSet(CSVLocalDataSet):
         )
 
     def _load(self) -> Any:
-        """ loading is not supported. """
+        """loading is not supported."""
         return None
 
     def _save(self, data: pd.DataFrame) -> None:
