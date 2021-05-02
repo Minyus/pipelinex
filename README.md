@@ -95,6 +95,12 @@ $ pipenv run sort
 
 # apply mypy to python code
 $ pipenv run vet
+
+# get into shell
+$ pipenv shell
+
+# run test
+$ pipenv run test
 ```
 
 ### Prepare Docker environment for PipelineX
