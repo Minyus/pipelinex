@@ -1,4 +1,5 @@
 import json
+import re
 import tempfile
 import time
 from importlib.util import find_spec
@@ -19,9 +20,13 @@ def _get_task_name(node: Node) -> str:
         node._func_name.replace("<", "")
         .replace(">", "")
         .split(" ")[0]
-        .split(".")[-1][:250]
+        .split("(")[0]
+        .split("=")[0]
+        .split(".")[-1]
     )
-    return "{} -- {}".format(func_name, " - ".join(node.outputs))
+    task_name = "{} -- {}".format(func_name[:20], " - ".join(node.outputs))
+    task_name = re.sub(r"[^A-Za-z0-9\_\-\.\ \/]", " ", task_name)
+    return task_name[:50]
 
 
 def dump_dict(filepath: str, d: dict):
