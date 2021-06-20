@@ -1,11 +1,12 @@
+import torch.nn.functional as F
+from ignite.contrib.handlers.param_scheduler import LinearCyclicalScheduler
+from ignite.handlers import ModelCheckpoint
+from ignite.metrics import Accuracy, Loss
 from torch import nn
 from torch.optim import SGD
-import torch.nn.functional as F
-from torchvision.transforms import Compose, ToTensor, Normalize
 from torchvision.datasets import MNIST
-from ignite.metrics import Accuracy, Loss
-from ignite.handlers import ModelCheckpoint
-from ignite.contrib.handlers.param_scheduler import LinearCyclicalScheduler
+from torchvision.transforms import Compose, Normalize, ToTensor
+
 from pipelinex import NetworkTrain
 
 
