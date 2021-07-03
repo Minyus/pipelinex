@@ -1,4 +1,5 @@
 from importlib.util import find_spec
+
 import pandas as pd
 
 if find_spec("kedro"):

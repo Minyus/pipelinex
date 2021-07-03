@@ -1,6 +1,7 @@
 import pandas as pd
-from pipelinex import FixedWidthCSVDataSet
 from kedro.extras.datasets.text.text_dataset import TextDataSet
+
+from pipelinex import FixedWidthCSVDataSet
 
 
 def test_simple():

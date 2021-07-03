@@ -27,9 +27,9 @@ if find_spec("kedro"):
 if find_spec("pandas"):
     from .extras.datasets.pandas.csv_local import *  # NOQA
     from .extras.datasets.pandas.efficient_csv_local import *  # NOQA
+    from .extras.datasets.pandas.fixed_width_csv_dataset import *  # NOQA
     from .extras.datasets.pandas.pandas_cat_matrix import *  # NOQA
     from .extras.datasets.pandas.pandas_describe import *  # NOQA
-    from .extras.datasets.pandas.fixed_width_csv_dataset import *  # NOQA
 
     if find_spec("matplotlib"):
         from .extras.datasets.pandas.histgram import *  # NOQA
