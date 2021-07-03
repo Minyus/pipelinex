@@ -25,6 +25,14 @@ pipelinex.extras.datasets.pandas.efficient\_csv\_local module
    :undoc-members:
    :show-inheritance:
 
+pipelinex.extras.datasets.pandas.fixed\_width\_csv\_dataset module
+------------------------------------------------------------------
+
+.. automodule:: pipelinex.extras.datasets.pandas.fixed_width_csv_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 pipelinex.extras.datasets.pandas.histgram module
 ------------------------------------------------
 
