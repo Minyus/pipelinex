@@ -67,13 +67,15 @@ def fix_width(df, num_decimal_places=9):
     import numpy as np
 
     for col in df.select_dtypes(["float64", "float32", "float16"]):
-        d = int(np.ceil(np.log10(df[col].max())))
+        sr = df[col].apply("{:.0f}".format)
+        d = sr.astype(str).str.len().max()
         df[col] = df[col].apply(
             ("{:" + str(d) + "." + str(num_decimal_places) + "f}").format
         )
 
     for col in df.select_dtypes(["int64", "int32", "int16", "int8"]):
-        d = int(np.ceil(np.log10(df[col].max())))
+        sr = df[col].apply("{}".format)
+        d = sr.astype(str).str.len().max()
         df[col] = df[col].apply(("{:" + str(d) + "d}").format)
 
     for col in df.select_dtypes(["object"]):
