@@ -235,7 +235,12 @@ def dot_flatten(d):
 
         d = flatten(d, reducer="dot")
     except Exception:
-        log.warning("{} failed to be flattened.".format(d), exc_info=True)
+        log.warning(
+            "{} failed to be flattened. To install dependency, you can run: pip install flatten-dict>=0.3.0".format(
+                d
+            ),
+            exc_info=True,
+        )
     return d
 
 
