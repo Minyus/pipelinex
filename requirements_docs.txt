@@ -1,6 +1,9 @@
 Sphinx==3.5.1
+Jinja2==2.11.3
+markupsafe==2.0.1
 sphinx-rtd-theme==0.5.1
 recommonmark==0.7.1
 sphinx-autodoc-typehints==1.11.1
 typed-ast==1.4.2
 sphinx-copybutton==0.3.1
+kedro==0.17.7

@@ -1,4 +1,4 @@
-kedro
+kedro<=0.17.7
 pandas
 matplotlib
 seaborn
