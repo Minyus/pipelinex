@@ -18,6 +18,12 @@ sphinx-apidoc -f --module-first -o ./ ../src/pipelinex
 
 3. Split the repository top README.md into smaller markdown files
 
+If you use macOS, enable GNU version of csplit:
+```bash
+brew install coreutils
+PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH"
+```
+
 ```bash
 cd <repository>/docs
 csplit -f 'section' -b %02d.md -n 2 ../README.md "/^## /" {*}
