@@ -328,7 +328,7 @@ assert numpy_array_func == numpy.array
 [PyYAML's `!!python/object` and `!!python/name`](https://pyyaml.org/wiki/PyYAMLDocumentation), however, has the following problems.
 
 - `!!python/object` or `!!python/name` are too long to write.
-- Positional (non-keyword) arguments are apparently not supported.
+- Positional (unnamed) arguments are apparently not supported.
 
 Any better way?
 
@@ -339,14 +339,14 @@ PipelineX provides the solution.
 PipelineX's HatchDict provides an easier syntax, as follows, to convert Python dictionaries read from YAML or JSON files to Python objects without `import`.
 
 - Use `=` key to specify the package, module, and class/function with `.` separator in `foo_package.bar_module.baz_class` format.
-- [Optional] Use `_` key to specify (list of) positional arguments (args) if any.
+- [Optional] Use `_` key to specify (list of) positional (unnamed) arguments if any.
 - [Optional] Add keyword arguments (kwargs) if any.
 
-To return an object instance like PyYAML's `!!python/object`, feed positional and/or keyword arguments. If there is no arguments, just feed null (known as `None` in Python) to `_` key.
+To return an object instance like PyYAML's `!!python/object`, feed positional and/or keyword arguments. If it has no arguments, just feed null (known as `None` in Python) to `_` key.
 
-To return an uninstantiated (raw) object like PyYAML's `!!python/name`, just feed `=` key without positional nor keyword arguments.
+To return an uninstantiated (raw) object like PyYAML's `!!python/name`, just feed `=` key without any arguments.
 
-Example alternative to `!!python/object`:
+Example alternative to `!!python/object` specifying keyword arguments:
 
 ```python
 from pipelinex import HatchDict
@@ -388,6 +388,43 @@ LogisticRegression(C=1.23456, class_weight=None, dual=False, fit_intercept=True,
                    multi_class='warn', n_jobs=None, penalty='l2',
                    random_state=42, solver='warn', tol=0.0001, verbose=0,
                    warm_start=False)
+```
+
+Example alternative to `!!python/object` specifying both positional and keyword arguments:
+
+```python
+from pipelinex import HatchDict
+import yaml
+from pprint import pprint  # pretty-print for clearer look
+
+params_yaml = """
+metrics:
+  - =: functools.partial
+    _:
+      =: sklearn.metrics.roc_auc_score
+    multiclass: ovr
+"""
+parameters = yaml.safe_load(params_yaml)
+
+metrics_dict = parameters.get("metrics")
+
+print("### Before ###")
+pprint(metrics_dict)
+
+metrics = HatchDict(parameters).get("metrics")
+
+print("\n### After ###")
+print(metrics)
+```
+
+```
+### Before ###
+[{'=': 'functools.partial',
+  '_': {'=': 'sklearn.metrics.roc_auc_score'},
+  'multiclass': 'ovr'}]
+
+### After ###
+[functools.partial(<function roc_auc_score at 0x16bcf19d0>, multiclass='ovr')]
 ```
 
 Example alternative to `!!python/name`:
