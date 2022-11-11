@@ -10,9 +10,6 @@ from .utils import *  # NOQA
 
 if find_spec("kedro"):
     from .extras.hooks.add_catalog_dict import *  # NOQA
-    from .extras.hooks.add_transformers import *  # NOQA
-    from .flex_kedro.configure import *  # NOQA
-    from .flex_kedro.context.flexible_context import *  # NOQA
     from .flex_kedro.pipeline.pipeline import *  # NOQA
     from .flex_kedro.pipeline.sub_pipeline import *  # NOQA
     from .mlflow_on_kedro.datasets.mlflow.mlflow_dataset import *  # NOQA
@@ -22,7 +19,15 @@ if find_spec("kedro"):
     from .mlflow_on_kedro.hooks.mlflow.mlflow_datasets_logger import *  # NOQA
     from .mlflow_on_kedro.hooks.mlflow.mlflow_env_vars_logger import *  # NOQA
     from .mlflow_on_kedro.hooks.mlflow.mlflow_time_logger import *  # NOQA
-    from .mlflow_on_kedro.transformers.mlflow.mlflow_io_time_logger import *  # NOQA
+
+    import kedro
+
+    kedro_major, kedro_minor = kedro.__version__.split(".", 2)[:2]
+    if int(kedro_major) == 0 and int(kedro_minor) < 18:
+        from .extras.hooks.add_transformers import *  # NOQA
+        from .flex_kedro.configure import *  # NOQA
+        from .flex_kedro.context.flexible_context import *  # NOQA
+        from .mlflow_on_kedro.transformers.mlflow.mlflow_io_time_logger import *  # NOQA
 
 if find_spec("pandas"):
     from .extras.datasets.pandas.csv_local import *  # NOQA
