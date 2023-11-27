@@ -1,6 +1,7 @@
 from typing import Dict
 
-from kedro.io import AbstractDataSet, DataCatalog
+from kedro.io import DataCatalog
+from kedro_datasets._io import AbstractDataset as AbstractDataSet
 
 try:
     from kedro.framework.hooks import hook_impl
