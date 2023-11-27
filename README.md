@@ -114,14 +114,14 @@ docker run --rm -it pipelinex
 
 ## Getting Started with PipelineX
 
-### Kedro 0.17.x Starter projects
+### Kedro (0.17-0.18) Starter projects
 
 Kedro starters (Cookiecutter templates) to use Kedro, Scikit-learn, MLflow, and PipelineX are available at:
 [kedro-starters-sklearn](https://github.com/Minyus/kedro-starters-sklearn)
 
 Iris dataset is included and used, but you can easily change to Kaggle Titanic dataset.
 
-### Example/Demo Projects tested with Kedro 0.16.x
+### Example/Demo Projects tested with Kedro 0.16
 
 - [Computer Vision using PyTorch](https://github.com/Minyus/pipelinex_pytorch)
 
@@ -1144,8 +1144,8 @@ mlflow_hooks = (
     pipelinex.MLflowArtifactsLoggerHook(
         filepaths_before_pipeline_run=["conf/base/parameters.yml"],
         filepaths_after_pipeline_run=[
-            "logs/info.log",
-            "logs/errors.log",
+            "info.log",
+            "errors.log",
         ],
     ),
     pipelinex.MLflowEnvVarsLoggerHook(
@@ -1153,9 +1153,6 @@ mlflow_hooks = (
         metric_env_vars=[],
     ),
     pipelinex.MLflowTimeLoggerHook(),
-    pipelinex.AddTransformersHook(
-        transformers=[pipelinex.MLflowIOTimeLoggerTransformer()],
-    ),
 )
 ``` 
 
