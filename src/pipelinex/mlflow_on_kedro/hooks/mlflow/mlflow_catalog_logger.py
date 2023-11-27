@@ -3,7 +3,8 @@ from importlib.util import find_spec
 from logging import getLogger
 from typing import Any, Dict, Union  # NOQA
 
-from kedro.io import AbstractDataSet, DataCatalog
+from kedro.io import DataCatalog
+from kedro_datasets._io import AbstractDataset as AbstractDataSet
 from kedro.pipeline import Pipeline
 from kedro.pipeline.node import Node
 

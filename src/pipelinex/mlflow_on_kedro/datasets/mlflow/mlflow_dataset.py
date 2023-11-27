@@ -4,9 +4,10 @@ from importlib.util import find_spec
 from pathlib import Path
 from typing import Any, Dict, Union
 
-from kedro.extras.datasets.pickle import PickleDataSet
-from kedro.io import MemoryDataSet
-from kedro.io.core import AbstractDataSet
+from kedro_datasets.pickle import PickleDataset as PickleDataSet
+from kedro.io import MemoryDataset as MemoryDataSet
+from kedro_datasets._io import AbstractDataset as AbstractDataSet
+
 
 from pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_utils import (
     mlflow_log_artifacts,
@@ -18,18 +19,18 @@ from pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_utils import (
 log = logging.getLogger(__name__)
 
 dataset_dicts = {
-    "json": {"type": "json.JSONDataSet"},
-    "csv": {"type": "pandas.CSVDataSet"},
-    "xls": {"type": "pandas.ExcelDataSet"},
-    "parquet": {"type": "pandas.ParquetDataSet"},
-    "pkl": {"type": "pickle.PickleDataSet"},
-    "png": {"type": "pillow.ImageDataSet"},
-    "jpg": {"type": "pillow.ImageDataSet"},
-    "jpeg": {"type": "pillow.ImageDataSet"},
-    "img": {"type": "pillow.ImageDataSet"},
-    "txt": {"type": "text.TextDataSet"},
-    "yaml": {"type": "yaml.YAMLDataSet"},
-    "yml": {"type": "yaml.YAMLDataSet"},
+    "json": {"type": "json.JSONDataset"},
+    "csv": {"type": "pandas.CSVDataset"},
+    "xls": {"type": "pandas.ExcelDataset"},
+    "parquet": {"type": "pandas.ParquetDataset"},
+    "pkl": {"type": "pickle.PickleDataset"},
+    "png": {"type": "pillow.ImageDataset"},
+    "jpg": {"type": "pillow.ImageDataset"},
+    "jpeg": {"type": "pillow.ImageDataset"},
+    "img": {"type": "pillow.ImageDataset"},
+    "txt": {"type": "text.TextDataset"},
+    "yaml": {"type": "yaml.YAMLDataset"},
+    "yml": {"type": "yaml.YAMLDataset"},
 }
 
 
@@ -140,7 +141,7 @@ class MLflowDataSet(AbstractDataSet):
             _dataset = self.dataset
             if isinstance(self.dataset, str):
                 dataset_dict = dataset_dicts.get(
-                    self.dataset, {"type": "pickle.PickleDataSet"}
+                    self.dataset, {"type": "pickle.PickleDataset"}
                 )
                 dataset_dict["filepath"] = self.filepath = (
                     self.filepath
@@ -179,7 +180,7 @@ class MLflowDataSet(AbstractDataSet):
 
     def _describe(self) -> Dict[str, Any]:
         return {
-            "dataset": self._dataset._describe()
+            "Dataset": self._dataset._describe()
             if getattr(self, "_ready", None)
             else self.dataset,  # pylint: disable=protected-access
             "filepath": self.filepath,
