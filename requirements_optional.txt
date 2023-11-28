@@ -1,4 +1,5 @@
 kedro
+kedro-datasets
 pandas
 matplotlib
 seaborn
