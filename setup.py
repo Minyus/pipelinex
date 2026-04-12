@@ -41,7 +41,7 @@ def dedupe(items):
 
 requires_optional = dedupe(requires + requires_optional)
 
-with open("requirements_docs.txt", "r") as f:
+with open("requirements_docs_only.txt", "r") as f:
     requires_docs = [x.strip() for x in f if x.strip()]
 requires_docs = dedupe(requires_docs)
 
