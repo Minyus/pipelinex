@@ -43,7 +43,7 @@ requires_optional = dedupe(requires + requires_optional)
 
 with open("requirements_docs.txt", "r") as f:
     requires_docs = [x.strip() for x in f if x.strip()]
-requires_docs = dedupe(requires_docs + requires_optional)
+requires_docs = dedupe(requires_docs)
 
 with open("requirements_dev.txt", "r") as f:
     requires_dev = [x.strip() for x in f if x.strip()]
