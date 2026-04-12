@@ -17,7 +17,7 @@
 ## Testing environment (appreciated)
 
 - Install tox 4.26.0 locally with `python -m pip install --upgrade "tox==4.26.0"`
-- Use `python -m tox` to run the optional dependency smoke suite locally, for example `python -m tox -e py310-min-optional`
+- Use `python -m tox` to run the optional dependency smoke suite locally, for example `python -m tox -e py311-latest`
 - Keep local smoke-test runs aligned with the checks used in CI
 - CI runs the same matrix defined in `.github/workflows/optional-dependency-matrix.yml`
 - Re-run the suite before opening a pull request if you touched optional-dependency paths

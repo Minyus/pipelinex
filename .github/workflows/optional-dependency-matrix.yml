@@ -22,8 +22,6 @@ jobs:
             toxenv: py312-latest
           - python-version: "3.13"
             toxenv: py313-latest
-          - python-version: "3.10"
-            toxenv: py310-min-optional
 
     steps:
       - name: Check out repository

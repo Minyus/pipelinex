@@ -26,12 +26,12 @@ Install tox 4.26.0 locally first:
 python -m pip install --upgrade "tox==4.26.0"
 ```
 
-The pinned minimum optional profile is currently targeted at Python 3.10 because the requested Kedro/Kedro-Datasets pin set is not available on Python 3.11. To run the full listed matrix locally, install the matching Python interpreters for the envs in `tox.ini` first; otherwise only the environments whose interpreters are available on your machine will run.
+To run the full listed matrix locally, install the matching Python interpreters for the envs in `tox.ini` first; otherwise only the environments whose interpreters are available on your machine will run.
 
 ```sh
 # run the optional dependency smoke checks locally
+$ python -m tox -e py311-latest
 $ python -m tox -e py310-latest
-$ python -m tox -e py310-min-optional
 ```
 
 See [optional-dependency-matrix.yml](https://github.com/Minyus/pipelinex/blob/master/.github/workflows/optional-dependency-matrix.yml) for the CI matrix.

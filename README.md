@@ -69,7 +69,7 @@ pip install -e .
 
 Use [tox](https://tox.wiki/) 4.26.0 to run the optional dependency smoke suite locally and match the CI matrix.
 
-`tox` 4.26.0 runs the configured environments that are available on your machine. The pinned minimum optional profile is currently targeted at Python 3.10 because the requested Kedro/Kedro-Datasets pin set is not available on Python 3.11. To run the full listed matrix locally, install the required Python interpreters for the envs in `tox.ini` first; otherwise only the available envs will run.
+`tox` 4.26.0 runs the configured environments that are available on your machine. To run the full listed matrix locally, install the required Python interpreters for the envs in `tox.ini` first; otherwise only the available envs will run.
 
 ```sh
 python -m pip install --upgrade "tox==4.26.0"
@@ -77,14 +77,14 @@ python -m pip install --upgrade "tox==4.26.0"
 
 ```sh
 # run example matrix entries locally
+$ python -m tox -e py311-latest
 $ python -m tox -e py310-latest
-$ python -m tox -e py310-min-optional
 
 # run the full listed matrix locally (requires the matching Python interpreters)
 $ python -m tox
 
 # or run the explicit env names one by one
-$ python -m tox -e py310-latest -e py311-latest -e py312-latest -e py313-latest -e py310-min-optional
+$ python -m tox -e py310-latest -e py311-latest -e py312-latest -e py313-latest
 ```
 
 The CI matrix is defined in [optional-dependency-matrix.yml](https://github.com/Minyus/pipelinex/blob/master/.github/workflows/optional-dependency-matrix.yml).
