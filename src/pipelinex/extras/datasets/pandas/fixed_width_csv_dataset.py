@@ -1,14 +1,14 @@
-from importlib.util import find_spec
+from importlib import import_module
 
 import pandas as pd
 
-if find_spec("kedro"):
-    from kedro.extras.datasets.pandas.csv_dataset import CSVDataSet
-else:
+try:
+    CSVDataSet = import_module("kedro_datasets.pandas").CSVDataset
+except (ImportError, AttributeError):
     from .csv_local import CSVLocalDataSet as CSVDataSet
 
 
-class FixedWidthCSVDataSet(CSVDataSet):
+class FixedWidthCSVDataSet(CSVDataSet):  # type: ignore[misc]
     """``CSVDataSet`` loads/saves data from/to a CSV file using an underlying
     filesystem (e.g.: local, S3, GCS). It uses pandas to handle the CSV file.
     """

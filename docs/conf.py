@@ -10,11 +10,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
 
-from recommonmark.transform import AutoStructify
+sys.path.insert(0, os.path.abspath("../src"))
 
 from pipelinex import __version__ as release
 
@@ -43,7 +42,7 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
     "sphinx.ext.mathjax",
-    "recommonmark",
+    "myst_parser",
     "sphinx_copybutton",
 ]
 
@@ -116,6 +115,3 @@ def skip(app, what, name, obj, skip, options):
 def setup(app):
     app.connect("autodoc-process-docstring", autodoc_process_docstring)
     app.connect("autodoc-skip-member", skip)
-    # enable rendering RST tables in Markdown
-    app.add_config_value("recommonmark_config", {"enable_eval_rst": True}, True)
-    app.add_transform(AutoStructify)

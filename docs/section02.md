@@ -13,46 +13,28 @@ This is recommended only if you want to modify the source code of PipelineX.
 ```bash
 git clone https://github.com/Minyus/pipelinex.git
 cd pipelinex
-python setup.py develop
+pip install -e .
 ```
 
 ### Prepare development environment for PipelineX
 
-You can install packages and organize development environment with [pipenv](https://github.com/pypa/pipenv).
-Refer the [pipenv](https://github.com/pypa/pipenv) document to install pipenv.
-Once you installed pipenv, you can use pipenv to install and organize your environment.
+Use the project test matrix via [tox](https://tox.wiki/) and GitHub Actions to match the optional dependency smoke checks.
+
+Install tox 4.26.0 locally first:
 
 ```sh
-# install dependent libraries
-$ pipenv install
-
-# install development libraries
-$ pipenv install --dev
-
-# install pipelinex
-$ pipenv run install
-
-# install pipelinex via setup.py
-$ pipenv run install_dev
-
-# lint python code
-$ pipenv run lint
-
-# format python code
-$ pipenv run fmt
-
-# sort imports
-$ pipenv run sort
-
-# apply mypy to python code
-$ pipenv run vet
-
-# get into shell
-$ pipenv shell
-
-# run test
-$ pipenv run test
+python -m pip install --upgrade "tox==4.26.0"
 ```
+
+The pinned minimum optional profile is currently targeted at Python 3.10 because the requested Kedro/Kedro-Datasets pin set is not available on Python 3.11. To run the full listed matrix locally, install the matching Python interpreters for the envs in `tox.ini` first; otherwise only the environments whose interpreters are available on your machine will run.
+
+```sh
+# run the optional dependency smoke checks locally
+$ python -m tox -e py310-latest
+$ python -m tox -e py310-min-optional
+```
+
+See [optional-dependency-matrix.yml](https://github.com/Minyus/pipelinex/blob/master/.github/workflows/optional-dependency-matrix.yml) for the CI matrix.
 
 ### Prepare Docker environment for PipelineX
 
@@ -62,4 +44,3 @@ cd pipelinex
 docker build --tag pipelinex .
 docker run --rm -it pipelinex
 ```
-

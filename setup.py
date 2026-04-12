@@ -2,6 +2,8 @@ import re
 from codecs import open
 from os import path
 
+from packaging.requirements import Requirement
+from packaging.utils import canonicalize_name
 from setuptools import find_packages, setup
 
 name = "pipelinex"
@@ -21,29 +23,39 @@ with open("requirements.txt", "r") as f:
 
 with open("requirements_optional.txt", "r") as f:
     requires_optional = [x.strip() for x in f if x.strip()]
-requires_optional += requires
+
+
+def dedupe(items):
+    seen = set()
+    result = []
+
+    for item in items:
+        key = canonicalize_name(Requirement(item).name)
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(item)
+
+    return result
+
+
+requires_optional = dedupe(requires + requires_optional)
 
 with open("requirements_docs.txt", "r") as f:
     requires_docs = [x.strip() for x in f if x.strip()]
-requires_docs += requires_optional
+requires_docs = dedupe(requires_docs + requires_optional)
 
 with open("requirements_dev.txt", "r") as f:
     requires_dev = [x.strip() for x in f if x.strip()]
-requires_dev += requires_docs
+requires_dev = dedupe(requires_dev + requires_docs)
 
-readme = r"""
-# PipelineX
-
-GitHub Repository:
-https://github.com/Minyus/pipelinex
-
-Documentation:
-https://pipelinex.readthedocs.io/
-"""
+with open(path.join(here, "README.md"), encoding="utf-8") as f:
+    readme = f.read()
 
 setup(
     name=name,
     version=version,
+    python_requires=">=3.10,<3.14",
     description="PipelineX: Python package to build ML pipelines for experimentation with Kedro, MLflow, and more",
     license="Apache Software License (Apache 2.0)",
     long_description=readme,
@@ -63,11 +75,10 @@ setup(
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Operating System :: OS Independent",
     ],
 )
