@@ -78,6 +78,20 @@ def test_sequential():
     assert_eq(fp, kp)
 
 
+def test_node_passthrough():
+    fp_node = kedro.pipeline.node(
+        func=task_func1, inputs="my_input", outputs="my_output"
+    )
+    kp_node = kedro.pipeline.node(
+        func=task_func1, inputs="my_input", outputs="my_output"
+    )
+
+    fp = pipelinex.FlexiblePipeline(nodes=[fp_node])
+    kp = kedro.pipeline.Pipeline(nodes=[kp_node])
+
+    assert_eq(fp, kp)
+
+
 def test_decorator():
     if kedro.__version__[:5] not in {"0.16.", "0.17."}:
         return
