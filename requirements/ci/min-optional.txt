@@ -1,5 +1,5 @@
 # Smoke-suite dependency subset only: use with an installer that installs just kedro, kedro-datasets, mlflow, scikit-learn, and pandas.
-kedro==1.0.0
+kedro==1.3.0
 kedro-datasets==1.0.0
 mlflow==3.0.0
 scikit-learn==1.7.0
