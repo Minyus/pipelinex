@@ -4,9 +4,9 @@ from importlib.util import find_spec
 from pathlib import Path
 from typing import Any, Dict, Union
 
-from kedro_datasets.pickle import PickleDataset as PickleDataSet
+from kedro.io import AbstractDataset as AbstractDataSet
 from kedro.io import MemoryDataset as MemoryDataSet
-from kedro_datasets._io import AbstractDataset as AbstractDataSet
+from kedro_datasets.pickle import PickleDataset as PickleDataSet
 
 
 from pipelinex.mlflow_on_kedro.hooks.mlflow.mlflow_utils import (

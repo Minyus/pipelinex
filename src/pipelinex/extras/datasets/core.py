@@ -29,11 +29,17 @@
 
 from importlib.util import find_spec
 
-if find_spec("kedro-datasets"):
-    from kedro_datasets._io import (
-        AbstractDataset as AbstractDataSet,
-        AbstractVersionedDataset as AbstractVersionedDataSet,
-    )
+if find_spec("kedro"):
+    try:
+        from kedro.io import AbstractDataset as AbstractDataSet
+        from kedro.io import AbstractVersionedDataset as AbstractVersionedDataSet
+        from kedro.io import DatasetError as DataSetError
+        from kedro.io.core import Version
+    except ImportError:
+        from kedro_datasets._io import (
+            AbstractDataset as AbstractDataSet,
+            AbstractVersionedDataset as AbstractVersionedDataSet,
+        )
 else:
 
     """This module provides a set of classes which underpin the data loading and

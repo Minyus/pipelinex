@@ -6,7 +6,7 @@ seaborn
 pandas-profiling
 Pillow
 torch
-torch-vision 
+torchvision
 pytorch-ignite
 opencv-python
 opencv-contrib-python

@@ -2,9 +2,9 @@
 
 PipelineX: Python package to build ML pipelines for experimentation with Kedro, MLflow, and more
 
-[![Python version](https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/pipelinex/)
+[![Python version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://pypi.org/project/pipelinex/)
 [![PyPI version](https://badge.fury.io/py/pipelinex.svg)](https://badge.fury.io/py/pipelinex)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/Minyus/pipelinex/blob/master/LICENSEj)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/Minyus/pipelinex/blob/master/LICENSE)
 [![Documentation](https://readthedocs.org/projects/pipelinex/badge/?version=latest)](https://pipelinex.readthedocs.io/)
 
 ## PipelineX Overview
@@ -62,46 +62,32 @@ This is recommended only if you want to modify the source code of PipelineX.
 ```bash
 git clone https://github.com/Minyus/pipelinex.git
 cd pipelinex
-python setup.py develop
+pip install -e .
 ```
 
-### Prepare development environment for PipelineX
+### Optional dependency smoke checks
 
-You can install packages and organize development environment with [pipenv](https://github.com/pypa/pipenv).
-Refer the [pipenv](https://github.com/pypa/pipenv) document to install pipenv.
-Once you installed pipenv, you can use pipenv to install and organize your environment.
+Use [tox](https://tox.wiki/) 4.26.0 to run the optional dependency smoke suite locally and match the CI matrix.
+
+`tox` 4.26.0 runs the configured environments that are available on your machine. The pinned minimum optional profile is currently targeted at Python 3.10 because the requested Kedro/Kedro-Datasets pin set is not available on Python 3.11. To run the full listed matrix locally, install the required Python interpreters for the envs in `tox.ini` first; otherwise only the available envs will run.
 
 ```sh
-# install dependent libraries
-$ pipenv install
-
-# install development libraries
-$ pipenv install --dev
-
-# install pipelinex
-$ pipenv run install
-
-# install pipelinex via setup.py
-$ pipenv run install_dev
-
-# lint python code
-$ pipenv run lint
-
-# format python code
-$ pipenv run fmt
-
-# sort imports
-$ pipenv run sort
-
-# apply mypy to python code
-$ pipenv run vet
-
-# get into shell
-$ pipenv shell
-
-# run test
-$ pipenv run test
+python -m pip install --upgrade "tox==4.26.0"
 ```
+
+```sh
+# run example matrix entries locally
+$ python -m tox -e py310-latest
+$ python -m tox -e py310-min-optional
+
+# run the full listed matrix locally (requires the matching Python interpreters)
+$ python -m tox
+
+# or run the explicit env names one by one
+$ python -m tox -e py310-latest -e py311-latest -e py312-latest -e py313-latest -e py310-min-optional
+```
+
+The CI matrix is defined in [optional-dependency-matrix.yml](https://github.com/Minyus/pipelinex/blob/master/.github/workflows/optional-dependency-matrix.yml).
 
 ### Prepare Docker environment for PipelineX
 

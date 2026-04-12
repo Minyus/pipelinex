@@ -151,6 +151,9 @@ static
 # macOS
 *.DS_Store
 
+.worktrees/*
+docs/superpowers/*
+
 # data
 *.pt
 *.gz
