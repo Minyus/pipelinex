@@ -8,7 +8,6 @@ from pipelinex import ImagesLocalDataSet
 def test_save_and_load():
 
     with tempfile.TemporaryDirectory() as dir:
-
         ds = ImagesLocalDataSet(
             path=dir + "/foobar_images", save_args={"suffix": ".jpg"}
         )

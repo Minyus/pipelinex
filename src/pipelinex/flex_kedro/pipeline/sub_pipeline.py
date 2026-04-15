@@ -13,7 +13,7 @@ class SubPipeline(Pipeline):
         module: str = "",
         decorator: Union[Callable, List[Callable]] = None,
         intermediate_node_name_fmt: str = "{}__{:03d}",
-        **kwargs
+        **kwargs,
     ):
         funcs = _load_callables(func, module)
 
@@ -56,7 +56,8 @@ def _load_callables(func, default_module):
             assert module or default_module, (
                 "The module to which '{}' belongs is unknown. ".format(obj)
                 + "Specify the module (e.g. foo.bar) using the name format"
-                " (e.g. 'foo.bar.{}') ".format(obj) + "or default_module argument."
+                " (e.g. 'foo.bar.{}') ".format(obj)
+                + "or default_module argument."
             )
         else:
             assert callable(f), "{} should be callable or str.".format(f)

@@ -63,9 +63,9 @@ class FlexibleParametersContext(KedroContext):
         return self._params
 
     def _get_pipelines(self) -> Dict[str, Pipeline]:
-        assert (
-            self._kedro_pipelines
-        ), "'PIPELINES' key or value is missing in parameters."
+        assert self._kedro_pipelines, (
+            "'PIPELINES' key or value is missing in parameters."
+        )
         return self._kedro_pipelines
 
     def run(self, *args, **kwargs):

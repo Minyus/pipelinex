@@ -148,7 +148,6 @@ def _dfs_apply(
     s = d_input
 
     if isinstance(d_input, dict):
-
         obj_str = d_input.get(obj_key)
 
         d, s = {}, {}
@@ -176,7 +175,6 @@ def _dfs_apply(
                 d = _hatch(d, a, obj_key=obj_key)
 
     if isinstance(d_input, list):
-
         d, s = [], []
         for v in d_input:
             _d, _s = _dfs_apply(v, hatch_args)
@@ -214,10 +212,10 @@ def _hatch(
 
         attribute_name = d.pop(attr_key, None)
         for k in d:
-            assert isinstance(
-                k, str
-            ), "Non-string key '{}' in '{}' is not valid for callable: '{}'.".format(
-                k, d, a.__name__
+            assert isinstance(k, str), (
+                "Non-string key '{}' in '{}' is not valid for callable: '{}'.".format(
+                    k, d, a.__name__
+                )
             )
         d = a(*pos_args, **d)
         if attribute_name:

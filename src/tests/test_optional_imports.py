@@ -5,7 +5,7 @@ from importlib import import_module
 
 
 def test_import_pipelinex_exports_target_optional_surfaces():
-    code = r'''
+    code = r"""
 import importlib
 import json
 import warnings
@@ -24,7 +24,7 @@ payload = {
     "warnings": [str(w.message) for w in caught],
 }
 print(json.dumps(payload))
-'''
+"""
 
     result = subprocess.run(
         [sys.executable, "-c", code],

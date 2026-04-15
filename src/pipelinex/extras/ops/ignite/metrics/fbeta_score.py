@@ -45,10 +45,10 @@ class FbetaScore(Metric):
         precision_val = self._precision.compute()
         recall_val = self._recall.compute()
         fbeta_val = (
-            (1.0 + self._beta ** 2)
+            (1.0 + self._beta**2)
             * precision_val
             * recall_val
-            / (self._beta ** 2 * precision_val + recall_val + 1e-15)
+            / (self._beta**2 * precision_val + recall_val + 1e-15)
         )
         if self._average == "macro":
             fbeta_val = torch.mean(fbeta_val).item()

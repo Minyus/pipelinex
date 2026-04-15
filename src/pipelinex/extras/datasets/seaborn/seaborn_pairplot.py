@@ -13,7 +13,6 @@ log = logging.getLogger(__name__)
 
 
 class SeabornPairPlotDataSet(AbstractVersionedDataSet):
-
     DEFAULT_SAVE_ARGS = dict()  # type: Dict[str, Any]
 
     def __init__(

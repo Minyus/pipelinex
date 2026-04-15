@@ -13,6 +13,7 @@ from .utils import *  # NOQA
 def _warn_optional_import_failure(group: str, exc: Exception) -> None:
     warn("Skipping optional pipelinex imports for {}: {}".format(group, exc))
 
+
 if find_spec("kedro"):
     try:
         from .extras.hooks.add_catalog_dict import *  # NOQA

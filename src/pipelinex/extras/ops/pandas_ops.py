@@ -673,7 +673,7 @@ class DfFocusTransform:
             columns=columns,
             keep_others=keep_others,
             func=func,
-            **kwargs
+            **kwargs,
         )(df)
         return df
 

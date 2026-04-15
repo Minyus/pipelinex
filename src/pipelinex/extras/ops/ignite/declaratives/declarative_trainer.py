@@ -257,10 +257,10 @@ class NetworkTrain:
             assert (metric is None) or (metric in evaluation_metrics)
             minimize = early_stopping_params.pop("minimize", False)
             if metric:
-                assert (
-                    "score_function" not in early_stopping_params
-                ), "Remove either 'metric' or 'score_function' from early_stopping_params: {}".format(
-                    early_stopping_params
+                assert "score_function" not in early_stopping_params, (
+                    "Remove either 'metric' or 'score_function' from early_stopping_params: {}".format(
+                        early_stopping_params
+                    )
                 )
                 early_stopping_params["score_function"] = get_score_function(
                     metric, minimize=minimize

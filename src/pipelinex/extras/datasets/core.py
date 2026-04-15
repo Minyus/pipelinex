@@ -41,7 +41,6 @@ if find_spec("kedro"):
             AbstractVersionedDataset as AbstractVersionedDataSet,
         )
 else:
-
     """This module provides a set of classes which underpin the data loading and
     saving functionality provided by ``kedro.io``.
     """
@@ -178,8 +177,7 @@ else:
                 )
             except Exception as err:
                 raise DataSetError(
-                    "\n{}.\nFailed to instantiate DataSet "
-                    "'{}' of type `{}.{}`.".format(
+                    "\n{}.\nFailed to instantiate DataSet '{}' of type `{}.{}`.".format(
                         str(err), name, class_obj.__module__, class_obj.__qualname__
                     )
                 )

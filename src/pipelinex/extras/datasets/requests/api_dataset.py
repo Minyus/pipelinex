@@ -30,6 +30,7 @@
 and returns them into either as string or json Dict.
 It uses the python requests library: https://requests.readthedocs.io/en/master/
 """
+
 import socket
 from typing import Any, Dict, List, Tuple, Union
 

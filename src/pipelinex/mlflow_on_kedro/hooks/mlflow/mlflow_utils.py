@@ -89,7 +89,6 @@ def mlflow_log_values(d, enable_mlflow=True):
     d = dot_flatten(d)
 
     if enable_mlflow:
-
         metrics = {k: v for (k, v) in d.items() if isinstance(v, (float, int))}
         mlflow_log_metrics(metrics)
 

@@ -30,7 +30,6 @@ class Net(nn.Module):
 
 
 if __name__ == "__main__":
-
     train_params = {
         # loss_fn accepts a loss function at https://pytorch.org/docs/stable/nn.html#loss-functions
         "loss_fn": nn.NLLLoss(),

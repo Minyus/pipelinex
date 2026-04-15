@@ -18,7 +18,7 @@ class FixedWidthCSVDataSet(CSVDataSet):  # type: ignore[misc]
         *args,
         enable_fixed_width: bool = True,
         num_decimal_places: int = 9,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Creates a ``FixedWidthCSVDataSet`` pointing to a concrete CSV file
         on a specific filesystem.

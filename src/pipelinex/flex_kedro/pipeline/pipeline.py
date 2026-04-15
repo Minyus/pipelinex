@@ -13,19 +13,18 @@ class FlexiblePipeline(kedro.pipeline.Pipeline):
         parameters_in_inputs=False,  # type: bool
         module="",  # type: str
         decorator=[],  # type: Union[Callable, List[Callable]]
-        **kwargs
+        **kwargs,
     ):
 
         for i, node in enumerate(nodes):
-
             assert node is not None, "Node {}: is empty.".format(i)
             if isinstance(node, dict):
-                assert (
-                    "inputs" in node
-                ), "Node {} ({}): is missing 'inputs' key.".format(i, node)
-                assert (
-                    "outputs" in node
-                ), "Node {} ({}): is missing 'outputs' key.".format(i, node)
+                assert "inputs" in node, (
+                    "Node {} ({}): is missing 'inputs' key.".format(i, node)
+                )
+                assert "outputs" in node, (
+                    "Node {} ({}): is missing 'outputs' key.".format(i, node)
+                )
 
                 if parameters_in_inputs:
                     inputs = node.get("inputs")

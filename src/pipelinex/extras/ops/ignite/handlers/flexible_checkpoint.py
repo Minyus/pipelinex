@@ -71,11 +71,15 @@ class ModelCheckpoint(object):
         >>> from ignite.handlers import ModelCheckpoint
         >>> from torch import nn
         >>> trainer = Engine(lambda batch: None)
-        >>> handler = ModelCheckpoint('/tmp/models', 'myprefix', save_interval=2, n_saved=2, create_dir=True)
+        >>> handler = ModelCheckpoint(
+        ...     "/tmp/models", "myprefix", save_interval=2, n_saved=2, create_dir=True
+        ... )
         >>> model = nn.Linear(3, 3)
-        >>> trainer.add_event_handler(Events.EPOCH_COMPLETED, handler, {'mymodel': model})
+        >>> trainer.add_event_handler(
+        ...     Events.EPOCH_COMPLETED, handler, {"mymodel": model}
+        ... )
         >>> trainer.run([0], max_epochs=6)
-        >>> os.listdir('/tmp/models')
+        >>> os.listdir("/tmp/models")
         ['myprefix_mymodel_4.pth', 'myprefix_mymodel_6.pth']
     """
 
@@ -210,7 +214,7 @@ class FlexibleModelCheckpoint(ModelCheckpoint):
         filename_format=None,
         suffix_format=None,
         *args,
-        **kwargs
+        **kwargs,
     ):
         if "%" in filename_prefix:
             filename_prefix = get_timestamp(

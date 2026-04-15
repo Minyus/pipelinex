@@ -24,10 +24,10 @@ class ModuleConcat(ModuleListMerge):
 
 
 def _check_size_match(self, tt_list):
-    assert (
-        len(set([tuple(list(tt.size())) for tt in tt_list])) == 1
-    ), "Sizes of tensors must match. " "\n{}\n got tensor sizes: \n{}\n".format(
-        self, [tt.size() for tt in tt_list]
+    assert len(set([tuple(list(tt.size())) for tt in tt_list])) == 1, (
+        "Sizes of tensors must match. \n{}\n got tensor sizes: \n{}\n".format(
+            self, [tt.size() for tt in tt_list]
+        )
     )
 
 
@@ -218,7 +218,7 @@ def setup_conv_params(
     stride=None,
     raise_error=False,
     *args,
-    **kwargs
+    **kwargs,
 ):
     kwargs["kernel_size"] = as_tuple(kernel_size)
     if dilation is not None:
@@ -325,7 +325,7 @@ class ModuleBottleneck2d(torch.nn.Sequential):
         mid_channels=None,
         batch_norm=None,
         activation=None,
-        **kwargs
+        **kwargs,
     ):
         mid_channels = mid_channels or in_channels // 2 or 1
         batch_norm = batch_norm or TensorSkip()
@@ -336,7 +336,7 @@ class ModuleBottleneck2d(torch.nn.Sequential):
                 out_channels=mid_channels,
                 kernel_size=(1, 1),
                 stride=(1, 1),
-                **kwargs
+                **kwargs,
             ),
             batch_norm,
             activation,
@@ -345,7 +345,7 @@ class ModuleBottleneck2d(torch.nn.Sequential):
                 out_channels=mid_channels,
                 kernel_size=kernel_size,
                 stride=stride,
-                **kwargs
+                **kwargs,
             ),
             batch_norm,
             activation,
@@ -354,7 +354,7 @@ class ModuleBottleneck2d(torch.nn.Sequential):
                 out_channels=out_channels,
                 kernel_size=(1, 1),
                 stride=(1, 1),
-                **kwargs
+                **kwargs,
             ),
         )
 

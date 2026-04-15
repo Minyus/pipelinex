@@ -57,9 +57,7 @@ def _get_cat_mat_df(df, cols_analyze):
     dep_mat = [
         [
             (
-                df.groupby(c1)[c0]
-                .nunique(dropna=False)
-                .mean()
+                df.groupby(c1)[c0].nunique(dropna=False).mean()
                 # 1
                 # - df.groupby(c1)[c0].nunique(dropna=False).mean()
                 # / df[c0].nunique(dropna=False)

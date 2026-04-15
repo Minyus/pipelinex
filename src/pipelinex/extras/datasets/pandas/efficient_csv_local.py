@@ -23,7 +23,7 @@ class EfficientCSVLocalDataSet(CSVLocalDataSet):
         preview_args: Dict[str, Any] = None,
         margin: float = 100.0,
         verbose: Union[bool, int] = True,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Creates a new instance of ``PandasDescribeDataSet`` pointing to a concrete
         filepath.
@@ -139,7 +139,6 @@ def _get_necessary_dtypes(
                 dtypes_dict[col] = "int64"  # np.int64
 
     if verbose:
-
         for dtype in [
             "float16",
             "float32",
